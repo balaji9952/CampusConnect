@@ -1,4 +1,4 @@
-import { AdminUsersService } from './src/services/admin-users.service';
+import { AdminUsersService } from '../src/services/admin-users.service';
 
 async function test() {
   try {

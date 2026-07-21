@@ -1,5 +1,5 @@
-import { processEscalations } from './src/services/cron.service';
-import prisma from './src/utils/prisma';
+import { processEscalations } from '../src/services/cron.service';
+import prisma from '../src/utils/prisma';
 import { v4 as uuidv4 } from 'uuid';
 
 async function test() {

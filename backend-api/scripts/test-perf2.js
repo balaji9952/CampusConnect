@@ -12,7 +12,7 @@ async function test() {
   });
   console.timeEnd('fetch user');
 
-  const { AssignmentRepository } = require('./src/repositories/AssignmentRepository');
+  const { AssignmentRepository } = require('../src/repositories/AssignmentRepository');
   console.time('getVisibleTicketIds');
   const visibleTicketIds = await AssignmentRepository.getVisibleTicketIds(
       userId, 

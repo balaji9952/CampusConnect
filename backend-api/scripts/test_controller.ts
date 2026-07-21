@@ -1,4 +1,4 @@
-import { TicketsController } from './src/controllers/tickets.controller';
+import { TicketsController } from '../src/controllers/tickets.controller';
 
 async function main() {
   const req = {

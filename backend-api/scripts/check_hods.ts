@@ -1,4 +1,4 @@
-import prisma from './src/utils/prisma';
+import prisma from '../src/utils/prisma';
 
 async function fixDB() {
   const hods = await prisma.users.findMany({ where: { designation: 'HOD' } });

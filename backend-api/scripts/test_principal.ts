@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { DashboardService } from './src/services/dashboard.service';
+import { DashboardService } from '../src/services/dashboard.service';
 
 const prisma = new PrismaClient();
 

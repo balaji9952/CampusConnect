@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { TicketsService } from './src/services/tickets.service';
+import { TicketsService } from '../src/services/tickets.service';
 
 const prisma = new PrismaClient();
 

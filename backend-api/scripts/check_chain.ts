@@ -1,4 +1,4 @@
-import prisma from './src/utils/prisma';
+import prisma from '../src/utils/prisma';
 
 async function checkChain() {
   console.log('--- STARTING CHAIN CHECK ---');

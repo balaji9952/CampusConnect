@@ -1,5 +1,5 @@
-import prisma from './src/utils/prisma';
-import { processLevel1ToLevel2, processLevel2ToLevel3 } from './src/cron/escalation';
+import prisma from '../src/utils/prisma';
+import { processLevel1ToLevel2, processLevel2ToLevel3 } from '../src/cron/escalation';
 
 async function runTest() {
   const student = await prisma.users.findFirst({ where: { role: 0 } });

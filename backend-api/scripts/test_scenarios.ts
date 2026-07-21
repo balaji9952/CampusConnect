@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
-import { TicketsService } from './src/services/tickets.service';
-import { GlobalAssignmentsService } from './src/services/global-assignments.service';
+import { TicketsService } from '../src/services/tickets.service';
+import { GlobalAssignmentsService } from '../src/services/global-assignments.service';
 
 const prisma = new PrismaClient();
 

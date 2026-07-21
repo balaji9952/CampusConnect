@@ -1,4 +1,4 @@
-import { TicketQuerySchema } from './src/schemas/ticket.schema';
+import { TicketQuerySchema } from '../src/schemas/ticket.schema';
 
 async function main() {
   try {

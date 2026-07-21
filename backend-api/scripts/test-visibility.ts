@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { VisibilityService } from './src/services/visibility.service';
+import { VisibilityService } from '../src/services/visibility.service';
 
 const prisma = new PrismaClient();
 
