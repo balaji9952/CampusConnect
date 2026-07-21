@@ -1,0 +1,90 @@
+# =========================
+# Node.js
+# =========================
+**/node_modules/
+**/dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# =========================
+# Flutter / Dart
+# =========================
+**/.dart_tool/
+**/build/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.packages
+
+# =========================
+# Logs
+# =========================
+**/*.log
+
+# =========================
+# Coverage
+# =========================
+**/coverage/
+
+# =========================
+# Environment files
+# =========================
+**/.env
+
+# Keep example env files
+!**/.env.example
+
+# =========================
+# Firebase Admin Credentials
+# =========================
+**/firebase-service-account.json
+
+# =========================
+# OS files
+# =========================
+**/.DS_Store
+Thumbs.db
+
+# =========================
+# Temporary files
+# =========================
+*.tmp
+*.bak
+*.cache
+
+# =========================
+# VS Code Workspace Storage
+# (Keep project settings)
+# =========================
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
+
+# =========================
+# AI exports (optional)
+# =========================
+antigravity_export/
+
+# =========================
+# Temporary comparison files
+# =========================
+backend_diff.txt
+mobile_diff.txt
+project_tree.txt
+tracked_files.txt
+fetched.css
+
+# =========================
+# .NET
+# =========================
+**/bin/
+**/obj/
+
+# Visual Studio
+*.user
+*.suo
+*.userosscache
+*.sln.docstates

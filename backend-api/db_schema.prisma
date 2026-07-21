@@ -1,0 +1,206 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model audit_logs {
+  id          BigInt   @id(map: "PK__audit_lo__3213E83F33D73A3A") @default(autoincrement())
+  user_id     String?  @db.VarChar(36)
+  user_name   String?  @db.NVarChar(150)
+  user_role   String?  @db.NVarChar(50)
+  action      String   @db.NVarChar(100)
+  entity_type String?  @db.VarChar(50)
+  entity_id   String?  @db.VarChar(50)
+  old_value   String?  @db.NVarChar(Max)
+  new_value   String?  @db.NVarChar(Max)
+  description String?  @db.NVarChar(500)
+  ip_address  String?  @db.VarChar(45)
+  user_agent  String?  @db.NVarChar(500)
+  created_at  DateTime @default(dbgenerated("sysutcdatetime()"), map: "DF__audit_log__creat__73BA3083")
+  users       users?   @relation(fields: [user_id], references: [id], onUpdate: NoAction, map: "FK__audit_log__user___72C60C4A")
+
+  @@index([created_at(sort: Desc)], map: "IX_audit_created")
+  @@index([entity_type, entity_id], map: "IX_audit_entity")
+  @@index([user_id, created_at(sort: Desc)], map: "IX_audit_user")
+}
+
+model complaint_categories {
+  id          Int       @id(map: "PK__complain__3213E83F3DD5A649") @default(autoincrement())
+  name        String    @unique(map: "UQ_complaint_categories_name") @db.NVarChar(100)
+  description String?   @db.NVarChar(500)
+  icon        String?   @db.VarChar(50)
+  sort_order  Int       @default(0, map: "DF__complaint__sort___52593CB8")
+  is_active   Boolean   @default(true, map: "DF__complaint__is_ac__534D60F1")
+  created_at  DateTime  @default(dbgenerated("sysutcdatetime()"), map: "DF__complaint__creat__5441852A")
+  tickets     tickets[]
+}
+
+model departments {
+  id                                     Int         @id(map: "PK__departme__3213E83FBEFDD360") @default(autoincrement())
+  name                                   String      @unique(map: "UQ_departments_name") @db.NVarChar(150)
+  code                                   String?     @db.VarChar(20)
+  hod_user_id                            String?     @db.VarChar(36)
+  is_active                              Boolean     @default(true, map: "DF__departmen__is_ac__38996AB5")
+  created_at                             DateTime    @default(dbgenerated("sysutcdatetime()"), map: "DF__departmen__creat__398D8EEE")
+  updated_at                             DateTime    @default(dbgenerated("sysutcdatetime()"), map: "DF__departmen__updat__3A81B327")
+  users_departments_hod_user_idTousers   users?      @relation("departments_hod_user_idTousers", fields: [hod_user_id], references: [id], onUpdate: NoAction, map: "FK_departments_hod")
+  locations                              locations[]
+  users_users_department_idTodepartments users[]     @relation("users_department_idTodepartments")
+}
+
+model escalation_history {
+  id            BigInt   @id(map: "PK__escalati__3213E83F5515FDDC") @default(autoincrement())
+  ticket_id     String   @db.VarChar(30)
+  from_level    Int      @db.TinyInt
+  to_level      Int      @db.TinyInt
+  from_assignee String?  @db.NVarChar(150)
+  to_assignee   String?  @db.NVarChar(150)
+  reason        String   @db.NVarChar(500)
+  escalated_by  String?  @db.NVarChar(150)
+  user_id       String?  @db.VarChar(36)
+  escalated_at  DateTime @default(dbgenerated("sysutcdatetime()"), map: "DF__escalatio__escal__693CA210")
+  tickets       tickets  @relation(fields: [ticket_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK__escalatio__ticke__6754599E")
+  users         users?   @relation(fields: [user_id], references: [id], onUpdate: NoAction, map: "FK__escalatio__user___68487DD7")
+
+  @@index([ticket_id, escalated_at(sort: Desc)], map: "IX_escalation_ticket")
+}
+
+model locations {
+  id            Int          @id(map: "PK__location__3213E83F02E81331") @default(autoincrement())
+  name          String       @unique(map: "UQ_locations_name") @db.NVarChar(100)
+  block         String?      @db.NVarChar(100)
+  floor         String?      @db.VarChar(20)
+  department_id Int?
+  is_active     Boolean      @default(true, map: "DF__locations__is_ac__46E78A0C")
+  created_at    DateTime     @default(dbgenerated("sysutcdatetime()"), map: "DF__locations__creat__47DBAE45")
+  departments   departments? @relation(fields: [department_id], references: [id], onUpdate: NoAction, map: "FK__locations__depar__45F365D3")
+  qr_codes      qr_codes[]
+  tickets       tickets[]
+}
+
+model notifications {
+  id              String   @id(map: "PK__notifica__3213E83F850DB87A") @db.VarChar(36)
+  user_id         String?  @db.VarChar(36)
+  title           String   @db.NVarChar(255)
+  body            String
+  type            String   @db.VarChar(50)
+  ticket_id       String?  @db.VarChar(30)
+  is_read         Boolean  @default(false, map: "DF__notificat__is_re__6E01572D")
+  privileged_only Boolean  @default(false, map: "DF__notificat__privi__6EF57B66")
+  created_at      DateTime @default(dbgenerated("sysutcdatetime()"), map: "DF__notificat__creat__6FE99F9F")
+  tickets         tickets? @relation(fields: [ticket_id], references: [id], onUpdate: NoAction, map: "FK__notificat__ticke__6D0D32F4")
+  users           users?   @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK__notificat__user___6C190EBB")
+
+  @@index([user_id, is_read, created_at(sort: Desc)], map: "IX_notifications_user_unread")
+}
+
+model qr_codes {
+  id           Int       @id(map: "PK__qr_codes__3213E83FFE3896C7") @default(autoincrement())
+  location_id  Int
+  qr_token     String    @unique(map: "IX_qr_token") @db.VarChar(64)
+  qr_image_url String?   @db.NVarChar(500)
+  is_active    Boolean   @default(true, map: "DF__qr_codes__is_act__4CA06362")
+  generated_by String?   @db.VarChar(36)
+  generated_at DateTime  @default(dbgenerated("sysutcdatetime()"), map: "DF__qr_codes__genera__4E88ABD4")
+  expires_at   DateTime?
+  users        users?    @relation(fields: [generated_by], references: [id], onUpdate: NoAction, map: "FK__qr_codes__genera__4D94879B")
+  locations    locations @relation(fields: [location_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK__qr_codes__locati__4BAC3F29")
+}
+
+model system_settings {
+  key        String   @id @db.VarChar(100)
+  value      String   @db.NVarChar(Max)
+  updated_by String?  @db.VarChar(100)
+  updated_at DateTime @updatedAt
+}
+
+model ticket_updates {
+  id          BigInt   @id(map: "PK__ticket_u__3213E83F47A92BA5") @default(autoincrement())
+  ticket_id   String   @db.VarChar(30)
+  message     String
+  update_type String   @default("remark", map: "DF__ticket_up__updat__628FA481") @db.VarChar(30)
+  updated_by  String   @db.NVarChar(150)
+  user_id     String?  @db.VarChar(36)
+  created_at  DateTime @default(dbgenerated("sysutcdatetime()"), map: "DF__ticket_up__creat__6477ECF3")
+  tickets     tickets  @relation(fields: [ticket_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK__ticket_up__ticke__619B8048")
+  users       users?   @relation(fields: [user_id], references: [id], onUpdate: NoAction, map: "FK__ticket_up__user___6383C8BA")
+
+  @@index([ticket_id, created_at(sort: Desc)], map: "IX_ticket_updates_ticket")
+}
+
+model tickets {
+  id                   String               @id(map: "PK__tickets__3213E83F2479ACDE") @db.VarChar(30)
+  title                String               @db.NVarChar(255)
+  description          String               @db.NVarChar(2000)
+  location_id          Int
+  location_name        String               @db.NVarChar(100)
+  category_id          Int
+  category_name        String               @db.NVarChar(100)
+  priority             Int                  @default(1, map: "DF__tickets__priorit__59063A47") @db.TinyInt
+  status               Int                  @default(0, map: "DF__tickets__status__59FA5E80") @db.TinyInt
+  escalation_level     Int                  @default(1, map: "DF__tickets__escalat__5AEE82B9") @db.TinyInt
+  assigned_to_name     String?              @db.NVarChar(150)
+  assigned_role        String?              @db.NVarChar(100)
+  has_photo            Boolean              @default(false, map: "DF__tickets__has_pho__5BE2A6F2")
+  photo_url            String?              @db.NVarChar(500)
+  creator_id           String               @db.VarChar(36)
+  creator_name         String               @db.NVarChar(150)
+  creator_role         String               @db.NVarChar(50)
+  resolved_at          DateTime?
+  closed_at            DateTime?
+  created_at           DateTime             @default(dbgenerated("sysutcdatetime()"), map: "DF__tickets__created__5DCAEF64")
+  updated_at           DateTime             @default(dbgenerated("sysutcdatetime()"), map: "DF__tickets__updated__5EBF139D")
+  is_deleted           Boolean              @default(false, map: "DF__tickets__is_dele__74AE54BC")
+  deleted_at           DateTime?            @db.DateTime
+  ticket_number        String?              @db.VarChar(30)
+  escalation_history   escalation_history[]
+  notifications        notifications[]
+  ticket_updates       ticket_updates[]
+  complaint_categories complaint_categories @relation(fields: [category_id], references: [id], onUpdate: NoAction, map: "FK__tickets__categor__5812160E")
+  users                users                @relation(fields: [creator_id], references: [id], onUpdate: NoAction, map: "FK__tickets__creator__5CD6CB2B")
+  locations            locations            @relation(fields: [location_id], references: [id], onUpdate: NoAction, map: "FK__tickets__locatio__571DF1D5")
+
+  @@index([category_id], map: "IX_tickets_category")
+  @@index([created_at(sort: Desc)], map: "IX_tickets_created_desc")
+  @@index([creator_id], map: "IX_tickets_creator")
+  @@index([location_id], map: "IX_tickets_location")
+  @@index([status], map: "IX_tickets_status")
+}
+
+model users {
+  id                                           String               @id(map: "PK__users__3213E83F8185631D") @db.VarChar(36)
+  name                                         String               @db.NVarChar(150)
+  email                                        String               @unique(map: "UQ_users_email") @db.NVarChar(255)
+  password_hash                                String               @db.NVarChar(255)
+  phone                                        String               @db.VarChar(15)
+  role                                         Int                  @db.TinyInt
+  department_id                                Int?
+  roll_no                                      String?              @db.VarChar(50)
+  program_type                                 String?              @db.VarChar(10)
+  branch                                       String?              @db.VarChar(50)
+  study_year                                   String?              @db.VarChar(20)
+  designation                                  String?              @db.NVarChar(100)
+  avatar_url                                   String?              @db.NVarChar(500)
+  is_active                                    Boolean              @default(true, map: "DF__users__is_active__3F466844")
+  last_login_at                                DateTime?
+  created_at                                   DateTime             @default(dbgenerated("sysutcdatetime()"), map: "DF__users__created_a__403A8C7D")
+  updated_at                                   DateTime             @default(dbgenerated("sysutcdatetime()"), map: "DF__users__updated_a__412EB0B6")
+  audit_logs                                   audit_logs[]
+  departments_departments_hod_user_idTousers   departments[]        @relation("departments_hod_user_idTousers")
+  escalation_history                           escalation_history[]
+  notifications                                notifications[]
+  qr_codes                                     qr_codes[]
+  ticket_updates                               ticket_updates[]
+  tickets                                      tickets[]
+  departments_users_department_idTodepartments departments?         @relation("users_department_idTodepartments", fields: [department_id], references: [id], onUpdate: NoAction, map: "FK__users__departmen__3E52440B")
+
+  @@index([department_id], map: "IX_users_department")
+  @@index([email], map: "IX_users_email")
+  @@index([role], map: "IX_users_role")
+}
+
+

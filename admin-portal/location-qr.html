@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Location and QR — Campus Connect</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/admin-shared.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="assets/js/theme.js"></script>
+  <style>
+    /* ── Category Pill Filter ─────────────────────────────────── */
+    .cat-filter-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .cat-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1.5px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      user-select: none;
+    }
+
+    .cat-pill:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--primary-bg);
+    }
+
+    .cat-pill.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .cat-pill .pill-count {
+      background: rgba(255, 255, 255, 0.25);
+      border-radius: 10px;
+      padding: 1px 7px;
+      font-size: 11px;
+      font-weight: 700;
+      min-width: 20px;
+      text-align: center;
+    }
+
+    .cat-pill:not(.active) .pill-count {
+      background: var(--primary-bg);
+      color: var(--primary);
+    }
+
+    /* ── Stats Row ─────────────────────────────────────────────── */
+    .stat-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .mini-stat {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 18px;
+      background: var(--bg-card);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      flex: 1;
+      min-width: 140px;
+    }
+
+    .mini-stat-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .mini-stat-val {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1;
+    }
+
+    .mini-stat-label {
+      font-size: 11px;
+      color: var(--text-hint);
+      margin-top: 3px;
+    }
+
+    /* ── QR version badge ──────────────────────────────────────── */
+    .qr-version-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      background: var(--primary-bg);
+      color: var(--primary);
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: 'Courier New', monospace;
+    }
+
+    .qr-version-badge.needs-regen {
+      background: #fff3e0;
+      color: #e65100;
+    }
+
+    /* ── Category badge in table ──────────────────────────────── */
+    .cat-badge {
+      display: inline-block;
+      padding: 2px 9px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .cat-Library  { background: #e3f2fd; color: #1565c0; }
+    .cat-Hostel   { background: #f3e5f5; color: #6a1b9a; }
+    .cat-Canteen  { background: #fff3e0; color: #e65100; }
+    .cat-Transport{ background: #e8f5e9; color: #2e7d32; }
+    .cat-Academic { background: #e0f7fa; color: #006064; }
+    .cat-Sports   { background: #fce4ec; color: #880e4f; }
+    .cat-General  { background: var(--primary-bg); color: var(--primary); }
+
+    /* ── Internal code cell ────────────────────────────────────── */
+    .internal-code {
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: var(--bg);
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+
+    /* ── Block/Floor combined ──────────────────────────────────── */
+    .block-floor-cell {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .block-floor-cell .bf-floor {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    /* ── Regenerate All button ─────────────────────────────────── */
+    .btn-regen {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #fff;
+      border: none;
+    }
+
+    .btn-regen:hover {
+      background: linear-gradient(135deg, #d97706, #b45309);
+    }
+
+    .btn-regen:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* ── Loading overlay ───────────────────────────────────────── */
+    .regen-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .regen-overlay.show { display: flex; }
+
+    .spinner {
+      width: 44px;
+      height: 44px;
+      border: 4px solid var(--border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Scan count ────────────────────────────────────────────── */
+    .scan-count {
+      font-size: 11px;
+      color: var(--text-hint);
+      font-style: italic;
+    }
+
+    @media print {
+      body * {
+        visibility: hidden !important;
+      }
+      #qr-modal, #qr-modal * {
+        visibility: visible !important;
+      }
+      #qr-img {
+        visibility: visible !important;
+        position: absolute !important;
+        left: 50% !important;
+        top: 50% !important;
+        transform: translate(-50%, -50%) scale(1.6) !important;
+        border: none !important;
+      }
+      #qr-modal {
+        position: fixed !important;
+        inset: 0 !important;
+        background: white !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+      #qr-modal .modal-card {
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        background: transparent !important;
+      }
+      #qr-modal .modal-header,
+      #qr-modal h3,
+      #qr-modal div[style*="font-size:12px"],
+      #qr-modal div[style*="display:flex;gap:10px"] {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-badge">
+        <div class="logo-icon">
+          <img src="assets/images/mzcetlogo.jpg" alt="Campus Connect Logo">
+        </div>
+        <div>
+          <div class="logo-text">Campus Connect</div>
+          <div class="logo-sub">Admin Portal</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-nav">
+      <div class="nav-group">
+        <div class="nav-section-label">Management</div>
+        <a class="nav-item" href="user-management.html">
+          <span class="nav-icon-wrap"><i class="ti ti-users nav-icon"></i></span>
+          <span class="nav-label">User Management</span>
+        </a>
+        <a class="nav-item" href="department-management.html">
+          <span class="nav-icon-wrap"><i class="ti ti-building nav-icon"></i></span>
+          <span class="nav-label">Department Management</span>
+        </a>
+        <a class="nav-item" href="department-dashboards.html">
+          <span class="nav-icon-wrap"><i class="ti ti-layout-dashboard nav-icon"></i></span>
+          <span class="nav-label">Department Dashboards</span>
+        </a>
+        <a class="nav-item active" href="location-qr.html">
+          <span class="nav-icon-wrap"><i class="ti ti-map-pin nav-icon"></i></span>
+          <span class="nav-label">Location and QR</span>
+        </a>
+        <a class="nav-item" href="mounva-creation.html">
+          <span class="nav-icon-wrap"><i class="ti ti-qrcode nav-icon"></i></span>
+          <span class="nav-label">Mounva Creation</span>
+        </a>
+        <a class="nav-item" href="complaint-categories.html">
+          <span class="nav-icon-wrap"><i class="ti ti-tag nav-icon"></i></span>
+          <span class="nav-label">Complaint Categories</span>
+        </a>
+        <a class="nav-item" href="escalation-routing.html">
+          <span class="nav-icon-wrap"><i class="ti ti-arrows-exchange nav-icon"></i></span>
+          <span class="nav-label">Escalation Routing</span>
+        </a>
+        <a class="nav-item" href="escalation-settings.html">
+          <span class="nav-icon-wrap"><i class="ti ti-trending-up nav-icon"></i></span>
+          <span class="nav-label">Escalation Settings</span>
+        </a>
+        <a class="nav-item" href="designations.html">
+          <span class="nav-icon-wrap"><i class="ti ti-id-badge nav-icon"></i></span>
+          <span class="nav-label">Designations</span>
+        </a>
+        <a class="nav-item" href="security-settings.html">
+          <span class="nav-icon-wrap"><i class="ti ti-shield-lock nav-icon"></i></span>
+          <span class="nav-label">Security Settings</span>
+        </a>
+        <a class="nav-item" href="backup-restore.html">
+          <span class="nav-icon-wrap"><i class="ti ti-database nav-icon"></i></span>
+          <span class="nav-label">Backup and Restore</span>
+        </a>
+        <a class="nav-item" href="audit-logs.html">
+          <span class="nav-icon-wrap"><i class="ti ti-clipboard-list nav-icon"></i></span>
+          <span class="nav-label">Audit Logs</span>
+        </a>
+        <a class="nav-item" href="profile-settings.html">
+          <span class="nav-icon-wrap"><i class="ti ti-user-circle nav-icon"></i></span>
+          <span class="nav-label">Profile Settings</span>
+        </a>
+        <a class="nav-item" href="login.html" onclick="return confirm('Are you sure you want to logout?')">
+          <span class="nav-icon-wrap"><i class="ti ti-logout nav-icon"></i></span>
+          <span class="nav-label">Logout</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="admin-card">
+        <div class="admin-avatar" id="sidebar-avatar">RK</div>
+        <div>
+          <div class="admin-name" id="sidebar-name">Raj Kumar</div>
+          <div class="admin-role" id="sidebar-role">Super Administrator</div>
+        </div>
+        <div class="admin-menu-btn"><i class="ti ti-dots-vertical"></i></div>
+      </div>
+    </div>
+  </nav>
+  <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="btn btn-outline btn-icon mobile-nav-btn" onclick="openSidebar()"><i
+            class="ti ti-menu-2"></i></button>
+        <div>
+          <div class="page-title">Location and QR Management</div>
+          <div class="breadcrumb">Admin <i class="ti ti-chevron-right" style="font-size:10px"></i> <span>Location & QR</span></div>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button id="theme-toggle-btn" class="btn-theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">
+          <i class="ti ti-moon"></i>
+        </button>
+        <button class="btn btn-outline btn-icon" title="Notifications" style="position:relative">
+          <i class="ti ti-bell"></i>
+          <span style="position:absolute;top:7px;right:7px;width:8px;height:8px;background:var(--danger);border-radius:50%;border:2px solid #fff"></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- Page header -->
+      <div class="section-header">
+        <div>
+          <div class="section-title">Location and QR Management</div>
+          <div class="section-desc">Manage complaint locations, QR codes, and routing configuration.</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <button class="btn btn-regen btn-sm" id="btn-regen-all" onclick="regenerateAllQrs()" title="Regenerate QR for all active locations">
+            <i class="ti ti-refresh"></i> Regenerate All QRs
+          </button>
+          <button class="btn btn-primary btn-sm" onclick="openLocModal()"><i class="ti ti-plus"></i> Add Location</button>
+        </div>
+      </div>
+
+      <!-- Stats Row -->
+      <div class="stat-row">
+        <div class="mini-stat">
+          <div class="mini-stat-icon" style="background:#eef2ff;color:#6366f1"><i class="ti ti-map-pin"></i></div>
+          <div>
+            <div class="mini-stat-val" id="stat-total">–</div>
+            <div class="mini-stat-label">Total Locations</div>
+          </div>
+        </div>
+        <div class="mini-stat">
+          <div class="mini-stat-icon" style="background:#e6fffa;color:#00b894"><i class="ti ti-circle-check"></i></div>
+          <div>
+            <div class="mini-stat-val" id="stat-active">–</div>
+            <div class="mini-stat-label">Active</div>
+          </div>
+        </div>
+        <div class="mini-stat">
+          <div class="mini-stat-icon" style="background:#fff8e1;color:#fdcb6e"><i class="ti ti-qrcode"></i></div>
+          <div>
+            <div class="mini-stat-val" id="stat-qrs">–</div>
+            <div class="mini-stat-label">QRs Generated</div>
+          </div>
+        </div>
+        <div class="mini-stat">
+          <div class="mini-stat-icon" style="background:#fce4ec;color:#e91e63"><i class="ti ti-barrier-block"></i></div>
+          <div>
+            <div class="mini-stat-val" id="stat-disabled">–</div>
+            <div class="mini-stat-label">Disabled</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card -->
+      <div class="card">
+        <!-- Search + Dept filter -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+            <div class="input-icon-wrap">
+              <i class="ti ti-search"></i>
+              <input type="text" id="loc-search" class="form-control" placeholder="Search locations..."
+                style="width:210px;padding:8px 12px 8px 38px" oninput="onSearchInput()">
+            </div>
+            <select class="form-control" id="loc-dept-filter" style="width:170px;padding:8px 12px"
+              onchange="fetchLocations()">
+              <option value="All">All Departments</option>
+            </select>
+          </div>
+          <div style="font-size:12px;color:var(--text-hint)" id="result-count"></div>
+        </div>
+
+        <!-- Category Pills -->
+        <div class="cat-filter-bar" id="cat-filter-bar">
+          <div class="spinner" style="width:20px;height:20px;border-width:2px;margin:4px 0 0 4px"></div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Category</th>
+                <th>Location Name</th>
+                <th>Internal Code</th>
+                <th>Floor</th>
+                <th>Department</th>
+                <th>QR Status</th>
+                <th>QR Code</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="locations-table-body">
+              <tr><td colspan="8" style="text-align:center;color:var(--text-hint)">Loading locations…</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-top:1px solid var(--border)">
+          <div id="pagination-info" style="font-size:12px;color:var(--text-hint)"></div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-outline btn-sm" id="btn-prev" onclick="changePage(-1)" disabled>Previous</button>
+            <button class="btn btn-outline btn-sm" id="btn-next" onclick="changePage(1)" disabled>Next</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOCATION MODAL -->
+  <div class="modal-overlay" id="loc-modal">
+    <div class="modal-card" style="max-width:520px">
+      <div class="modal-header">
+        <div class="modal-title" id="loc-modal-title">Add Location</div>
+        <button class="modal-close" onclick="closeModal('loc-modal')"><i class="ti ti-x"></i></button>
+      </div>
+      <input type="hidden" id="lm-id">
+      <div class="form-group">
+        <label class="form-label">Location Name <span style="color:var(--danger)">*</span></label>
+        <input type="text" class="form-control" id="lm-name" placeholder="e.g. Central Library">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Internal Code <span style="color:var(--text-hint);font-weight:400">(optional)</span></label>
+        <input type="text" class="form-control" id="lm-internal-code" placeholder="e.g. LIB-01, MESS-A">
+        <small style="color:var(--text-hint);font-size:11px">Short identifier shown on printed QR labels</small>
+      </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Block <span style="color:var(--text-hint);font-weight:400">(optional)</span></label>
+          <input type="text" class="form-control" id="lm-block" placeholder="e.g. Main Block">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Floor <span style="color:var(--text-hint);font-weight:400">(optional)</span></label>
+          <input type="text" class="form-control" id="lm-floor" placeholder="e.g. Ground Floor">
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select class="form-control" id="lm-category" onchange="onCategoryChange()">
+            <option value="General">General</option>
+            <option value="Academic">Academic</option>
+            <option value="Library">Library</option>
+            <option value="Hostel">Hostel</option>
+            <option value="Transport">Transport</option>
+            <option value="Canteen">Canteen</option>
+            <option value="Sports">Sports</option>
+            <option value="Mess">Mess</option>
+            <option value="Toilet">Toilet</option>
+            <option value="Main gate">Main gate</option>
+            <option value="Labs">Labs</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <select class="form-control" id="lm-status">
+            <option value="true">Active</option>
+            <option value="false">Disabled</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Routing Type</label>
+          <select class="form-control" id="lm-routing-type" onchange="toggleRoutingKey()">
+            <option value="DEPARTMENT_ROUTED">Department Routed</option>
+            <option value="GLOBAL_ROUTED">Global Routed</option>
+          </select>
+        </div>
+        <div>
+          <div class="form-group" id="lm-dept-group">
+            <label class="form-label">Department</label>
+            <select class="form-control" id="lm-dept">
+              <option value="">-- No Department --</option>
+            </select>
+          </div>
+          <div class="form-group" id="lm-routing-key-group" style="display:none">
+            <label class="form-label">Routing Key</label>
+            <select class="form-control" id="lm-routing-key" onchange="updateAssigneeDisplay()">
+              <option value="">-- Select --</option>
+            </select>
+            <div id="lm-routing-assignee" style="margin-top:6px;font-size:12px;font-weight:600;display:none"></div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:24px">
+        <button class="btn btn-outline" onclick="closeModal('loc-modal')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveLoc()">Save Location</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QR CODE MODAL -->
+  <div class="modal-overlay" id="qr-modal">
+    <div class="modal-card" style="max-width:380px;text-align:center">
+      <div class="modal-header" style="margin-bottom:10px">
+        <div class="modal-title">Location QR Code</div>
+        <button class="modal-close" onclick="closeModal('qr-modal')"><i class="ti ti-x"></i></button>
+      </div>
+      
+      <!-- Preview Visual Card Image Directly From Server -->
+      <div style="background:#fff;padding:16px;border-radius:16px;margin:8px 0;box-shadow:0 4px 15px rgba(0,0,0,0.06);display:flex;justify-content:center;align-items:center">
+        <img src="" alt="QR Code Card" id="qr-img" style="width:280px;height:auto;display:block;border-radius:8px;border:1px solid var(--border)">
+      </div>
+      <h3 id="qr-loc-name" style="margin:8px 0 2px">–</h3>
+      <div id="qr-loc-meta" style="font-size:12px;color:var(--text-hint);font-family:monospace;margin-bottom:4px">–</div>
+
+      <div style="display:flex;gap:10px;justify-content:center;margin-top:16px">
+        <button class="btn btn-outline btn-sm" onclick="window.print()"><i class="ti ti-printer"></i> Print</button>
+        <button class="btn btn-primary btn-sm" onclick="downloadQR()"><i class="ti ti-download"></i> Download</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Regenerate All Progress Overlay -->
+  <div class="regen-overlay" id="regen-overlay">
+    <div class="spinner"></div>
+    <div style="font-size:16px;font-weight:600;color:var(--text-primary)" id="regen-status">Regenerating QRs…</div>
+    <div style="font-size:13px;color:var(--text-hint)" id="regen-count"></div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast">
+    <i class="ti ti-circle-check" id="toast-icon"></i>
+    <span id="toast-msg">Changes saved!</span>
+  </div>
+
+  <script src="api/api.js"></script>
+  <script>
+    // ── Helpers ───────────────────────────────────────────────────────────────
+    function saveToast(msg, isError = false) {
+      const t   = document.getElementById('toast');
+      const ico = document.getElementById('toast-icon');
+      document.getElementById('toast-msg').textContent = msg || 'Done!';
+      ico.className = isError ? 'ti ti-x' : 'ti ti-circle-check';
+      ico.style.color = isError ? 'var(--danger)' : 'var(--success)';
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3500);
+    }
+
+    function openSidebar() {
+      document.getElementById('sidebar').classList.add('open');
+      document.getElementById('overlay').classList.add('show');
+    }
+    function closeSidebar() {
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('overlay').classList.remove('show');
+    }
+    function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+    function onCategoryChange() {
+      const cat = document.getElementById('lm-category').value;
+      const typeSel = document.getElementById('lm-routing-type');
+      const keySel = document.getElementById('lm-routing-key');
+
+      if (['Academic', 'Labs'].includes(cat)) {
+        typeSel.value = 'DEPARTMENT_ROUTED';
+        keySel.value = '';
+      } else if (['Library', 'Hostel', 'Canteen', 'Transport', 'Mess', 'Toilet', 'Main gate'].includes(cat)) {
+        typeSel.value = 'GLOBAL_ROUTED';
+        if (cat === 'Library') keySel.value = 'LIBRARY_HEAD';
+        else if (cat === 'Canteen') keySel.value = 'CANTEEN_HEAD';
+        else if (cat === 'Transport') keySel.value = 'TRANSPORT_MANAGER';
+        else if (cat === 'Toilet') keySel.value = 'SANITATION_HEAD';
+        else if (cat === 'Mess') {
+          if (!['BOYS_MESS_MANAGER', 'GIRLS_MESS_MANAGER'].includes(keySel.value)) {
+            keySel.value = 'BOYS_MESS_MANAGER';
+          }
+        } else if (cat === 'Hostel') {
+          if (!['BOYS_HOSTEL_WARDEN', 'GIRLS_HOSTEL_WARDEN'].includes(keySel.value)) {
+            keySel.value = '';
+          }
+        } else if (cat === 'Main gate') {
+          keySel.value = '';
+        }
+      }
+      toggleRoutingKey();
+    }
+
+    function toggleRoutingKey() {
+      const type = document.getElementById('lm-routing-type').value;
+      const keyGroup = document.getElementById('lm-routing-key-group');
+      const deptGroup = document.getElementById('lm-dept-group');
+      
+      if (type === 'GLOBAL_ROUTED') {
+        keyGroup.style.display = 'block';
+        deptGroup.style.display = 'none';
+        document.getElementById('lm-dept').value = '';
+        updateAssigneeDisplay();
+      } else {
+        keyGroup.style.display = 'none';
+        deptGroup.style.display = 'block';
+        document.getElementById('lm-routing-key').value = '';
+        updateAssigneeDisplay();
+      }
+    }
+
+    async function loadActiveAssignments() {
+      try {
+        const res = await fetch(`${API_BASE}/admin/routing/assignments`, { headers });
+        const json = await res.json();
+        if (json.success) {
+          activeAssignments = json.data || [];
+        }
+      } catch (e) {
+        console.error('Failed to load active assignments', e);
+      }
+    }
+
+    function updateAssigneeDisplay() {
+      const key = document.getElementById('lm-routing-key').value;
+      const displayEl = document.getElementById('lm-routing-assignee');
+      if (!key) {
+        displayEl.style.display = 'none';
+        return;
+      }
+      
+      const assign = activeAssignments.find(a => a.routing_key === key && (a.escalation_level === null || a.escalation_level === 1));
+      if (assign && assign.users) {
+        displayEl.textContent = `Assigned to: ${assign.users.name} (${assign.users.designation || 'Staff'})`;
+        displayEl.style.color = 'var(--primary)';
+      } else {
+        displayEl.textContent = 'Assigned to: Not assigned (complaints will fallback)';
+        displayEl.style.color = 'var(--danger)';
+      }
+      displayEl.style.display = 'block';
+    }
+
+    let searchTimer = null;
+    function onSearchInput() {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => { currentPage = 1; fetchLocations(); }, 350);
+    }
+
+    // ── State ────────────────────────────────────────────────────────────────
+    const headers = getAuthHeaders();
+    let locs = [];
+    let activeAssignments = [];
+    let currentPage = 1;
+    const limit = 12;
+    let totalPages = 1;
+    let activeCategory = 'All';
+    let catStats = []; // [{category, count}]
+
+    // ── Load categories + stats ────────────────────────────────────────────
+    async function loadCategories() {
+      try {
+        const res  = await fetch(`${API_BASE}/locations/categories`, { headers });
+        const json = await res.json();
+        if (!json.success) throw new Error();
+        catStats = json.data || [];
+
+        const total = catStats.reduce((s, c) => s + c.count, 0);
+        renderCatPills(catStats, total);
+      } catch (e) {
+        document.getElementById('cat-filter-bar').innerHTML =
+          '<span style="color:var(--text-hint);font-size:12px">Categories unavailable</span>';
+      }
+    }
+
+    function renderCatPills(stats, total) {
+      const bar = document.getElementById('cat-filter-bar');
+      const allCount = stats.reduce((s, c) => s + c.count, 0);
+      const pills = [
+        { category: 'All',       count: allCount },
+        ...stats.filter(s => s.count > 0)
+      ].map(s => `
+        <button class="cat-pill${activeCategory === s.category ? ' active' : ''}"
+                onclick="setCategory('${s.category}')">
+          ${s.category}
+          <span class="pill-count">${s.count}</span>
+        </button>`).join('');
+      bar.innerHTML = pills;
+    }
+
+    function setCategory(cat) {
+      activeCategory = cat;
+      currentPage = 1;
+      renderCatPills(catStats, catStats.reduce((s, c) => s + c.count, 0));
+      fetchLocations();
+    }
+
+    // ── Load departments ────────────────────────────────────────────────────
+    async function loadDepartments() {
+      try {
+        const res  = await fetch(`${API_BASE}/departments`, { headers });
+        const json = await res.json();
+        if (!json.success) throw new Error();
+        const filterSel = document.getElementById('loc-dept-filter');
+        const modalSel  = document.getElementById('lm-dept');
+        const opts = json.data
+          .filter(d => d.isActive !== false)
+          .map(d => `<option value="${d.id}">${d.name}</option>`).join('');
+        filterSel.innerHTML = '<option value="All">All Departments</option>' + opts;
+        modalSel.innerHTML  = '<option value="">-- No Department --</option>' + opts;
+      } catch (e) { console.error('Departments load error', e); }
+    }
+
+    // ── Load routing keys ───────────────────────────────────────────────────
+    async function loadRoutingKeys() {
+      try {
+        const res  = await fetch(`${API_BASE}/admin/routing/keys`, { headers });
+        const json = await res.json();
+        if (!json.success) throw new Error();
+        const sel  = document.getElementById('lm-routing-key');
+        sel.innerHTML = '<option value="">-- Select --</option>' +
+          json.data.map(k => `<option value="${k.key}">${k.label}</option>`).join('');
+      } catch (e) { console.error('Routing keys load error', e); }
+    }
+
+    // ── Fetch locations ─────────────────────────────────────────────────────
+    async function fetchLocations(showLoading = false) {
+      const q         = document.getElementById('loc-search').value.trim();
+      const dept      = document.getElementById('loc-dept-filter').value;
+      let   url       = `${API_BASE}/locations?page=${currentPage}&limit=${limit}`;
+      if (q)        url += `&search=${encodeURIComponent(q)}`;
+      if (dept !== 'All')  url += `&departmentId=${dept}`;
+      if (activeCategory !== 'All') url += `&category=${encodeURIComponent(activeCategory)}`;
+
+      const tbody = document.getElementById('locations-table-body');
+      if (showLoading) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-hint)">Loading locations…</td></tr>';
+      }
+
+      try {
+        const res  = await fetch(url, { headers });
+        if (res.status === 401 || res.status === 403) { window.location.href = 'login.html'; return; }
+        const json = await res.json();
+
+        if (json.success) {
+          locs = json.data || [];
+          totalPages = json.totalPages || 1;
+          const total = json.total || 0;
+
+          // Update stats
+          document.getElementById('stat-total').textContent = total;
+          document.getElementById('result-count').textContent =
+            total ? `${total} location${total !== 1 ? 's' : ''} found` : '';
+
+          document.getElementById('pagination-info').textContent =
+            total ? `Showing page ${currentPage} of ${totalPages} (${total} total)` : '';
+          document.getElementById('btn-prev').disabled = currentPage <= 1;
+          document.getElementById('btn-next').disabled = currentPage >= totalPages;
+
+          renderLocsTable();
+        } else {
+          tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--danger)">Failed to load locations.</td></tr>';
+        }
+      } catch (e) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--danger)">Network error.</td></tr>';
+      }
+    }
+
+    function changePage(delta) {
+      const np = currentPage + delta;
+      if (np >= 1 && np <= totalPages) { currentPage = np; fetchLocations(true); }
+    }
+
+    // ── Render table ────────────────────────────────────────────────────────
+    function renderLocsTable() {
+      const tbody = document.getElementById('locations-table-body');
+      if (!locs.length) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-hint)">No locations found.</td></tr>';
+        return;
+      }
+
+      // Precompute aggregate stats from current page
+      const totalActive = locs.filter(l => l.isActive).length;
+      const totalQr     = locs.filter(l => l.qr).length;
+      const totalDis     = locs.filter(l => !l.isActive).length;
+      document.getElementById('stat-active').textContent   = totalActive;
+      document.getElementById('stat-qrs').textContent       = totalQr;
+      document.getElementById('stat-disabled').textContent  = totalDis;
+
+      tbody.innerHTML = locs.map(l => {
+        const cat        = l.category || 'General';
+        const catClass   = 'cat-' + cat.replace(/\s+/g, '');
+        const statusBadge = l.isActive
+          ? '<span class="badge badge-success">Active</span>'
+          : '<span class="badge badge-danger">Disabled</span>';
+        const internalCode = l.internalCode
+          ? `<span class="internal-code">${l.internalCode}</span>`
+          : `<span style="color:var(--text-hint);font-size:12px">—</span>`;
+        let floorText = '';
+        if (l.block && l.floor) {
+          floorText = `<div class="block-floor-cell"><div class="bf-floor">${l.floor}</div><div style="font-size:11px;color:var(--text-hint);margin-top:2px">${l.block}</div></div>`;
+        } else if (l.floor) {
+          floorText = `<div class="block-floor-cell"><div class="bf-floor">${l.floor}</div></div>`;
+        } else if (l.block) {
+          floorText = `<div class="block-floor-cell">${l.block}</div>`;
+        } else {
+          floorText = `<span style="color:var(--text-hint);font-size:12px">—</span>`;
+        }
+
+        return `<tr>
+          <td><span class="cat-badge ${catClass}">${cat}</span></td>
+          <td>
+            <div style="display:flex;align-items:center;gap:10px">
+              <div style="width:32px;height:32px;border-radius:9px;background:var(--primary-bg);display:flex;align-items:center;justify-content:center;color:var(--primary);font-size:15px">
+                <i class="ti ti-map-pin"></i>
+              </div>
+              <div>
+                <div style="font-weight:600;font-size:13px">${l.name}</div>
+                <div style="font-size:10px;color:var(--text-hint);font-family:monospace">ID: ${l.id}</div>
+              </div>
+            </div>
+          </td>
+          <td>${internalCode}</td>
+          <td>${floorText}</td>
+          <td style="font-size:12px;color:var(--text-secondary)">${l.departmentName || '<span style="color:var(--text-hint)">—</span>'}</td>
+          <td>
+            ${statusBadge}
+          </td>
+          <td>
+            ${l.qr ? `<button class="btn btn-primary btn-sm" onclick="showQR('${l.id}')" style="display:flex;align-items:center;gap:6px">
+                        <i class="ti ti-qrcode"></i> View QR
+                      </button>` 
+                   : `<button class="btn btn-primary btn-sm" onclick="showQR('${l.id}')" style="display:flex;align-items:center;gap:6px">
+                        <i class="ti ti-qrcode"></i> Generate QR
+                      </button>`}
+          </td>
+          <td>
+            <div class="td-actions">
+              ${l.qr ? `<button class="btn btn-outline btn-icon btn-sm" title="Delete QR" onclick="deleteQr('${l.id}')"><i class="ti ti-qrcode-off"></i></button>` : ''}
+              <button class="btn btn-outline btn-icon btn-sm" title="Edit" onclick="editLoc('${l.id}')"><i class="ti ti-edit"></i></button>
+              <button class="btn btn-danger btn-icon btn-sm" title="Delete" onclick="deleteLoc('${l.id}')"><i class="ti ti-trash"></i></button>
+            </div>
+          </td>
+        </tr>`;
+      }).join('');
+    }
+
+    function formatDate(iso) {
+      if (!iso) return '';
+      const d = new Date(iso);
+      return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+
+    // ── Add / Edit modal ────────────────────────────────────────────────────
+    function openLocModal() {
+      ['lm-id','lm-name','lm-internal-code','lm-block','lm-floor'].forEach(id => {
+        document.getElementById(id).value = '';
+      });
+      document.getElementById('lm-category').value    = 'General';
+      document.getElementById('lm-dept').value       = '';
+      document.getElementById('lm-status').value      = 'true';
+      document.getElementById('lm-routing-type').value = 'DEPARTMENT_ROUTED';
+      document.getElementById('lm-routing-key').value  = '';
+      toggleRoutingKey();
+      document.getElementById('loc-modal-title').textContent = 'Add Location';
+      document.getElementById('loc-modal').classList.add('show');
+    }
+
+    function editLoc(id) {
+      const l = locs.find(x => x.id == id);
+      if (!l) return;
+      document.getElementById('lm-id').value             = l.id;
+      document.getElementById('lm-name').value            = l.name;
+      document.getElementById('lm-category').value        = l.category || 'General';
+      document.getElementById('lm-internal-code').value  = l.internalCode || '';
+      document.getElementById('lm-block').value         = l.block || '';
+      document.getElementById('lm-floor').value         = l.floor || '';
+      document.getElementById('lm-dept').value          = l.departmentId || '';
+      document.getElementById('lm-status').value         = l.isActive ? 'true' : 'false';
+      document.getElementById('lm-routing-type').value   = l.routingType || 'DEPARTMENT_ROUTED';
+      document.getElementById('lm-routing-key').value    = l.routingKey || '';
+      toggleRoutingKey();
+      document.getElementById('loc-modal-title').textContent = 'Edit Location';
+      document.getElementById('loc-modal').classList.add('show');
+    }
+
+    async function saveLoc() {
+      const id          = document.getElementById('lm-id').value;
+      const name        = document.getElementById('lm-name').value.trim();
+      const internalCode = document.getElementById('lm-internal-code').value.trim();
+      const block       = document.getElementById('lm-block').value.trim();
+      const floor       = document.getElementById('lm-floor').value.trim();
+      const category    = document.getElementById('lm-category').value;
+      const departmentId = document.getElementById('lm-dept').value;
+      const isActive    = document.getElementById('lm-status').value === 'true';
+      const routingType = document.getElementById('lm-routing-type').value;
+      const routingKey  = document.getElementById('lm-routing-key').value;
+
+      if (!name) { saveToast('Location name is required', true); return; }
+      if (routingType === 'GLOBAL_ROUTED' && !routingKey) {
+        saveToast('Routing Key is required for Global Routing', true); return;
+      }
+
+      const payload = {
+        name,
+        internalCode: internalCode || null,
+        block: block || null,
+        floor: floor || null,
+        departmentId: departmentId ? parseInt(departmentId, 10) : null,
+        routingType,
+        routingKey: routingType === 'GLOBAL_ROUTED' ? routingKey : null,
+        isActive,
+        category
+      };
+
+      try {
+        const res = await fetch(`${API_BASE}/locations${id ? '/' + id : ''}`, {
+          method: id ? 'PUT' : 'POST',
+          headers,
+          body: JSON.stringify(payload)
+        });
+        const json = await res.json();
+        if (json.success) {
+          saveToast(id ? 'Location updated' : 'Location added');
+          closeModal('loc-modal');
+          await loadCategories();
+          fetchLocations();
+        } else {
+          saveToast(json.message || 'Operation failed', true);
+        }
+      } catch (e) { saveToast('Network error', true); }
+    }
+
+    async function deleteLoc(id) {
+      if (!confirm('Delete this location? QR code will also be removed.')) return;
+      try {
+        const res  = await fetch(`${API_BASE}/locations/${id}`, { method: 'DELETE', headers });
+        const json = await res.json();
+        if (json.success) {
+          saveToast('Location deleted');
+          await loadCategories();
+          fetchLocations();
+        } else {
+          saveToast(json.message || 'Failed to delete', true);
+        }
+      } catch (e) {
+        alert('Network error.');
+      }
+    }
+
+    async function deleteQr(id) {
+      if (!confirm('Are you sure you want to delete this QR code? Users will no longer be able to use it to submit complaints.')) return;
+      
+      try {
+        const res = await fetch(`${API_BASE}/locations/${id}/qr`, {
+          method: 'DELETE',
+          headers: headers
+        });
+        
+        if (res.status === 401 || res.status === 403) { window.location.href = 'login.html'; return; }
+        
+        const json = await res.json();
+        if (json.success) {
+          saveToast('QR code deleted successfully');
+          fetchLocations();
+        } else {
+          alert(json.message || 'Failed to delete QR code');
+        }
+      } catch (e) {
+        alert('Network error.');
+      }
+    }
+
+    // ── Generate & Download QRs ───────────────────────────────────────────────────────
+    async function showQR(id) {
+      const l = locs.find(x => x.id == id);
+      if (!l) return;
+
+      document.getElementById('qr-loc-name').textContent  = l.name;
+      document.getElementById('qr-loc-meta').textContent = 'Loading…';
+      document.getElementById('qr-img').src               = '';
+      document.getElementById('qr-modal').classList.add('show');
+
+      try {
+        const res  = await fetch(`${API_BASE}/locations/${id}/qr`, { headers });
+        const json = await res.json();
+        if (json.success && json.data) {
+          const imgUrl = typeof resolveImageUrl === 'function' ? resolveImageUrl(json.data.imageUrl) : json.data.imageUrl;
+          document.getElementById('qr-img').src = imgUrl;
+          document.getElementById('qr-loc-meta').textContent = json.data.token;
+        } else {
+          document.getElementById('qr-loc-meta').textContent = 'Error';
+        }
+      } catch (e) { document.getElementById('qr-loc-meta').textContent = 'Error'; }
+    }
+
+    function downloadQR() {
+      const img = document.getElementById('qr-img');
+      if (!img.src) return;
+      
+      const filename = (document.getElementById('qr-loc-meta').textContent || 'location-qr').replace(/\s+/g, '-');
+      fetch(img.src)
+        .then(r => r.blob())
+        .then(b => {
+          const url = URL.createObjectURL(b);
+          const a   = document.createElement('a');
+          a.href    = url; a.download = `${filename}.png`; a.click();
+          URL.revokeObjectURL(url);
+        });
+    }
+
+    // ── Regenerate All ──────────────────────────────────────────────────────
+    async function regenerateAllQrs() {
+      if (!confirm('Regenerate QR codes for ALL active locations? This may take a moment.')) return;
+
+      const overlay = document.getElementById('regen-overlay');
+      const status  = document.getElementById('regen-status');
+      const count   = document.getElementById('regen-count');
+      const btn     = document.getElementById('btn-regen-all');
+
+      overlay.classList.add('show');
+      btn.disabled = true;
+      status.textContent = 'Regenerating QRs…';
+      count.textContent  = '';
+
+      try {
+        const res  = await fetch(`${API_BASE}/locations/regenerate-all`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({})
+        });
+        const json = await res.json();
+        if (json.success && json.data) {
+          const { total, regenerated, errors } = json.data;
+          status.textContent = `Done! ${regenerated} of ${total} QR codes regenerated.`;
+          count.textContent  = errors.length
+            ? `${errors.length} location(s) failed: ${errors.join(', ')}`
+            : 'All QRs updated successfully.';
+          saveToast(`${regenerated} QR codes regenerated`);
+        } else {
+          status.textContent = 'Regeneration failed.';
+          count.textContent   = json.message || '';
+          saveToast('Regenerate failed', true);
+        }
+      } catch (e) {
+        status.textContent = 'Network error.';
+        saveToast('Network error during regeneration', true);
+      } finally {
+        btn.disabled = false;
+        setTimeout(() => overlay.classList.remove('show'), 3500);
+        fetchLocations();
+      }
+    }
+
+    // ── Init ────────────────────────────────────────────────────────────────
+    (async () => {
+      await Promise.all([loadDepartments(), loadRoutingKeys(), loadActiveAssignments()]);
+      await loadCategories();
+      await fetchLocations();
+    })();
+  </script>
+  <script type="module" src="firebase.js"></script>
+</body>
+</html>

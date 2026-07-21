@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Connect | Secure Executive Portal Selection</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bg-black: #050505;
+            --emerald-main: #10b981;
+            --emerald-glow: rgba(16, 185, 129, 0.5);
+            --emerald-faint: rgba(16, 185, 129, 0.08);
+            --glass-bg: rgba(10, 10, 10, 0.75);
+            --glass-border: rgba(16, 185, 129, 0.3);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-black);
+            background: radial-gradient(circle at center, #0a1f15 0%, var(--bg-black) 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Animated Background Effects */
+        .bg-effects {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .gradient-orb {
+            position: absolute;
+            width: 60vw;
+            height: 60vw;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.25) 0%, transparent 60%);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: pulse-orb 8s infinite alternate ease-in-out;
+            pointer-events: none;
+        }
+
+        .hex-pattern {
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='103.923' viewBox='0 0 60 103.923' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 17.3205V51.9615L30 69.282L0 51.9615V17.3205L30 0Z' fill='none' stroke='%2310b981' stroke-opacity='0.15' stroke-width='1'/%3E%3Cpath d='M30 103.923L60 86.6025V51.9615L30 69.282L0 51.9615V86.6025L30 103.923Z' fill='none' stroke='%2310b981' stroke-opacity='0.15' stroke-width='1'/%3E%3C/svg%3E");
+            opacity: 1;
+            pointer-events: none;
+        }
+
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--emerald-main), 0 0 20px var(--emerald-main), 0 0 30px var(--emerald-main);
+            animation: float-up 10s linear infinite;
+            opacity: 0;
+        }
+
+        @keyframes pulse-orb {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+            100% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+        }
+
+        @keyframes float-up {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            20% { opacity: 1; transform: translateY(80vh) scale(1); }
+            80% { opacity: 1; transform: translateY(20vh) scale(1); }
+            100% { transform: translateY(-10vh) scale(0); opacity: 0; }
+        }
+
+        /* Glass Panel */
+        .glass-panel {
+            position: relative;
+            z-index: 10;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3.5rem 3rem;
+            width: 90%;
+            max-width: 540px;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 80px rgba(16, 185, 129, 0.2), inset 0 0 0 1px rgba(255,255,255,0.1);
+            text-align: center;
+            animation: slide-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            transition: all 0.5s var(--ease);
+        }
+
+        @keyframes slide-up {
+            0% { transform: translateY(40px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        .shield-container {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 1.5rem;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .shield-circle {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            border: 2px dashed var(--emerald-main);
+            opacity: 0.5;
+            animation: spin-slow 12s linear infinite;
+        }
+
+        .shield-icon {
+            font-size: 2.4rem;
+            color: var(--emerald-main);
+            text-shadow: 0 0 20px var(--emerald-glow);
+            animation: pulse-glow 2.5s infinite alternate ease-in-out;
+            z-index: 2;
+        }
+
+        @keyframes spin-slow {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse-glow {
+            0% { text-shadow: 0 0 10px var(--emerald-glow); transform: scale(1); }
+            100% { text-shadow: 0 0 30px var(--emerald-main); transform: scale(1.08); }
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.5px;
+            color: #fff;
+        }
+
+        .subtitle {
+            color: var(--emerald-main);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 2.5rem;
+        }
+
+        .role-grid {
+            display: flex;
+            flex-direction: row;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+            justify-content: center;
+        }
+
+        .role-btn {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 16px;
+            padding: 1.25rem 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            gap: 0.75rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .role-btn .role-icon {
+            font-size: 1.6rem;
+            transition: color 0.3s;
+            color: var(--text-muted);
+        }
+
+        .role-btn:hover {
+            background: rgba(16, 185, 129, 0.08);
+            border-color: rgba(16, 185, 129, 0.5);
+            color: var(--text-main);
+            transform: translateY(-2px);
+        }
+
+        .role-btn:hover .role-icon {
+            color: var(--text-main);
+        }
+
+        .role-btn.active {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: var(--emerald-main);
+            color: #fff;
+            box-shadow: 0 0 25px var(--emerald-glow), inset 0 0 12px var(--emerald-faint);
+            transform: scale(1.05);
+        }
+
+        .role-btn.active .role-icon {
+            color: var(--emerald-main);
+            text-shadow: 0 0 15px var(--emerald-glow);
+        }
+
+        .cta-btn {
+            width: 100%;
+            background: linear-gradient(90deg, #059669, #10b981, #059669);
+            background-size: 200% auto;
+            border: none;
+            color: #fff;
+            padding: 1.1rem;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .cta-btn:hover {
+            background-position: right center;
+            box-shadow: 0 10px 40px rgba(16, 185, 129, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .cta-btn:disabled {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            box-shadow: none;
+            cursor: not-allowed;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform: none;
+        }
+
+        /* Login sliding/folding panel */
+        .login-card {
+            display: none;
+            margin-top: 2rem;
+            text-align: left;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 2rem;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .login-card.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--emerald-main);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .input-group input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 0.9rem 1rem 0.9rem 2.6rem;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus {
+            border-color: var(--emerald-main);
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .pwd-toggle {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .pwd-toggle:hover {
+            color: var(--emerald-main);
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+            display: none;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .error-message.show {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 480px) {
+            .glass-panel { padding: 2.5rem 1.5rem; }
+            h1 { font-size: 1.8rem; }
+            .subtitle { font-size: 0.75rem; }
+            .role-grid { gap: 0.5rem; }
+            .role-btn { padding: 1rem 0.25rem; font-size: 0.85rem; }
+            .role-btn .role-icon { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Dynamic Background Effects -->
+    <div class="bg-effects">
+        <div class="gradient-orb"></div>
+        <div class="hex-pattern"></div>
+        <div class="particles" id="particles"></div>
+    </div>
+
+    <!-- Main Glass Panel -->
+    <div class="glass-panel" id="mainPanel">
+        <!-- Shield Motif -->
+        <div class="shield-container">
+            <div class="shield-circle"></div>
+            <i class="fa-solid fa-shield-halved shield-icon"></i>
+        </div>
+        
+        <h1>Campus Connect</h1>
+        <div class="subtitle">Secure Administrative Gateway</div>
+
+        <!-- Role Selection -->
+        <div class="role-grid">
+            <button class="role-btn" data-role="principal" onclick="selectRole('principal')">
+                <i class="fa-solid fa-building-columns role-icon"></i>
+                <span>Principal</span>
+            </button>
+            <button class="role-btn" data-role="dean" onclick="selectRole('dean')">
+                <i class="fa-solid fa-graduation-cap role-icon"></i>
+                <span>Dean</span>
+            </button>
+            <button class="role-btn" data-role="director" onclick="selectRole('director')">
+                <i class="fa-solid fa-user-tie role-icon"></i>
+                <span>Director</span>
+            </button>
+        </div>
+
+        <!-- Unified Login Panel -->
+        <div class="login-card" id="loginCard">
+            <form id="loginForm">
+                <div class="form-group">
+                    <label id="usernameLabel">Institutional Email</label>
+                    <div class="input-group">
+                        <i class="fa-solid fa-envelope"></i>
+                        <input type="text" id="username" placeholder="e.g. dean@example.com" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <div class="input-group">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="password" placeholder="••••••••" required>
+                        <button type="button" class="pwd-toggle" id="pwdToggle" onclick="togglePassword()">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="error-message" id="errorMessage">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    <span id="errorText">Invalid username or password.</span>
+                </div>
+
+                <button type="submit" class="cta-btn" id="loginBtn">
+                    LOG IN & ACCESS PORTAL <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- API Client Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        // Background particles
+        const particleContainer = document.getElementById('particles');
+        const particleCount = 20;
+
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = (Math.random() * 10) + 's';
+            particle.style.animationDuration = (8 + Math.random() * 7) + 's';
+            particleContainer.appendChild(particle);
+        }
+
+        let selectedRole = null;
+
+        function selectRole(role) {
+            selectedRole = role;
+            
+            // Highlight active button
+            document.querySelectorAll('.role-btn').forEach(btn => {
+                if (btn.dataset.role === role) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // Adjust placeholders based on selection
+            const usernameInput = document.getElementById('username');
+            if (role === 'principal') {
+                usernameInput.placeholder = 'e.g. principal@example.com';
+            } else if (role === 'dean') {
+                usernameInput.placeholder = 'e.g. dean@example.com';
+            } else {
+                usernameInput.placeholder = 'e.g. director@example.com';
+            }
+
+            // Slide down login card
+            document.getElementById('loginCard').classList.add('active');
+            
+            // Clear any previous error messages
+            document.getElementById('errorMessage').classList.remove('show');
+        }
+
+        function togglePassword() {
+            const passInput = document.getElementById('password');
+            const toggleBtn = document.getElementById('pwdToggle');
+            const isPwd = passInput.type === 'password';
+            passInput.type = isPwd ? 'text' : 'password';
+            toggleBtn.innerHTML = `<i class="fa-solid ${isPwd ? 'fa-eye-slash' : 'fa-eye'}"></i>`;
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const errorMsg = document.getElementById('errorMessage');
+            const errorText = document.getElementById('errorText');
+            const loginBtn = document.getElementById('loginBtn');
+
+            errorMsg.classList.remove('show');
+            loginBtn.disabled = true;
+            const origHtml = loginBtn.innerHTML;
+            loginBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Authenticating...';
+
+            const result = await API.login(username, password);
+
+            if (result.success) {
+                const user = result.user;
+                const designation = (user.designation || '').toLowerCase();
+                
+                // Authorize and block role mismatches
+                let roleValid = false;
+                if (selectedRole === 'dean' && designation.includes('dean')) roleValid = true;
+                else if (selectedRole === 'director' && designation.includes('director')) roleValid = true;
+                else if (selectedRole === 'principal' && designation.includes('principal')) roleValid = true;
+
+                if (!roleValid) {
+                    errorText.textContent = `The entered credentials belong to the ${user.designation} console. Please choose the correct portal selection.`;
+                    errorMsg.classList.add('show');
+                    loginBtn.disabled = false;
+                    loginBtn.innerHTML = origHtml;
+                    return;
+                }
+
+                // Successful login
+                localStorage.setItem('executive_token', result.token);
+                localStorage.setItem('executive_user', JSON.stringify(user));
+                
+                loginBtn.style.background = '#10b981';
+                loginBtn.innerHTML = '<i class="fa-solid fa-check"></i> Welcome! Redirecting...';
+                
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1000);
+            } else {
+                errorText.textContent = result.message || 'Authentication failed. Please verify credentials.';
+                errorMsg.classList.add('show');
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = origHtml;
+            }
+        });
+    </script>
+</body>
+</html>

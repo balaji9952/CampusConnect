@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Web Client ID from Google Cloud Console (NOT the Android client ID) -->
+    <!-- Used by google_sign_in to request server auth code -->
+    <string name="default_web_client_id">609668322154-et2vg0u7maa9g19phba0rom4v3emnq2m.apps.googleusercontent.com</string>
+</resources>

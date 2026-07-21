@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus Connect | Executive Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Auth Protection Guard -->
+  <script src="js/auth.js"></script>
+</head>
+<body class="role-dean">
+
+<div class="app-shell" id="appShell">
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <i class="fa-solid fa-shield-halved" style="font-size: 24px; color: var(--accent);"></i>
+      <div class="brand-text">
+        <div class="brand-name">Campus Connect</div>
+        <div class="brand-sub" id="sidebarBrandSub">Dean Console</div>
+      </div>
+    </div>
+
+    <div class="sidebar-authority">
+      <div class="badge-ring" id="sidebarBadgeRing">L2</div>
+      <div class="authority-text">
+        <div class="t1" id="sidebarAuthTitle">L2 Authority</div>
+        <div class="t2" id="sidebarAuthSub">Dean Escalation</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Overview</div>
+      <a href="dashboard.html" class="nav-link active"><i class="fa-solid fa-house"></i><span>Dashboard</span></a>
+      <a href="complaints.html" class="nav-link"><i class="fa-solid fa-layer-group"></i><span id="navEscalatedText">Level 2 Escalated</span></a>
+      
+      <div class="nav-section-title">Insights</div>
+      <a href="analytics.html" class="nav-link"><i class="fa-solid fa-chart-pie"></i><span>Analytics</span></a>
+      <a href="reports.html" class="nav-link"><i class="fa-solid fa-file-lines"></i><span>Reports</span></a>
+      
+      <div class="nav-section-title">Account</div>
+      <a href="notifications.html" class="nav-link"><i class="fa-solid fa-bell"></i><span>Notifications</span></a>
+      <a href="profile.html" class="nav-link"><i class="fa-solid fa-user-gear"></i><span>Profile & Settings</span></a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="#" class="nav-link" onclick="performLogout(); return false;" style="margin-top:auto;"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN CONTENT ============ -->
+  <main class="main-col">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="sidebar-toggle" id="sidebarToggle"><i class="fa-solid fa-bars"></i></button>
+        <div class="page-title">
+          <h1 id="pageHeadingTitle">Executive Dashboard</h1>
+          <div class="breadcrumb" id="currentDateTime">Loading date...</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <!-- Notification Icon -->
+        <a href="notifications.html" class="icon-btn" style="position:relative; text-decoration:none;">
+          <i class="fa-solid fa-bell"></i>
+          <span id="notifBadge" style="display:none; position:absolute; top:-4px; right:-4px; background:#ef4444; color:white; font-size:9px; font-weight:bold; width:16px; height:16px; border-radius:50%; align-items:center; justify-content:center; border:2px solid white;">0</span>
+        </a>
+
+        <!-- User Profile Dropdown -->
+        <button class="profile-chip" id="profileChipBtn" onclick="toggleProfileDropdown(event)">
+          <div class="avatar-initial" id="profileAvatar">U</div>
+          <div style="text-align:left;">
+            <div class="p-name" id="profileName">Loading User...</div>
+            <div class="p-role" id="profileRole">Role</div>
+          </div>
+          <i class="fa-solid fa-chevron-down chev"></i>
+        </button>
+        
+        <div class="dropdown-panel" id="profileDropdown">
+          <a href="profile.html" class="dd-item"><i class="fa-solid fa-user"></i> My Profile</a>
+          <a href="settings.html" class="dd-item"><i class="fa-solid fa-gear"></i> Settings</a>
+          <div class="dd-divider"></div>
+          <a href="#" class="dd-item" onclick="performLogout(); return false;"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <div class="content">
+      <!-- Alert Banner for critical/breached items -->
+      <div class="alert-banner" id="alertBanner" style="display:none;">
+        <i class="fa-solid fa-triangle-exclamation alert-icon"></i>
+        <div class="alert-body">
+          <strong>Escalation Attention Required</strong>
+          <div class="alert-chips">
+            <span class="alert-chip" id="chipSla">0 SLA breached</span>
+            <span class="alert-chip" id="chipCritical">0 critical complaints</span>
+            <span class="alert-chip" id="chipPending">0 pending escalation</span>
+          </div>
+        </div>
+        <a href="complaints.html" class="btn btn-primary btn-sm" style="background:#fff; color:#ef4444; border:none; box-shadow:none;">Review now <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="stat-grid" id="statGrid">
+        <div class="stat-card" data-tone="blue">
+          <div class="s-icon"><i class="fa-solid fa-folder"></i></div>
+          <div class="s-value mono" id="statTotal">--</div>
+          <div class="s-label">Total Complaints</div>
+          <div class="s-trend-text up"><i class="fa-solid fa-arrow-up"></i> Live stats</div>
+        </div>
+        <div class="stat-card" data-tone="amber">
+          <div class="s-icon"><i class="fa-solid fa-hourglass-half"></i></div>
+          <div class="s-value mono" id="statPending">--</div>
+          <div class="s-label">Pending Review</div>
+          <div class="s-trend-text"><i class="fa-solid fa-clock"></i> Active status</div>
+        </div>
+        <div class="stat-card" data-tone="red">
+          <div class="s-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+          <div class="s-value mono" id="statCritical">--</div>
+          <div class="s-label">Critical Complaints</div>
+          <div class="s-trend-text down"><i class="fa-solid fa-arrow-up"></i> Needs action</div>
+        </div>
+        <div class="stat-card" data-tone="green">
+          <div class="s-icon"><i class="fa-solid fa-circle-check"></i></div>
+          <div class="s-value mono" id="statResolved">--</div>
+          <div class="s-label">Resolved Complaints</div>
+          <div class="s-trend-text up"><i class="fa-solid fa-arrow-up"></i> Resolved cases</div>
+        </div>
+      </div>
+
+      <!-- Recent Table Card -->
+      <div class="card">
+        <div class="card-header">
+          <h3>Recently Escalated Complaints</h3>
+          <a href="complaints.html" class="btn btn-outline btn-sm">View All <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <div class="card-body table-wrap">
+          <table class="data-table" id="recentTable">
+            <thead>
+              <tr>
+                <th>Complaint ID</th>
+                <th>Student</th>
+                <th>Department</th>
+                <th>Category</th>
+                <th>Date Filed</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="recentTableBody">
+              <tr>
+                <td colspan="7" style="text-align:center; padding:30px; color:var(--ink-faint);">
+                  <i class="fa-solid fa-spinner fa-spin" style="margin-right:8px;"></i> Loading complaints from database...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Detailed Complaint Modal Root -->
+<div class="modal-overlay" id="detailModalRoot"></div>
+
+<!-- API & Page Logic scripts -->
+<script src="js/api.js"></script>
+<script src="js/complaint-modal.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    // Skin body and sidebar based on role
+    const role = window.currentRole; // 'dean', 'director', or 'principal'
+    document.body.className = `role-${role}`;
+
+    // Update branding elements
+    const brandSub = document.getElementById('sidebarBrandSub');
+    const badgeRing = document.getElementById('sidebarBadgeRing');
+    const authTitle = document.getElementById('sidebarAuthTitle');
+    const authSub = document.getElementById('sidebarAuthSub');
+    const navEscalatedText = document.getElementById('navEscalatedText');
+    const pageHeadingTitle = document.getElementById('pageHeadingTitle');
+
+    if (role === 'principal') {
+      brandSub.textContent = 'Principal Console';
+      badgeRing.textContent = 'L3';
+      authTitle.textContent = 'L3 Authority';
+      authSub.textContent = 'Principal Escalation';
+      navEscalatedText.innerHTML = 'Level 3 Escalated';
+      pageHeadingTitle.textContent = 'Principal Dashboard';
+    } else if (role === 'director') {
+      brandSub.textContent = 'Director Console';
+      badgeRing.textContent = 'DIR';
+      authTitle.textContent = 'Executive';
+      authSub.textContent = 'Director Review';
+      navEscalatedText.innerHTML = 'All Complaints';
+      pageHeadingTitle.textContent = 'Director Dashboard';
+    } else {
+      // dean
+      brandSub.textContent = 'Dean Console';
+      badgeRing.textContent = 'L2';
+      authTitle.textContent = 'L2 Authority';
+      authSub.textContent = 'Dean Escalation';
+      navEscalatedText.innerHTML = 'Level 2 Escalated';
+      pageHeadingTitle.textContent = 'Dean Dashboard';
+    }
+
+    // Set Date & Time
+    const now = new Date();
+    document.getElementById('currentDateTime').textContent = now.toLocaleDateString("en-IN", {
+      weekday: "long", day: "numeric", month: "long", year: "numeric"
+    }) + " · " + now.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
+
+    // Set active user credentials
+    const user = window.currentUser;
+    if (user) {
+      document.getElementById('profileName').textContent = user.name;
+      document.getElementById('profileRole').textContent = `${user.designation} · Portal`;
+      document.getElementById('profileAvatar').textContent = user.name.split(' ').map(n=>n[0]).join('').substring(0, 2).toUpperCase();
+    }
+
+    // Sidebar Toggle
+    const toggleBtn = document.getElementById('sidebarToggle');
+    const shell = document.getElementById('appShell');
+    toggleBtn.addEventListener('click', () => {
+      shell.classList.toggle('collapsed');
+    });
+
+    // Initial data load
+    await refreshDashboard();
+  });
+
+  async function refreshDashboard() {
+    const role = window.currentRole;
+    
+    // 1. Fetch unread notifications count
+    const unreadCount = await API.getUnreadCount();
+    const badge = document.getElementById('notifBadge');
+    if (unreadCount > 0) {
+      badge.textContent = unreadCount;
+      badge.style.display = 'flex';
+    } else {
+      badge.style.display = 'none';
+    }
+
+    // 2. Fetch stats
+    const statsResult = await API.getStats();
+    
+    // 3. Fetch tickets
+    const ticketsResult = await API.getTickets();
+    let tickets = ticketsResult.data || [];
+
+    // Filter tickets based on role constraints
+    if (role === 'dean') {
+      tickets = tickets.filter(t => t.escalation_level === 2);
+    } else if (role === 'principal') {
+      tickets = tickets.filter(t => t.escalation_level === 3);
+    }
+
+    // Update stats counts
+    const totalCount = tickets.length;
+    const pendingCount = tickets.filter(t => t.status === 0 || t.status === 1).length;
+    const resolvedCount = tickets.filter(t => t.status === 2).length;
+    const criticalCount = tickets.filter(t => t.priority === 3).length; // Priority 3 = critical
+
+    document.getElementById('statTotal').textContent = totalCount;
+    document.getElementById('statPending').textContent = pendingCount;
+    document.getElementById('statCritical').textContent = criticalCount;
+    document.getElementById('statResolved').textContent = resolvedCount;
+
+    // Show/Hide Alert Banner if there are critical pending tickets
+    const alertBanner = document.getElementById('alertBanner');
+    const chipCritical = document.getElementById('chipCritical');
+    const chipPending = document.getElementById('chipPending');
+
+    if (criticalCount > 0 || pendingCount > 0) {
+      chipCritical.textContent = `${criticalCount} critical complaints`;
+      chipPending.textContent = `${pendingCount} pending reviews`;
+      // Backend doesn't explicitly flag SLA, count pending as warning
+      document.getElementById('chipSla').textContent = `${tickets.filter(t => t.status === 0).length} open tickets`;
+      alertBanner.style.display = 'flex';
+    } else {
+      alertBanner.style.display = 'none';
+    }
+
+    // Render Recent Table (up to 6 items)
+    const recentTickets = tickets.slice(0, 6);
+    const tbody = document.getElementById('recentTableBody');
+
+    if (recentTickets.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="7" style="text-align:center; padding:30px; color:var(--ink-faint);">
+            <i class="fa-solid fa-folder-open" style="font-size:24px; margin-bottom:8px; display:block;"></i>
+            No complaints found in this console view.
+          </td>
+        </tr>`;
+      return;
+    }
+
+    tbody.innerHTML = recentTickets.map(t => {
+      const s = getStatusLabelAndCls(t.status);
+      const dateStr = new Date(t.created_at).toLocaleDateString('en-IN', {
+        day: '2-digit', month: 'short'
+      });
+      return `
+        <tr>
+          <td class="id-cell">${t.ticket_number || t.id.substring(0, 8).toUpperCase()}</td>
+          <td>${t.creator_name}</td>
+          <td>${t.location_name.split(' - ')[0]}</td>
+          <td>${t.category_name}</td>
+          <td class="mono">${dateStr}</td>
+          <td><span class="badge ${s.cls}">${s.label}</span></td>
+          <td>
+            <button class="btn btn-outline btn-sm" onclick="viewTicketDetails('${t.id}')">
+              <i class="fa-solid fa-eye"></i> View Details
+            </button>
+          </td>
+        </tr>`;
+    }).join('');
+  }
+
+  function getStatusLabelAndCls(status) {
+    if (status === 2) return { label: 'Resolved', cls: 'badge-resolved' };
+    if (status === 1) return { label: 'In Progress', cls: 'badge-in-progress' };
+    if (status === 4) return { label: 'Closed', cls: 'badge-closed' };
+    return { label: 'Open', cls: 'badge-pending' };
+  }
+
+  async function viewTicketDetails(ticketId) {
+    const ticket = await API.getTicketById(ticketId);
+    if (ticket) {
+      ComplaintModal.open(ticket, refreshDashboard);
+    } else {
+      alert('Could not retrieve ticket details from backend.');
+    }
+  }
+
+  function toggleProfileDropdown(e) {
+    e.stopPropagation();
+    document.getElementById('profileDropdown').classList.toggle('open');
+  }
+
+  document.addEventListener('click', () => {
+    document.getElementById('profileDropdown').classList.remove('open');
+  });
+</script>
+</body>
+</html>

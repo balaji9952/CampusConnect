@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Escalation Settings — Campus Connect</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/admin-shared.css">
+  <script src="assets/js/theme.js"></script>
+</head>
+
+<body>
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-badge">
+        <div class="logo-icon">
+          <img src="assets/images/mzcetlogo.jpg" alt="Campus Connect Logo">
+        </div>
+        <div>
+          <div class="logo-text">Campus Connect</div>
+          <div class="logo-sub">Admin Portal</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-nav">
+      <div class="nav-group">
+        <div class="nav-section-label">Management</div>
+        <a class="nav-item" href="user-management.html">
+          <span class="nav-icon-wrap"><i class="ti ti-users nav-icon"></i></span>
+          <span class="nav-label">User Management</span>
+        </a>
+        <a class="nav-item" href="department-management.html">
+          <span class="nav-icon-wrap"><i class="ti ti-building nav-icon"></i></span>
+          <span class="nav-label">Department Management</span>
+        </a>
+        <a class="nav-item" href="department-dashboards.html">
+          <span class="nav-icon-wrap"><i class="ti ti-layout-dashboard nav-icon"></i></span>
+          <span class="nav-label">Department Dashboards</span>
+        </a>
+        <a class="nav-item" href="location-qr.html">
+          <span class="nav-icon-wrap"><i class="ti ti-map-pin nav-icon"></i></span>
+          <span class="nav-label">Location and QR</span>
+        </a>
+        <a class="nav-item" href="complaint-categories.html">
+          <span class="nav-icon-wrap"><i class="ti ti-tag nav-icon"></i></span>
+          <span class="nav-label">Complaint Categories</span>
+        </a>
+        <a class="nav-item" href="escalation-routing.html">
+          <span class="nav-icon-wrap"><i class="ti ti-arrows-exchange nav-icon"></i></span>
+          <span class="nav-label">Escalation Routing</span>
+        </a>
+        <a class="nav-item active" href="escalation-settings.html">
+          <span class="nav-icon-wrap"><i class="ti ti-trending-up nav-icon"></i></span>
+          <span class="nav-label">Escalation Settings</span>
+        </a>
+        <a class="nav-item" href="designations.html">
+          <span class="nav-icon-wrap"><i class="ti ti-id-badge nav-icon"></i></span>
+          <span class="nav-label">Designations</span>
+        </a>
+        <a class="nav-item" href="security-settings.html">
+          <span class="nav-icon-wrap"><i class="ti ti-shield-lock nav-icon"></i></span>
+          <span class="nav-label">Security Settings</span>
+        </a>
+        <a class="nav-item" href="backup-restore.html">
+          <span class="nav-icon-wrap"><i class="ti ti-database nav-icon"></i></span>
+          <span class="nav-label">Backup and Restore</span>
+        </a>
+        <a class="nav-item" href="audit-logs.html">
+          <span class="nav-icon-wrap"><i class="ti ti-clipboard-list nav-icon"></i></span>
+          <span class="nav-label">Audit Logs</span>
+        </a>
+        <a class="nav-item" href="profile-settings.html">
+          <span class="nav-icon-wrap"><i class="ti ti-user-circle nav-icon"></i></span>
+          <span class="nav-label">Profile Settings</span>
+        </a>
+        <a class="nav-item" href="login.html" onclick="return confirm('Are you sure you want to logout?')">
+          <span class="nav-icon-wrap">
+            <i class="ti ti-logout nav-icon"></i>
+          </span>
+          <span class="nav-label">Logout</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="admin-card">
+        <div class="admin-avatar">RK</div>
+        <div>
+          <div class="admin-name">Raj Kumar</div>
+          <div class="admin-role">Super Administrator</div>
+        </div>
+        <div class="admin-menu-btn"><i class="ti ti-dots-vertical"></i></div>
+      </div>
+    </div>
+  </nav>
+  <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="btn btn-outline btn-icon mobile-nav-btn" onclick="openSidebar()"><i
+            class="ti ti-menu-2"></i></button>
+        <div>
+          <div class="page-title">Escalation Settings</div>
+          <div class="breadcrumb">Admin <i class="ti ti-chevron-right" style="font-size:10px"></i>
+            <span>Escalation</span>
+          </div>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button id="theme-toggle-btn" class="btn-theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">
+          <i class="ti ti-moon"></i>
+        </button>
+        <button class="btn btn-outline btn-icon" title="Notifications" style="position:relative">
+          <i class="ti ti-bell"></i>
+        </button>
+        <button class="btn btn-outline btn-icon" title="Notifications" style="position:relative">
+          <i class="ti ti-bell"></i>
+          <span
+            style="position:absolute;top:7px;right:7px;width:8px;height:8px;background:var(--danger);border-radius:50%;border:2px solid #fff"></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="section-header" style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <div class="section-title">Escalation Settings</div>
+          <div class="section-desc">Configure SLA timings and escalation chain for complaints.</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button id="global-edit-btn" class="btn btn-outline btn-sm" onclick="enableEdit()"><i class="ti ti-edit"></i> Edit Settings</button>
+          <button id="global-save-btn" class="btn btn-primary btn-sm" onclick="saveSlaSettings()" style="display:none"><i class="ti ti-check"></i> Save Settings</button>
+        </div>
+      </div>
+
+      <div class="grid-2" style="align-items:start">
+        <div class="card">
+          <div class="card-title"><i class="ti ti-clock"></i> SLA Timings</div>
+          <div class="card-desc">Set resolution time for each priority level</div>
+          <div class="sla-row">
+            <div class="sla-priority"><span class="badge badge-success">Level 1</span></div>
+            <div class="sla-bar-wrap">
+              <div class="sla-bar" id="sla-bar-l1" style="width:33%;background:var(--success)"></div>
+            </div>
+            <div class="sla-time"><input type="number" id="sla-l1" value="24" min="1" oninput="updateSlaBar()" disabled>
+              <span style="font-size:11px;color:var(--text-hint);margin-left:4px">hrs</span>
+            </div>
+          </div>
+          <div class="sla-row">
+            <div class="sla-priority"><span class="badge badge-warning">Level 2</span></div>
+            <div class="sla-bar-wrap">
+              <div class="sla-bar" id="sla-bar-l2" style="width:66%;background:var(--warning)"></div>
+            </div>
+            <div class="sla-time"><input type="number" id="sla-l2" value="48" min="1" oninput="updateSlaBar()" disabled>
+              <span style="font-size:11px;color:var(--text-hint);margin-left:4px">hrs</span>
+            </div>
+          </div>
+          <div class="sla-row">
+            <div class="sla-priority"><span class="badge badge-danger">Level 3</span></div>
+            <div class="sla-bar-wrap">
+              <div class="sla-bar" id="sla-bar-l3" style="width:100%;background:var(--danger)"></div>
+            </div>
+            <div class="sla-time"><input type="number" id="sla-l3" value="72" min="1" oninput="updateSlaBar()" disabled>
+              <span style="font-size:11px;color:var(--text-hint);margin-left:4px">hrs</span>
+            </div>
+          </div>
+
+          <hr class="card-divider">
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <h4>Auto Escalation</h4>
+              <p>Automatically escalate when SLA breaches</p>
+            </div>
+            <label class="toggle"><input type="checkbox" id="autoEsc" disabled><span class="toggle-slider"></span></label>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:24px">
+          <div class="card">
+            <div class="card-title"><i class="ti ti-arrow-right"></i> Department Escalation Chain</div>
+            <div class="card-desc">Escalation path for standard department complaints</div>
+            <div class="chain" id="dept-chain">
+              <!-- Rendered by JS -->
+            </div>
+            <div style="margin-top:16px">
+              <button class="btn btn-outline btn-sm" id="dept-add-level-btn" style="width:100%;display:none" onclick="addEscalationLevel('dept')"><i class="ti ti-plus"></i> Add Level (Dept)</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title"><i class="ti ti-world"></i> Global Routing Escalation Chain</div>
+            <div class="card-desc">Escalation path for complaints routed globally (e.g. Canteen)</div>
+            <div class="chain" id="global-chain">
+              <!-- Rendered by JS -->
+            </div>
+            <div style="margin-top:16px">
+              <button class="btn btn-outline btn-sm" id="global-add-level-btn" style="width:100%;display:none" onclick="addEscalationLevel('global')"><i class="ti ti-plus"></i> Add Level (Global)</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ESCALATION LEVEL MODAL -->
+  <div class="modal-overlay" id="esc-modal">
+    <div class="modal-card" style="max-width:420px">
+      <div class="modal-header">
+        <div class="modal-title">Add Escalation Level</div>
+        <button class="modal-close" onclick="closeModal('esc-modal')"><i class="ti ti-x"></i></button>
+      </div>
+      <input type="hidden" id="add-level-type">
+      <div class="form-group"><label class="form-label">Role / Routing Key</label>
+        <select class="form-control" id="esc-title">
+          <option value="HOD">HOD</option>
+          <option value="PRINCIPAL">PRINCIPAL</option>
+          <option value="ADMIN">ADMIN</option>
+          <option value="ESTATE_OFFICER">ESTATE_OFFICER</option>
+          <option value="SYSTEM_ADMIN">SYSTEM_ADMIN</option>
+          <option value="DIRECTOR">DIRECTOR</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Description</label><input type="text" class="form-control"
+          id="esc-desc" placeholder="e.g. Final escalation point"></div>
+      <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:24px">
+        <button class="btn btn-outline" onclick="closeModal('esc-modal')">Cancel</button>
+        <button class="btn btn-primary" onclick="confirmAddEscalation()"><i class="ti ti-plus"></i> Add Level</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDIT NODE MODAL -->
+  <div class="modal-overlay" id="edit-node-modal">
+    <div class="modal-card" style="max-width:420px">
+      <div class="modal-header">
+        <div class="modal-title">Edit Escalation Node</div>
+        <button class="modal-close" onclick="closeModal('edit-node-modal')"><i class="ti ti-x"></i></button>
+      </div>
+      <input type="hidden" id="edit-node-type">
+      <input type="hidden" id="edit-node-level">
+      <div class="form-group">
+        <label class="form-label">Role / Routing Key</label>
+        <select class="form-control" id="edit-node-role">
+          <option value="HOD">HOD</option>
+          <option value="PRINCIPAL">PRINCIPAL</option>
+          <option value="ADMIN">ADMIN</option>
+          <option value="ESTATE_OFFICER">ESTATE_OFFICER</option>
+          <option value="SYSTEM_ADMIN">SYSTEM_ADMIN</option>
+          <option value="DIRECTOR">DIRECTOR</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:24px">
+        <button class="btn btn-outline" onclick="closeModal('edit-node-modal')">Cancel</button>
+        <button class="btn btn-primary" onclick="confirmEditNode()"><i class="ti ti-check"></i> Save Node</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"><i class="ti ti-circle-check"></i><span id="toast-msg">Changes saved
+      successfully!</span></div>
+
+  <script src="api/api.js"></script>
+  <script>
+    // API_BASE is globally available via api.js
+
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    };
+
+    function saveToast(msg, isError = false) {
+      const t = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = msg || 'Changes saved successfully!';
+      t.style.background = isError ? 'var(--danger)' : 'var(--success)';
+      t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000);
+    }
+    function openSidebar() { document.getElementById('sidebar').classList.add('open'); document.getElementById('overlay').classList.add('show'); }
+    function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+    let routingKeyLabels = {
+      "HOD": "HOD / Assigned Staff",
+      "PRINCIPAL": "Principal",
+      "ADMIN": "Management / Admin",
+      "ESTATE_OFFICER": "Estate Officer / Coordinator",
+      "SYSTEM_ADMIN": "System Admin",
+      "DIRECTOR": "Director"
+    };
+
+    async function loadRoutingKeys() {
+      try {
+        const res = await fetch(`${API_BASE}/admin/routing/keys`, { headers });
+        const json = await res.json();
+        if (json.success && json.data) {
+          const escSelect = document.getElementById('esc-title');
+          const editSelect = document.getElementById('edit-node-role');
+          
+          json.data.forEach(k => {
+            routingKeyLabels[k.key] = k.label;
+            const optionHtml = `<option value="${k.key}">${k.key}</option>`;
+            escSelect.innerHTML += optionHtml;
+            editSelect.innerHTML += optionHtml;
+          });
+        }
+      } catch (err) {
+        console.error('Failed to load routing keys', err);
+      }
+    }
+
+    function updateSlaBar() {
+      const vals = {
+        l1: +document.getElementById('sla-l1').value || 0,
+        l2: +document.getElementById('sla-l2').value || 0,
+        l3: +document.getElementById('sla-l3').value || 0
+      };
+      const max = Math.max(...Object.values(vals), 1);
+      document.getElementById('sla-bar-l1').style.width = Math.round(vals.l1 / max * 100) + '%';
+      document.getElementById('sla-bar-l2').style.width = Math.round(vals.l2 / max * 100) + '%';
+      document.getElementById('sla-bar-l3').style.width = Math.round(vals.l3 / max * 100) + '%';
+    }
+
+    function renderChain(type, keys) {
+      const chainEl = document.getElementById(`${type}-chain`);
+      if (!chainEl) return;
+      chainEl.innerHTML = '';
+      keys.forEach((key, index) => {
+        const level = index + 1;
+        const text = routingKeyLabels[key] || key;
+        const iconColor = level === 1 ? 'var(--primary)' : level === 2 ? '#d4a017' : 'var(--danger)';
+        const bgColor = level === 1 ? 'var(--bg-stat-icon-1)' : level === 2 ? 'var(--bg-stat-icon-2)' : 'var(--danger-bg)';
+        const icon = level === 1 ? 'ti-user-star' : level === 2 ? 'ti-crown' : 'ti-shield';
+        
+        let subtext = `Level ${level}`;
+        if (level === 1) subtext += ' - Primary Assignee';
+        else if (level === 2) subtext += ' - First Escalation';
+        else if (level >= 3) subtext += ' - Final Escalation';
+
+        const stepHTML = `
+          <div class="chain-step" data-level="${level}" data-key="${key}">
+            <div class="chain-node" style="position:relative;background:var(--card-bg);border:1px solid var(--border-color);border-radius:12px;padding:12px;display:flex;align-items:center;gap:12px">
+              <div class="chain-node-icon" style="background:${bgColor};color:${iconColor};width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px"><i class="ti ${icon}"></i></div>
+              <div>
+                <div class="chain-node-text" id="${type}-node-${level}-text" style="font-weight:600;font-size:14px;color:var(--text-color)">${text}</div>
+                <div class="chain-node-sub" style="font-size:12px;color:var(--text-hint);margin-top:2px">${subtext}</div>
+              </div>
+              <button class="btn btn-icon btn-sm esc-edit-btn" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);display:none" onclick="editNode('${type}', ${level})"><i class="ti ti-edit"></i></button>
+            </div>
+          </div>
+        `;
+        chainEl.innerHTML += stepHTML;
+        if (index < keys.length - 1) {
+          chainEl.innerHTML += `<div class="chain-arrow" style="text-align:center;color:var(--text-hint);margin:8px 0;font-size:20px"><i class="ti ti-chevron-down"></i></div>`;
+        }
+      });
+      
+      if (document.getElementById('global-save-btn').style.display !== 'none') {
+        document.querySelectorAll('.esc-edit-btn').forEach(btn => btn.style.display = 'inline-flex');
+      }
+    }
+
+    async function fetchSettings() {
+      let deptChain = ['HOD', 'PRINCIPAL', 'ADMIN'];
+      let globalChain = ['GLOBAL_HEAD', 'ESTATE_OFFICER', 'ADMIN'];
+
+      try {
+        const res = await fetch(`${API_BASE}/settings/escalation`, { headers });
+        if (res.status === 401 || res.status === 403) return window.location.href = 'login.html';
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && json.data) {
+            const data = json.data;
+            if (data.sla) {
+              document.getElementById('sla-l1').value = data.sla.l1 || 24;
+              document.getElementById('sla-l2').value = data.sla.l2 || 48;
+              document.getElementById('sla-l3').value = data.sla.l3 || 72;
+            }
+            if (data.autoEscalate !== undefined) {
+              document.getElementById('autoEsc').checked = data.autoEscalate;
+            }
+            if (data.chains) {
+              if (data.chains.dept) deptChain = data.chains.dept;
+              if (data.chains.global) globalChain = data.chains.global;
+            }
+          }
+        }
+      } catch(err) {
+        console.error("Backend API not found or failed, using mockup defaults.", err);
+      }
+      
+      renderChain('dept', deptChain);
+      renderChain('global', globalChain);
+      updateSlaBar();
+    }
+
+    function addEscalationLevel(type) {
+      document.getElementById('esc-title').value = 'HOD';
+      document.getElementById('esc-desc').value = '';
+      document.getElementById('add-level-type').value = type;
+      document.getElementById('esc-modal').classList.add('show');
+    }
+
+    function confirmAddEscalation() {
+      const title = document.getElementById('esc-title').value.trim();
+      const type = document.getElementById('add-level-type').value;
+      if (!title) { saveToast('Role/Title is required', true); return; }
+      
+      const chainEl = document.getElementById(`${type}-chain`);
+      const currentSteps = Array.from(chainEl.querySelectorAll('.chain-step')).map(el => el.dataset.key);
+      currentSteps.push(title);
+      renderChain(type, currentSteps);
+      closeModal('esc-modal');
+    }
+
+    function editNode(type, level) {
+      const step = document.querySelector(`#${type}-chain .chain-step[data-level="${level}"]`);
+      if (!step) return;
+      document.getElementById('edit-node-type').value = type;
+      document.getElementById('edit-node-level').value = level;
+      document.getElementById('edit-node-role').value = step.dataset.key;
+      document.getElementById('edit-node-modal').classList.add('show');
+    }
+    
+    function confirmEditNode() {
+      const type = document.getElementById('edit-node-type').value;
+      const level = document.getElementById('edit-node-level').value;
+      const role = document.getElementById('edit-node-role').value;
+      
+      const step = document.querySelector(`#${type}-chain .chain-step[data-level="${level}"]`);
+      if (step) {
+        step.dataset.key = role;
+        document.getElementById(`${type}-node-${level}-text`).innerText = routingKeyLabels[role] || role;
+      }
+      closeModal('edit-node-modal');
+    }
+
+    function enableEdit() {
+      document.getElementById('sla-l1').disabled = false;
+      document.getElementById('sla-l2').disabled = false;
+      document.getElementById('sla-l3').disabled = false;
+      document.getElementById('autoEsc').disabled = false;
+      document.getElementById('global-edit-btn').style.display = 'none';
+      document.getElementById('global-save-btn').style.display = 'inline-flex';
+      
+      document.querySelectorAll('.esc-edit-btn').forEach(btn => btn.style.display = 'inline-flex');
+      document.getElementById('dept-add-level-btn').style.display = 'inline-flex';
+      document.getElementById('global-add-level-btn').style.display = 'inline-flex';
+    }
+
+    async function saveSlaSettings() {
+      const payload = {
+        sla: {
+          l1: +document.getElementById('sla-l1').value,
+          l2: +document.getElementById('sla-l2').value,
+          l3: +document.getElementById('sla-l3').value
+        },
+        autoEscalate: document.getElementById('autoEsc').checked,
+        chains: {
+          dept: Array.from(document.querySelectorAll('#dept-chain .chain-step')).map(el => el.dataset.key),
+          global: Array.from(document.querySelectorAll('#global-chain .chain-step')).map(el => el.dataset.key)
+        }
+      };
+
+      try {
+        const res = await fetch(`${API_BASE}/settings/escalation`, {
+          method: 'PUT',
+          headers,
+          body: JSON.stringify(payload)
+        });
+        const json = await res.json();
+        if (json.success) {
+          saveToast('Settings saved successfully');
+          document.getElementById('sla-l1').disabled = true;
+          document.getElementById('sla-l2').disabled = true;
+          document.getElementById('sla-l3').disabled = true;
+          document.getElementById('autoEsc').disabled = true;
+          document.getElementById('global-edit-btn').style.display = 'inline-flex';
+          document.getElementById('global-save-btn').style.display = 'none';
+          
+          document.querySelectorAll('.esc-edit-btn').forEach(btn => btn.style.display = 'none');
+          document.getElementById('dept-add-level-btn').style.display = 'none';
+          document.getElementById('global-add-level-btn').style.display = 'none';
+        } else {
+          saveToast(json.message || 'Failed to save settings', true);
+        }
+      } catch (err) {
+        console.error(err);
+        saveToast('Network error saving settings', true);
+      }
+    }
+
+    Promise.all([loadRoutingKeys(), fetchSettings()]);
+  </script>
+  <script type="module" src="firebase.js"></script>
+</body>
+
+</html>

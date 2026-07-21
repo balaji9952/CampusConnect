@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Escalation Routing — Campus Connect</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/admin-shared.css">
+  <script src="assets/js/theme.js"></script>
+  <style>
+    .level-tab { display:flex; gap:4px; margin-bottom:20px; }
+    .level-tab-btn {
+      padding:8px 20px; border:none; border-radius:8px; cursor:pointer; font-weight:600; font-size:13px;
+      background:var(--bg-surface); color:var(--text-hint); border:1px solid var(--border-color);
+      transition:all .2s;
+    }
+    .level-tab-btn.active { background:var(--primary); color:#fff; border-color:var(--primary); }
+    .level-tab-btn:hover:not(.active) { background:var(--primary-bg); color:var(--primary); }
+    .routing-table th { white-space:nowrap; }
+    .assignee-cell { display:flex; align-items:center; gap:8px; }
+    .assignee-empty { color:var(--text-hint); font-style:italic; font-size:12px; }
+    .level-badge { font-size:11px; font-weight:700; padding:2px 8px; border-radius:20px; }
+    .level-1 { background:var(--success-bg); color:var(--success); }
+    .level-2 { background:var(--warning-bg); color:var(--warning); }
+    .level-3 { background:var(--danger-bg); color:var(--danger); }
+    .section-divider { margin:8px 0; border:none; border-top:1px solid var(--border-color); }
+    .dept-badge { background:var(--primary-bg); color:var(--primary); padding:2px 8px; border-radius:20px; font-size:11px; font-weight:600; }
+    @media(max-width:768px) {
+      .routing-table { font-size:12px; }
+      .routing-table th, .routing-table td { padding:8px 6px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-badge">
+        <div class="logo-icon"><img src="assets/images/mzcetlogo.jpg" alt="Campus Connect Logo"></div>
+        <div>
+          <div class="logo-text">Campus Connect</div>
+          <div class="logo-sub">Admin Portal</div>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-nav">
+      <div class="nav-group">
+        <div class="nav-section-label">Management</div>
+        <a class="nav-item" href="user-management.html"><span class="nav-icon-wrap"><i class="ti ti-users nav-icon"></i></span><span class="nav-label">User Management</span></a>
+        <a class="nav-item" href="department-management.html"><span class="nav-icon-wrap"><i class="ti ti-building nav-icon"></i></span><span class="nav-label">Department Management</span></a>
+        <a class="nav-item" href="department-dashboards.html"><span class="nav-icon-wrap"><i class="ti ti-layout-dashboard nav-icon"></i></span><span class="nav-label">Department Dashboards</span></a>
+        <a class="nav-item" href="location-qr.html"><span class="nav-icon-wrap"><i class="ti ti-map-pin nav-icon"></i></span><span class="nav-label">Location and QR</span></a>
+        <a class="nav-item" href="complaint-categories.html"><span class="nav-icon-wrap"><i class="ti ti-tag nav-icon"></i></span><span class="nav-label">Complaint Categories</span></a>
+        <a class="nav-item active" href="escalation-routing.html"><span class="nav-icon-wrap"><i class="ti ti-arrows-exchange nav-icon"></i></span><span class="nav-label">Escalation Routing</span></a>
+        <a class="nav-item" href="escalation-settings.html"><span class="nav-icon-wrap"><i class="ti ti-trending-up nav-icon"></i></span><span class="nav-label">Escalation Settings</span></a>
+        <a class="nav-item" href="designations.html"><span class="nav-icon-wrap"><i class="ti ti-id-badge nav-icon"></i></span><span class="nav-label">Designations</span></a>
+        <a class="nav-item" href="security-settings.html"><span class="nav-icon-wrap"><i class="ti ti-shield-lock nav-icon"></i></span><span class="nav-label">Security Settings</span></a>
+        <a class="nav-item" href="backup-restore.html"><span class="nav-icon-wrap"><i class="ti ti-database nav-icon"></i></span><span class="nav-label">Backup and Restore</span></a>
+        <a class="nav-item" href="audit-logs.html"><span class="nav-icon-wrap"><i class="ti ti-clipboard-list nav-icon"></i></span><span class="nav-label">Audit Logs</span></a>
+        <a class="nav-item" href="profile-settings.html"><span class="nav-icon-wrap"><i class="ti ti-user-circle nav-icon"></i></span><span class="nav-label">Profile Settings</span></a>
+        <a class="nav-item" href="login.html" onclick="return confirm('Logout?')"><span class="nav-icon-wrap"><i class="ti ti-logout nav-icon"></i></span><span class="nav-label">Logout</span></a>
+      </div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="admin-card">
+        <div class="admin-avatar" id="sidebar-avatar">RK</div>
+        <div><div class="admin-name" id="sidebar-name">Admin</div><div class="admin-role" id="sidebar-role">Administrator</div></div>
+      </div>
+    </div>
+  </nav>
+  <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="btn btn-outline btn-icon mobile-nav-btn" onclick="openSidebar()"><i class="ti ti-menu-2"></i></button>
+        <div>
+          <div class="page-title">Escalation Routing</div>
+          <div class="breadcrumb">Admin <i class="ti ti-chevron-right" style="font-size:10px"></i> <span>Routing</span></div>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button id="theme-toggle-btn" class="btn-theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode"><i class="ti ti-moon"></i></button>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Global Routing Assignments</div>
+          <div class="section-desc">Assign Level 1, 2, and 3 escalation targets for each routing key. Changes apply to new escalations immediately.</div>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="loadData()"><i class="ti ti-refresh"></i> Refresh</button>
+      </div>
+
+      <!-- Routing table card -->
+      <div class="card" style="margin-bottom:24px">
+        <div class="card-title" style="margin-bottom:16px"><i class="ti ti-world"></i> Global Routing Keys</div>
+        <div class="table-wrap">
+          <table class="routing-table">
+            <thead>
+              <tr>
+                <th style="min-width:180px">Routing Key</th>
+                <th style="min-width:200px">Level 1 — Initial Assignee</th>
+                <th style="min-width:200px">Level 2 — Escalation</th>
+                <th style="min-width:200px">Level 3 — Final Escalation</th>
+                <th style="width:80px">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="routing-table-body">
+              <tr><td colspan="5" style="text-align:center;padding:24px">Loading routing assignments...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Department Escalation -->
+      <div class="section-header" style="margin-top:8px">
+        <div>
+          <div class="section-title">Department-Level Escalation</div>
+          <div class="section-desc">Fallback escalation targets for department-routed tickets when no global routing assignment exists.</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table class="routing-table">
+            <thead>
+              <tr>
+                <th>Department</th>
+                <th>Level 1 (via HOD)</th>
+                <th style="min-width:200px">Level 2 — Escalation</th>
+                <th style="min-width:200px">Level 3 — Final Escalation</th>
+                <th style="width:80px">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="dept-table-body">
+              <tr><td colspan="5" style="text-align:center;padding:24px">Loading departments...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ASSIGN USER MODAL (Global Routing) -->
+  <div class="modal-overlay" id="assign-modal">
+    <div class="modal-card" style="max-width:460px">
+      <div class="modal-header">
+        <div class="modal-title" id="assign-modal-title">Assign User</div>
+        <button class="modal-close" onclick="closeModalFn('assign-modal')"><i class="ti ti-x"></i></button>
+      </div>
+      <input type="hidden" id="assign-routing-key">
+      <input type="hidden" id="assign-level">
+      <div class="form-group">
+        <label class="form-label">Level</label>
+        <div id="assign-level-display" style="padding:10px 14px;background:var(--bg-surface);border-radius:8px;font-weight:600;font-size:14px"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Select User <span style="color:var(--danger)">*</span></label>
+        <select class="form-control" id="assign-user-select">
+          <option value="">— Select a user —</option>
+        </select>
+      </div>
+      <div id="assign-current-info" style="margin-bottom:12px;font-size:13px;color:var(--text-hint)"></div>
+      <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:24px">
+        <button class="btn btn-outline" onclick="closeModalFn('assign-modal')">Cancel</button>
+        <button class="btn btn-primary" onclick="confirmAssign()"><i class="ti ti-check"></i> Assign</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ASSIGN USER MODAL (Department) -->
+  <div class="modal-overlay" id="dept-assign-modal">
+    <div class="modal-card" style="max-width:460px">
+      <div class="modal-header">
+        <div class="modal-title" id="dept-modal-title">Assign Department Escalation</div>
+        <button class="modal-close" onclick="closeModalFn('dept-assign-modal')"><i class="ti ti-x"></i></button>
+      </div>
+      <input type="hidden" id="dept-id">
+      <input type="hidden" id="dept-level">
+      <div class="form-group">
+        <label class="form-label">Department</label>
+        <div id="dept-name-display" style="padding:10px 14px;background:var(--bg-surface);border-radius:8px;font-weight:600;font-size:14px"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Select User <span style="color:var(--danger)">*</span></label>
+        <select class="form-control" id="dept-user-select">
+          <option value="">— Select a user —</option>
+        </select>
+      </div>
+      <div id="dept-current-info" style="margin-bottom:12px;font-size:13px;color:var(--text-hint)"></div>
+      <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:24px">
+        <button class="btn btn-outline" onclick="closeModalFn('dept-assign-modal')">Cancel</button>
+        <button class="btn btn-primary" onclick="confirmDeptAssign()"><i class="ti ti-check"></i> Assign</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"><i class="ti ti-circle-check"></i><span id="toast-msg">Saved!</span></div>
+
+  <script src="api/api.js"></script>
+  <script>
+    function toast(msg, isError = false) {
+      const t = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = msg;
+      t.style.background = isError ? 'var(--danger)' : 'var(--success)';
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3500);
+    }
+    function openSidebar() { document.getElementById('sidebar').classList.add('open'); document.getElementById('overlay').classList.add('show'); }
+    function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); }
+    function closeModalFn(id) { document.getElementById(id).classList.remove('show'); }
+
+    const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
+
+    let routingKeys = [];        // all supported routing keys
+    let assignmentsByKey = {};   // routing_key → [{ escalationLevel, user }]
+    let departments = [];
+    let deptAssignments = {};     // deptId → [{ escalationLevel, user }]
+    let allUsers = [];            // cached list for dropdown
+
+    async function loadRoutingKeys() {
+      try {
+        const res = await fetch(`${API_BASE}/admin/routing/keys`, { headers });
+        if (!res.ok) return;
+        const json = await res.json();
+        if (json.success) routingKeys = json.data || [];
+      } catch (e) { console.error(e); }
+    }
+
+    async function loadAssignmentsByKey() {
+      try {
+        const res = await fetch(`${API_BASE}/admin/routing/assignments`, { headers });
+        if (!res.ok) return;
+        const json = await res.json();
+        if (json.success) {
+          // Flat list → group by routing_key
+          assignmentsByKey = {};
+          for (const a of (json.data || [])) {
+            const key = a.routing_key;
+            if (!assignmentsByKey[key]) assignmentsByKey[key] = {};
+            const level = a.escalation_level || 1;
+            assignmentsByKey[key][level] = a.users;
+          }
+        }
+      } catch (e) { console.error(e); }
+    }
+
+    async function loadDepartments() {
+      try {
+        const res = await fetch(`${API_BASE}/departments?page=1&limit=100`, { headers });
+        if (!res.ok) return;
+        const json = await res.json();
+        if (json.success) departments = json.data || [];
+      } catch (e) { console.error(e); }
+    }
+
+    async function loadDeptAssignments() {
+      try {
+        const res = await fetch(`${API_BASE}/admin/escalation-assignments`, { headers });
+        if (!res.ok) return;
+        const json = await res.json();
+        if (json.success) {
+          deptAssignments = {};
+          for (const a of (json.data || [])) {
+            const deptId = a.department_id;
+            if (!deptAssignments[deptId]) deptAssignments[deptId] = {};
+            const level = a.escalation_level;
+            deptAssignments[deptId][level] = a.users;
+          }
+        }
+      } catch (e) { console.error(e); }
+    }
+
+    async function loadUsers() {
+      try {
+        const res = await fetch(`${API_BASE}/admin/users?page=1&limit=500`, { headers });
+        if (!res.ok) {
+          if (res.status === 401 || res.status === 403) {
+            console.error('[Escalation Routing] Auth error loading users — redirecting to login');
+            toast('Session expired. Please login again.', true);
+            window.location.href = 'login.html';
+          } else {
+            console.error(`[Escalation Routing] Failed to load users: HTTP ${res.status}`);
+            toast(`Failed to load users (HTTP ${res.status}). Refresh and try again.`, true);
+          }
+          return;
+        }
+        const json = await res.json();
+        if (json.success) {
+          allUsers = json.data || [];
+          console.log(`[Escalation Routing] Loaded ${allUsers.length} users for dropdown`);
+          const privileged = allUsers.filter(u => ['Dean', 'Principal', 'Director', 'Admin', 'Super Admin'].includes(u.designation));
+          if (privileged.length === 0) {
+            console.warn('[Escalation Routing] WARNING: No privileged designation users found in dropdown!');
+          } else {
+            console.log(`[Escalation Routing] Privileged users available:`, privileged.map(u => `${u.name} (${u.designation})`).join(', '));
+          }
+        } else {
+          console.error('[Escalation Routing] API error:', json.message);
+          toast('Failed to load users: ' + (json.message || 'Unknown error'), true);
+        }
+      } catch (e) {
+        console.error('[Escalation Routing] Network error loading users:', e);
+        toast('Network error loading users. Check your connection.', true);
+      }
+    }
+
+    async function loadData() {
+      document.getElementById('routing-table-body').innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px">Loading...</td></tr>';
+      document.getElementById('dept-table-body').innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px">Loading...</td></tr>';
+      await Promise.all([loadRoutingKeys(), loadAssignmentsByKey(), loadDepartments(), loadDeptAssignments(), loadUsers()]);
+      renderRoutingTable();
+      renderDeptTable();
+      // After render, show a warning if no users loaded (auth issue)
+      if (allUsers.length === 0) {
+        document.getElementById('routing-table-body').innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--danger)">Failed to load users. Please refresh the page and login again.</td></tr>';
+      }
+    }
+
+    function levelBadge(level) {
+      const cls = level === 1 ? 'level-1' : level === 2 ? 'level-2' : 'level-3';
+      return `<span class="level-badge ${cls}">L${level}</span>`;
+    }
+
+    function renderRoutingTable() {
+      const tbody = document.getElementById('routing-table-body');
+      if (routingKeys.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text-hint)">No routing keys configured.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = routingKeys.map(k => {
+        const l1 = assignmentsByKey[k.key]?.[1];
+        const l2 = assignmentsByKey[k.key]?.[2];
+        const l3 = assignmentsByKey[k.key]?.[3];
+
+        const cell = (level, user, note) => {
+          if (user) {
+            return `<div class="assignee-cell">
+              <div style="width:28px;height:28px;border-radius:50%;background:var(--primary-bg);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">
+                ${(user.name || '?').split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase()}
+              </div>
+              <div>
+                <div style="font-weight:600;font-size:13px">${escHtml(user.name)}</div>
+                <div style="font-size:11px;color:var(--text-hint)">${escHtml(user.designation || '—')}</div>
+              </div>
+            </div>`;
+          }
+          return `<div class="assignee-empty">${note || 'Not assigned'}</div>`;
+        };
+
+        return `<tr>
+          <td>
+            <span style="font-weight:600;font-size:13px">${escHtml(k.label || k.key)}</span>
+            <div style="font-size:11px;color:var(--text-hint);margin-top:2px">${escHtml(k.key)}</div>
+          </td>
+          <td>${cell(1, l1, 'No L1 assignee — complaint may not be routed')}</td>
+          <td>${cell(2, l2, 'Falls back to designation-based escalation')}</td>
+          <td>${cell(3, l3, 'Falls back to designation-based escalation')}</td>
+          <td>
+            <div class="td-actions" style="flex-wrap:nowrap">
+              <button class="btn btn-outline btn-icon btn-sm" onclick="openAssignModal('${escAttr(k.key)}', 1)" title="Set L1">L1</button>
+              <button class="btn btn-outline btn-icon btn-sm" onclick="openAssignModal('${escAttr(k.key)}', 2)" title="Set L2">L2</button>
+              <button class="btn btn-outline btn-icon btn-sm" onclick="openAssignModal('${escAttr(k.key)}', 3)" title="Set L3">L3</button>
+            </div>
+          </td>
+        </tr>`;
+      }).join('');
+    }
+
+    function renderDeptTable() {
+      const tbody = document.getElementById('dept-table-body');
+      if (departments.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text-hint)">No departments found.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = departments.map(d => {
+        const l2 = deptAssignments[d.id]?.[2];
+        const l3 = deptAssignments[d.id]?.[3];
+
+        const cell = (level, user, note) => {
+          if (user) {
+            return `<div class="assignee-cell" style="justify-content:space-between">
+              <div style="display:flex;align-items:center;gap:8px">
+                <div style="width:28px;height:28px;border-radius:50%;background:var(--primary-bg);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">
+                  ${(user.name || '?').split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase()}
+                </div>
+                <div>
+                  <div style="font-weight:600;font-size:13px">${escHtml(user.name)}</div>
+                  <div style="font-size:11px;color:var(--text-hint)">${escHtml(user.designation || '—')}</div>
+                </div>
+              </div>
+              <button class="btn btn-outline btn-icon btn-sm btn-danger-text" onclick="clearDeptAssignment(${d.id}, ${level})" title="Clear Assignment" style="border:none;background:transparent;color:var(--danger)"><i class="ti ti-trash"></i></button>
+            </div>`;
+          }
+          return `<div class="assignee-empty">${note || 'Not assigned'}</div>`;
+        };
+
+        return `<tr>
+          <td>
+            <span class="dept-badge">${escHtml(d.name)}</span>
+            ${d.code ? `<span style="font-size:11px;color:var(--text-hint);margin-left:6px">${escHtml(d.code)}</span>` : ''}
+          </td>
+          <td><span class="assignee-empty">Managed by HOD of this department</span></td>
+          <td>${cell(2, l2, 'Falls back to HOD / designation-based escalation')}</td>
+          <td>${cell(3, l3, 'Falls back to HOD / designation-based escalation')}</td>
+          <td>
+            <div class="td-actions" style="flex-wrap:nowrap">
+              <button class="btn btn-outline btn-icon btn-sm" onclick="openDeptModal(${d.id}, '${escAttr(d.name)}', 2)" title="Set L2">L2</button>
+              <button class="btn btn-outline btn-icon btn-sm" onclick="openDeptModal(${d.id}, '${escAttr(d.name)}', 3)" title="Set L3">L3</button>
+            </div>
+          </td>
+        </tr>`;
+      }).join('');
+    }
+
+    function escHtml(s) { return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+    function escAttr(s) { return (s || '').replace(/'/g, "\\'"); }
+
+    function populateUserSelect(selectId, targetDeptId = null) {
+      const sel = document.getElementById(selectId);
+      sel.innerHTML = '<option value="">— Select a user —</option>';
+
+      // Filter to keep ONLY Staff (role = 1) and Admin (role = 3)
+      const allowedUsers = allUsers.filter(u => u.role === 1 || u.role === 3);
+      const allowedDesignations = ['Principal', 'Dean', 'Director'];
+
+      if (targetDeptId !== null) {
+        // --- Department-Level Escalation Context ---
+        const targetDept = departments.find(d => d.id === targetDeptId);
+        const deptName = targetDept ? targetDept.name : 'This Department';
+
+        // 1. Staff belonging directly to target department
+        const deptStaff = allowedUsers.filter(u => u.departmentId === targetDeptId);
+        // 2. Global escalation authorities (Principal, Dean, Director) who are not already listed under department staff
+        const globalAuthorities = allowedUsers.filter(u => u.departmentId !== targetDeptId && allowedDesignations.includes(u.designation));
+
+        // Group 1: Department Staff
+        if (deptStaff.length > 0) {
+          let html = `<optgroup label="${escHtml(deptName)} Staff">`;
+          deptStaff.forEach(u => {
+            html += `<option value="${u.id}">${escHtml(u.name)} ${u.designation ? `(${escHtml(u.designation)})` : ''}</option>`;
+          });
+          html += `</optgroup>`;
+          sel.innerHTML += html;
+        }
+
+        // Group 2: Global Escalation Authorities
+        if (globalAuthorities.length > 0) {
+          let html = `<optgroup label="Global Escalation Authorities">`;
+          globalAuthorities.forEach(u => {
+            html += `<option value="${u.id}">${escHtml(u.name)} (${escHtml(u.designation)})</option>`;
+          });
+          html += `</optgroup>`;
+          sel.innerHTML += html;
+        }
+
+      } else {
+        // --- Global Routing Context ---
+        // 1. Staff belonging to global / non-departmental designations
+        const globalStaff = allowedUsers.filter(u => u.departmentId === null || u.departmentId === undefined);
+        // 2. Global escalation authorities (Principal, Dean, Director) who are assigned to departments
+        const otherAuthorities = allowedUsers.filter(u => u.departmentId !== null && u.departmentId !== undefined && allowedDesignations.includes(u.designation));
+
+        // Group 1: Global / Non-Departmental Staff
+        if (globalStaff.length > 0) {
+          let html = `<optgroup label="Global / Non-Departmental Staff">`;
+          globalStaff.forEach(u => {
+            html += `<option value="${u.id}">${escHtml(u.name)} ${u.designation ? `(${escHtml(u.designation)})` : ''}</option>`;
+          });
+          html += `</optgroup>`;
+          sel.innerHTML += html;
+        }
+
+        // Group 2: Global Escalation Authorities
+        if (otherAuthorities.length > 0) {
+          let html = `<optgroup label="Global Escalation Authorities">`;
+          otherAuthorities.forEach(u => {
+            html += `<option value="${u.id}">${escHtml(u.name)} (${escHtml(u.designation)}) - ${escHtml(u.departmentName || 'Other')}</option>`;
+          });
+          html += `</optgroup>`;
+          sel.innerHTML += html;
+        }
+      }
+    }
+
+    function openAssignModal(routingKey, level) {
+      document.getElementById('assign-routing-key').value = routingKey;
+      document.getElementById('assign-level').value = level;
+      document.getElementById('assign-modal-title').textContent = `Assign ${routingKey} — Level ${level}`;
+      const cls = level === 1 ? 'level-1' : level === 2 ? 'level-2' : 'level-3';
+      document.getElementById('assign-level-display').innerHTML = `<span class="level-badge ${cls}">Level ${level}</span> ${escHtml(routingKey)}`;
+
+      const current = assignmentsByKey[routingKey]?.[level];
+      document.getElementById('assign-current-info').textContent = current
+        ? `Currently: ${current.name} (${current.designation || '—'})`
+        : 'Currently: not assigned';
+
+      populateUserSelect('assign-user-select');
+      document.getElementById('assign-modal').classList.add('show');
+    }
+
+    async function confirmAssign() {
+      const routingKey = document.getElementById('assign-routing-key').value;
+      const level = parseInt(document.getElementById('assign-level').value);
+      const userId = document.getElementById('assign-user-select').value;
+
+      if (!userId) { toast('Please select a user', true); return; }
+
+      try {
+        const res = await fetch(`${API_BASE}/admin/routing/assignments`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({ routingKey, userId, escalationLevel: level })
+        });
+        const json = await res.json();
+        if (json.success) {
+          toast(`${routingKey} L${level} assigned!`);
+          closeModalFn('assign-modal');
+          await loadAssignmentsByKey();
+          renderRoutingTable();
+        } else {
+          toast(json.message || 'Assignment failed', true);
+        }
+      } catch (e) { toast('Network error', true); console.error(e); }
+    }
+
+    function openDeptModal(deptId, deptName, level) {
+      document.getElementById('dept-id').value = deptId;
+      document.getElementById('dept-level').value = level;
+      document.getElementById('dept-modal-title').textContent = `Escalation — ${deptName}`;
+      const cls = level === 2 ? 'level-2' : 'level-3';
+      document.getElementById('dept-name-display').innerHTML = `<span class="dept-badge">${escHtml(deptName)}</span> <span class="level-badge ${cls}" style="margin-left:6px">L${level}</span>`;
+      
+      const current = deptAssignments[deptId]?.[level];
+      document.getElementById('dept-current-info').textContent = current
+        ? `Currently: ${current.name} (${current.designation || '—'})`
+        : 'Currently: not assigned (falls back to designation)';
+        
+      populateUserSelect('dept-user-select', deptId);
+      document.getElementById('dept-assign-modal').classList.add('show');
+    }
+
+    async function confirmDeptAssign() {
+      const deptId = parseInt(document.getElementById('dept-id').value);
+      const level = parseInt(document.getElementById('dept-level').value);
+      const userId = document.getElementById('dept-user-select').value;
+
+      if (!userId) { toast('Please select a user', true); return; }
+
+      try {
+        const res = await fetch(`${API_BASE}/admin/escalation-assignments`, {
+          method: 'PUT',
+          headers,
+          body: JSON.stringify({ departmentId: deptId, escalationLevel: level, userId })
+        });
+        const json = await res.json();
+        if (json.success) {
+          toast(`Department Level ${level} assigned!`);
+          closeModalFn('dept-assign-modal');
+          await loadDeptAssignments();
+          renderDeptTable();
+        } else {
+          toast(json.message || 'Assignment failed', true);
+        }
+      } catch (e) { toast('Network error', true); console.error(e); }
+    }
+
+    async function clearDeptAssignment(deptId, level) {
+      if (!confirm(`Are you sure you want to clear Level ${level} assignment for this department?`)) return;
+      try {
+        const res = await fetch(`${API_BASE}/admin/escalation-assignments/${deptId}/${level}`, {
+          method: 'DELETE',
+          headers
+        });
+        const json = await res.json();
+        if (json.success) {
+          toast(`Department Level ${level} assignment cleared!`);
+          await loadDeptAssignments();
+          renderDeptTable();
+        } else {
+          toast(json.message || 'Clear failed', true);
+        }
+      } catch (e) { toast('Network error', true); console.error(e); }
+    }
+
+    loadData();
+  </script>
+  <script type="module" src="firebase.js"></script>
+</body>
+</html>

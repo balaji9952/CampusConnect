@@ -1,0 +1,13 @@
+
+model user_sessions {
+  id            String    @id @db.VarChar(100)
+  user_id       String    @db.VarChar(36)
+  jwt_id        String    @db.VarChar(100)
+  device_name   String    @db.VarChar(255)
+  ip_address    String    @db.VarChar(45)
+  is_revoked    Boolean   @default(false)
+  last_activity DateTime  @default(dbgenerated("sysutcdatetime()"))
+  created_at    DateTime  @default(dbgenerated("sysutcdatetime()"))
+  revoked_at    DateTime?
+}
+

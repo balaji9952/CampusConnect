@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Security Settings — Campus Connect</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/admin-shared.css">
+  <script src="assets/js/theme.js"></script>
+  <style>
+    .skeleton {
+      background: linear-gradient(90deg, var(--border) 25%, color-mix(in srgb, var(--border) 50%, var(--bg-secondary)) 50%, var(--border) 75%);
+      background-size: 200% 100%;
+      animation: skeleton-shimmer 1.4s ease-in-out infinite;
+      border-radius: 8px;
+    }
+    @keyframes skeleton-shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .skel-text { height: 13px; border-radius: 6px; margin-bottom: 10px; }
+    .skel-input { height: 42px; border-radius: 10px; margin-bottom: 16px; }
+    .skel-toggle { height: 28px; border-radius: 14px; width: 48px; }
+    .skel-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; }
+    .skel-row-left { display:flex; flex-direction:column; gap:6px; flex:1; margin-right:16px; }
+  </style>
+</head>
+
+<body>
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-badge">
+        <div class="logo-icon">
+          <img src="assets/images/mzcetlogo.jpg" alt="Campus Connect Logo">
+        </div>
+        <div>
+          <div class="logo-text">Campus Connect</div>
+          <div class="logo-sub">Admin Portal</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-nav">
+      <div class="nav-group">
+        <div class="nav-section-label">Management</div>
+        <a class="nav-item" href="user-management.html">
+          <span class="nav-icon-wrap"><i class="ti ti-users nav-icon"></i></span>
+          <span class="nav-label">User Management</span>
+        </a>
+        <a class="nav-item" href="department-management.html">
+          <span class="nav-icon-wrap"><i class="ti ti-building nav-icon"></i></span>
+          <span class="nav-label">Department Management</span>
+        </a>
+        <a class="nav-item" href="department-dashboards.html">
+          <span class="nav-icon-wrap"><i class="ti ti-layout-dashboard nav-icon"></i></span>
+          <span class="nav-label">Department Dashboards</span>
+        </a>
+        <a class="nav-item" href="location-qr.html">
+          <span class="nav-icon-wrap"><i class="ti ti-map-pin nav-icon"></i></span>
+          <span class="nav-label">Location and QR</span>
+        </a>
+        <a class="nav-item" href="complaint-categories.html">
+          <span class="nav-icon-wrap"><i class="ti ti-tag nav-icon"></i></span>
+          <span class="nav-label">Complaint Categories</span>
+        </a>
+        <a class="nav-item" href="escalation-routing.html">
+          <span class="nav-icon-wrap"><i class="ti ti-arrows-exchange nav-icon"></i></span>
+          <span class="nav-label">Escalation Routing</span>
+        </a>
+        <a class="nav-item" href="escalation-settings.html">
+          <span class="nav-icon-wrap"><i class="ti ti-trending-up nav-icon"></i></span>
+          <span class="nav-label">Escalation Settings</span>
+        </a>
+        <a class="nav-item" href="designations.html">
+          <span class="nav-icon-wrap"><i class="ti ti-id-badge nav-icon"></i></span>
+          <span class="nav-label">Designations</span>
+        </a>
+        <a class="nav-item active" href="security-settings.html">
+          <span class="nav-icon-wrap"><i class="ti ti-shield-lock nav-icon"></i></span>
+          <span class="nav-label">Security Settings</span>
+        </a>
+        <a class="nav-item" href="backup-restore.html">
+          <span class="nav-icon-wrap"><i class="ti ti-database nav-icon"></i></span>
+          <span class="nav-label">Backup and Restore</span>
+        </a>
+        <a class="nav-item" href="audit-logs.html">
+          <span class="nav-icon-wrap"><i class="ti ti-clipboard-list nav-icon"></i></span>
+          <span class="nav-label">Audit Logs</span>
+        </a>
+        <a class="nav-item" href="profile-settings.html">
+          <span class="nav-icon-wrap"><i class="ti ti-user-circle nav-icon"></i></span>
+          <span class="nav-label">Profile Settings</span>
+        </a>
+        <a class="nav-item" href="login.html" onclick="return confirm('Are you sure you want to logout?')">
+          <span class="nav-icon-wrap">
+            <i class="ti ti-logout nav-icon"></i>
+          </span>
+          <span class="nav-label">Logout</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="admin-card">
+        <div class="admin-avatar" id="sidebar-avatar"></div>
+        <div>
+          <div class="admin-name" id="sidebar-name"></div>
+          <div class="admin-role" id="sidebar-role"></div>
+        </div>
+        <div class="admin-menu-btn"><i class="ti ti-dots-vertical"></i></div>
+      </div>
+    </div>
+  </nav>
+  <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="btn btn-outline btn-icon mobile-nav-btn" onclick="openSidebar()"><i
+            class="ti ti-menu-2"></i></button>
+        <div>
+          <div class="page-title">Security Settings</div>
+          <div class="breadcrumb">Admin <i class="ti ti-chevron-right" style="font-size:10px"></i> <span>Security</span>
+          </div>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button id="theme-toggle-btn" class="btn-theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">
+          <i class="ti ti-moon"></i>
+        </button>
+        <button class="btn btn-outline btn-icon" title="Notifications" style="position:relative">
+          <i class="ti ti-bell"></i>
+          <span
+            style="position:absolute;top:7px;right:7px;width:8px;height:8px;background:var(--danger);border-radius:50%;border:2px solid #fff"></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="section-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+        <div>
+          <div class="section-title">Security Settings</div>
+          <div class="section-desc">Configure password policy and session management.</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button id="global-edit-btn" class="btn btn-outline btn-sm" onclick="enableSecurityEdit()"><i class="ti ti-edit"></i> Edit Settings</button>
+          <button id="global-save-btn" class="btn btn-primary btn-sm" onclick="saveSecurity()" style="display:none"><i class="ti ti-check"></i> Save Settings</button>
+        </div>
+      </div>
+
+      <div class="grid-2" style="align-items:start">
+        <!-- Session Settings Card -->
+        <div class="card" id="card-policy">
+          <!-- Skeleton -->
+          <div id="skel-policy">
+            <div class="skeleton skel-text" style="width:40%;margin-bottom:16px"></div>
+            <div class="skeleton skel-input"></div>
+          </div>
+          <!-- Real content -->
+          <div id="real-policy" style="display:none">
+            <div class="card-title"><i class="ti ti-clock"></i> Session Settings</div>
+            <div class="card-desc">Configure user session options</div>
+            <div class="form-group">
+              <label class="form-label">Session Timeout (minutes)</label>
+              <input type="number" class="form-control" id="sec-timeout" min="5" readonly>
+            </div>
+          </div>
+        </div>
+
+        <!-- Active Sessions Card -->
+        <div class="card" id="card-2fa">
+          <!-- Skeleton -->
+          <div id="skel-2fa">
+            <div class="skeleton skel-text" style="width:40%;margin-bottom:12px"></div>
+            <div class="skeleton skel-input" style="margin-bottom:8px"></div>
+            <div class="skeleton skel-input" style="margin-bottom:8px"></div>
+          </div>
+          <!-- Real content -->
+          <div id="real-2fa" style="display:none">
+            <div class="card-title" style="margin-bottom:12px"><i class="ti ti-devices"></i> Active Sessions</div>
+            <div id="active-sessions" style="max-height: 350px; overflow-y: auto; padding-right: 4px;">
+              <!-- Dynamic Sessions Rendered Here -->
+            </div>
+            <div style="margin-top:12px">
+              <button class="btn btn-danger btn-sm" style="width:100%" onclick="revokeAllSessions()"><i
+                  class="ti ti-logout"></i> Revoke All Other Sessions</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"><i class="ti ti-circle-check"></i><span id="toast-msg">Changes saved
+      successfully!</span></div>
+
+  <script src="api/api.js"></script>
+  <script>
+    if (!token) window.location.href = 'login.html';
+
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    };
+
+    function saveToast(msg, isError = false) {
+      const t = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = msg || 'Changes saved successfully!';
+      t.style.background = isError ? 'var(--danger)' : 'var(--success)';
+      t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000);
+    }
+    function openSidebar() { document.getElementById('sidebar').classList.add('open'); document.getElementById('overlay').classList.add('show'); }
+    function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); }
+
+    let currentSecuritySettings = {};
+
+    async function fetchSecuritySettings() {
+      try {
+        const response = await fetch(`${API_BASE}/settings/security`, { headers });
+        if (response.status === 401 || response.status === 403) return window.location.href = 'login.html';
+        const res = await response.json();
+        if (res.success && res.data) {
+          currentSecuritySettings = res.data.settings || res.data;
+          document.getElementById('sec-timeout').value = currentSecuritySettings.sessionTimeout ?? 30;
+        }
+        // Reveal real content
+        document.getElementById('skel-policy').style.display = 'none';
+        document.getElementById('real-policy').style.display = 'block';
+        document.getElementById('skel-2fa').style.display = 'none';
+        document.getElementById('real-2fa').style.display = 'block';
+      } catch (err) {
+        console.error("Error fetching settings:", err);
+        document.getElementById('skel-policy').style.display = 'none';
+        document.getElementById('real-policy').style.display = 'block';
+        document.getElementById('skel-2fa').style.display = 'none';
+        document.getElementById('real-2fa').style.display = 'block';
+      }
+    }
+
+    function parseUserAgent(ua) {
+      if (!ua) return { name: 'Unknown Device', browser: '' };
+      let os = 'Unknown OS', browser = 'Unknown Browser';
+      if (ua.includes('Windows')) os = 'Windows';
+      else if (ua.includes('Mac OS X')) os = 'Mac OS';
+      else if (ua.includes('Linux')) os = 'Linux';
+      else if (ua.includes('Android')) os = 'Android';
+      else if (ua.includes('iOS') || ua.includes('iPhone') || ua.includes('iPad')) os = 'iOS';
+      
+      if (ua.includes('Chrome') || ua.includes('CriOS')) browser = 'Chrome';
+      else if (ua.includes('Firefox') || ua.includes('FxiOS')) browser = 'Firefox';
+      else if (ua.includes('Safari') && !ua.includes('Chrome')) browser = 'Safari';
+      else if (ua.includes('Edge') || ua.includes('Edg/')) browser = 'Edge';
+      
+      return { name: `${os} - ${browser}`, browser: browser.toLowerCase() };
+    }
+
+    async function fetchSessions() {
+      try {
+        const response = await fetch(`${API_BASE}/security/sessions`, { headers });
+        const res = await response.json();
+        if (res.success && res.data) {
+          const container = document.getElementById('active-sessions');
+          container.innerHTML = '';
+          res.data.forEach(sess => {
+            const date = new Date(sess.last_activity).toLocaleString();
+            let icon = 'ti-device-desktop';
+            let color = 'var(--text)';
+            
+            const parsed = parseUserAgent(sess.device_name);
+            const devName = parsed.name;
+            const devBrowser = parsed.browser;
+            
+            if(devBrowser === 'chrome') { icon = 'ti-brand-chrome'; color = 'var(--primary)'; }
+            else if(devBrowser === 'safari') { icon = 'ti-brand-safari'; color = 'var(--secondary)'; }
+            else if(devBrowser === 'firefox') { icon = 'ti-brand-firefox'; color = '#e17055'; }
+            else if(devBrowser === 'edge') { icon = 'ti-brand-edge'; color = '#0078D7'; }
+
+            const actionBtn = sess.is_current 
+              ? `<span class="badge badge-success" style="white-space:nowrap;padding:4px 10px">Current</span>`
+              : `<button class="btn btn-danger btn-sm" style="white-space:nowrap;padding:4px 10px" onclick="revokeSession('${sess.id}')"><i class="ti ti-x"></i> Revoke</button>`;
+
+            container.innerHTML += `
+              <div style="background:var(--bg);border-radius:12px;padding:14px;font-size:13px;margin-bottom:8px;border:1px solid var(--border)" id="sess-${sess.id}">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+                  <span style="font-weight:600;display:flex;align-items:center;gap:6px"><i class="ti ${icon}" style="color:${color};font-size:16px;"></i> ${devName}</span>
+                  ${actionBtn}
+                </div>
+                <div style="font-size:11px;color:var(--text-hint);margin-top:6px;line-height:1.4">
+                  <div><strong>Last active:</strong> ${date}</div>
+                  <div><strong>IP:</strong> ${sess.ip_address || 'Unknown'}</div>
+                  <div style="opacity:0.6;font-size:10px;margin-top:2px">${sess.device_name}</div>
+                </div>
+              </div>
+            `;
+          });
+        }
+      } catch (err) {
+        console.error("Error fetching sessions:", err);
+      }
+    }
+
+    async function revokeSession(id) {
+      if (confirm(`Are you sure you want to revoke this session?`)) {
+        try {
+          const response = await fetch(`${API_BASE}/security/sessions/${id}/revoke`, { method: 'POST', headers });
+          const res = await response.json();
+          if (res.success) {
+            const el = document.getElementById('sess-' + id);
+            if (el) { el.style.opacity = '0'; el.style.transition = 'opacity 0.3s'; setTimeout(() => el.remove(), 300); }
+            saveToast(`Session revoked`);
+          } else {
+            saveToast(res.message || 'Error revoking session', true);
+          }
+        } catch (err) {
+          saveToast('Network error', true);
+        }
+      }
+    }
+
+    async function revokeAllSessions() {
+      if (confirm('Revoke all other active sessions? You will be the only one left logged in.')) {
+        try {
+          const response = await fetch(`${API_BASE}/security/sessions/revoke-all`, { method: 'POST', headers });
+          const res = await response.json();
+          if (res.success) {
+            saveToast('All other sessions revoked!');
+            fetchSessions();
+          } else {
+            saveToast(res.message || 'Error revoking sessions', true);
+          }
+        } catch (err) {
+          saveToast('Network error', true);
+        }
+      }
+    }
+
+    function enableSecurityEdit() {
+      document.getElementById("sec-timeout").removeAttribute("readonly");
+      
+      document.getElementById("global-edit-btn").style.display = "none";
+      document.getElementById("global-save-btn").style.display = "inline-flex";
+
+      saveToast("Edit mode enabled");
+    }
+
+    async function saveSecurity() {
+      const payload = {
+        ...currentSecuritySettings,
+        sessionTimeout: parseInt(document.getElementById('sec-timeout').value) || 30
+      };
+
+      try {
+        const response = await fetch(`${API_BASE}/settings/security`, {
+          method: 'PUT',
+          headers,
+          body: JSON.stringify(payload)
+        });
+        const res = await response.json();
+        
+        if (res.success) {
+          document.getElementById("sec-timeout").setAttribute("readonly", true);
+          
+          document.getElementById("global-edit-btn").style.display = "inline-flex";
+          document.getElementById("global-save-btn").style.display = "none";
+
+          saveToast("Security settings saved!");
+        } else {
+          saveToast(res.message || "Failed to save", true);
+        }
+      } catch (err) {
+        saveToast("Network error", true);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      fetchSecuritySettings();
+      fetchSessions();
+    });
+  </script>
+  <script type="module" src="firebase.js"></script>
+</body>
+
+</html>

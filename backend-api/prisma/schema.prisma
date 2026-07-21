@@ -1,0 +1,419 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model audit_logs {
+  id          BigInt   @id(map: "PK__audit_lo__3213E83F33D73A3A") @default(autoincrement())
+  user_id     String?  @db.VarChar(36)
+  user_name   String?  @db.VarChar(150)
+  user_role   String?  @db.VarChar(50)
+  action      String   @db.VarChar(100)
+  entity_type String?  @db.VarChar(50)
+  entity_id   String?  @db.VarChar(50)
+  old_value   String?  @db.Text
+  new_value   String?  @db.Text
+  description String?  @db.VarChar(500)
+  ip_address  String?  @db.VarChar(45)
+  user_agent  String?  @db.VarChar(500)
+  created_at  DateTime @default(now())
+  users       users?   @relation(fields: [user_id], references: [id], onUpdate: NoAction, map: "FK__audit_log__user___72C60C4A")
+
+  @@index([created_at(sort: Desc)], map: "IX_audit_created")
+  @@index([entity_type, entity_id], map: "IX_audit_entity")
+  @@index([user_id, created_at(sort: Desc)], map: "IX_audit_user")
+}
+
+model complaint_categories {
+  id                   Int       @id(map: "PK__complain__3213E83F3DD5A649") @default(autoincrement())
+  name                 String    @unique(map: "UQ_complaint_categories_name") @db.VarChar(100)
+  description          String?   @db.VarChar(500)
+  icon                 String?   @db.VarChar(50)
+  routing_type         String    @default("DEPARTMENT_ROUTED") @db.VarChar(50)
+  routing_key          String?   @db.VarChar(100)
+  sort_order           Int       @default(0)
+  sla_response_hours   Int       @default(24)
+  sla_escalation_hours Int       @default(48)
+  sla_resolution_hours Int       @default(72)
+  is_active            Boolean   @default(true)
+  created_at           DateTime  @default(now())
+  tickets              tickets[]
+}
+
+model departments {
+  id          Int      @id(map: "PK__departme__3213E83FBEFDD360") @default(autoincrement())
+  name        String   @unique(map: "UQ_departments_name") @db.VarChar(150)
+  code        String?  @db.VarChar(20)
+  hod_user_id String?  @db.VarChar(36)
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now())
+
+  // FIX 1: Verified dynamically linked with onDelete: NoAction
+  users_departments_hod_user_idTousers users? @relation("departments_hod_user_idTousers", fields: [hod_user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_departments_hod")
+
+  locations                              locations[]
+  users_users_department_idTodepartments users[]     @relation("users_department_idTodepartments")
+  escalation_assignments                 escalation_assignments[]
+}
+
+model escalation_history {
+  id            BigInt   @id(map: "PK__escalati__3213E83F5515FDDC") @default(autoincrement())
+  ticket_id     String   @db.VarChar(30)
+  from_level    Int      @db.SmallInt
+  to_level      Int      @db.SmallInt
+  from_assignee String?  @db.VarChar(150)
+  to_assignee   String?  @db.VarChar(150)
+  reason        String   @db.VarChar(500)
+  escalated_by  String?  @db.VarChar(150)
+  user_id       String?  @db.VarChar(36)
+  escalated_at  DateTime @default(now())
+  tickets       tickets  @relation(fields: [ticket_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK__escalatio__ticke__6754599E")
+  users         users?   @relation(fields: [user_id], references: [id], onUpdate: NoAction, map: "FK__escalatio__user___68487DD7")
+
+  @@index([ticket_id, escalated_at(sort: Desc)], map: "IX_escalation_ticket")
+}
+
+model locations {
+  id            Int          @id(map: "PK__location__3213E83F02E81331") @default(autoincrement())
+  name          String       @unique(map: "UQ_locations_name") @db.VarChar(100)
+  internal_code String?      @db.VarChar(50)
+  block         String?      @db.VarChar(100)
+  floor         String?      @db.VarChar(20)
+  department_id Int?
+  routing_type  String       @default("DEPARTMENT_ROUTED") @db.VarChar(50)
+  routing_key   String?      @db.VarChar(100)
+  category      String       @default("General") @db.VarChar(50)
+  is_active     Boolean      @default(true)
+  created_at    DateTime     @default(now())
+  departments   departments? @relation(fields: [department_id], references: [id], onUpdate: NoAction, map: "FK__locations__depar__45F365D3")
+  qr_codes      qr_codes[]
+  tickets       tickets[]
+  academic_QR_sublocations academic_QR_sublocations[]
+}
+
+model notifications {
+  id              String   @id(map: "PK__notifica__3213E83F850DB87A") @db.VarChar(36)
+  user_id         String?  @db.VarChar(36)
+  title           String   @db.VarChar(255)
+  body            String
+  type            String   @db.VarChar(50)
+  ticket_id       String?  @db.VarChar(30)
+  is_read         Boolean  @default(false)
+  privileged_only Boolean  @default(false)
+  created_at      DateTime @default(now())
+  tickets         tickets? @relation(fields: [ticket_id], references: [id], onUpdate: NoAction, map: "FK__notificat__ticke__6D0D32F4")
+  users           users?   @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK__notificat__user___6C190EBB")
+
+  @@index([user_id, is_read, created_at(sort: Desc)], map: "IX_notifications_user_unread")
+}
+
+model qr_codes {
+  id               Int                     @id(map: "PK__qr_codes__3213E83FFE3896C7") @default(autoincrement())
+  location_id      Int
+  sub_location_id  Int?
+  qr_token         String                  @unique(map: "IX_qr_token") @db.VarChar(64)
+  qr_image_url     String?                 @db.VarChar(500)
+  qr_image_base64  String?                 @db.Text
+  is_active        Boolean                 @default(true)
+  generated_by     String?                 @db.VarChar(36)
+  generated_at     DateTime                @default(now())
+  expires_at       DateTime?
+
+  // FIX 3: Verified inside qr_codes model with onDelete: NoAction
+  users             users?                  @relation(fields: [generated_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK__qr_codes__genera__4D94879B")
+
+  locations locations @relation(fields: [location_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK__qr_codes__locati__4BAC3F29")
+}
+
+/// Academic floor sub-locations — represent specific spots within a building/location
+/// (e.g., "Room 101", "Lab A", "Staff Room") that have their own QR codes.
+model academic_QR_sublocations {
+  id          Int        @id @default(autoincrement())
+  location_id Int
+  name        String     @db.VarChar(100)
+  description String?    @db.VarChar(255)
+  is_active   Boolean    @default(true)
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @default(now())
+
+  locations locations  @relation(fields: [location_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK__subloc__location")
+
+  @@index([location_id], map: "IX_subloc_location")
+}
+
+model ticket_updates {
+  id          BigInt   @id(map: "PK__ticket_u__3213E83F47A92BA5") @default(autoincrement())
+  ticket_id   String   @db.VarChar(30)
+  message     String
+  update_type String   @default("remark") @db.VarChar(30)
+  updated_by  String   @db.VarChar(150)
+  user_id     String?  @db.VarChar(36)
+  created_at  DateTime @default(now())
+  tickets     tickets  @relation(fields: [ticket_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK__ticket_up__ticke__619B8048")
+  users       users?   @relation(fields: [user_id], references: [id], onUpdate: NoAction, map: "FK__ticket_up__user___6383C8BA")
+
+  @@index([ticket_id, created_at(sort: Desc)], map: "IX_ticket_updates_ticket")
+}
+
+model tickets {
+  id                   String               @id(map: "PK__tickets__3213E83F2479ACDE") @db.VarChar(30)
+  title                String               @db.VarChar(255)
+  description          String               @db.VarChar(2000)
+  location_id          Int
+  location_name        String               @db.VarChar(100)
+  category_id          Int
+  category_name        String               @db.VarChar(100)
+  ticket_type          String               @default("COMPLAINT") @db.VarChar(50)
+  priority             Int                  @default(1) @db.SmallInt
+  status               Int                  @default(0) @db.SmallInt
+  escalation_level     Int                  @default(1) @db.SmallInt
+  assigned_to_name     String?              @db.VarChar(150)
+  assigned_role        String?              @db.VarChar(100)
+  has_photo            Boolean              @default(false)
+  photo_url            String?              @db.VarChar(500)
+  creator_id           String               @db.VarChar(36)
+  creator_name         String               @db.VarChar(150)
+  creator_role         String               @db.VarChar(50)
+  resolved_at          DateTime?
+  closed_at            DateTime?
+  created_at           DateTime             @default(now())
+  updated_at           DateTime             @default(now())
+  is_deleted           Boolean              @default(false)
+  deleted_at           DateTime?            @db.Timestamp(3)
+  ticket_number        String?              @unique(map: "UQ_ticket_number") @db.VarChar(30)
+  escalation_history   escalation_history[]
+  notifications        notifications[]
+  ticket_assignments   ticket_assignments[]
+  ticket_updates       ticket_updates[]
+  complaint_categories complaint_categories @relation(fields: [category_id], references: [id], onUpdate: NoAction, map: "FK__tickets__categor__5812160E")
+  users                users                @relation(fields: [creator_id], references: [id], onUpdate: NoAction, map: "FK__tickets__creator__5CD6CB2B")
+  locations            locations            @relation(fields: [location_id], references: [id], onUpdate: NoAction, map: "FK__tickets__locatio__571DF1D5")
+
+  @@index([category_id], map: "IX_tickets_category")
+  @@index([created_at(sort: Desc)], map: "IX_tickets_created_desc")
+  @@index([creator_id], map: "IX_tickets_creator")
+  @@index([location_id], map: "IX_tickets_location")
+  @@index([status], map: "IX_tickets_status")
+}
+
+model users {
+  id                                                               String               @id(map: "PK__users__3213E83F8185631D") @db.VarChar(36)
+  name                                                             String               @db.VarChar(150)
+  email                                                            String               @unique(map: "UQ_users_email") @db.VarChar(255)
+  password_hash                                                    String               @db.VarChar(255)
+  role                                                             Int                  @db.SmallInt
+  department_id                                                    Int?
+  roll_no                                                          String?              @db.VarChar(50)
+  program_type                                                     String?              @db.VarChar(10)
+  branch                                                           String?              @db.VarChar(50)
+  study_year                                                       String?              @db.VarChar(20)
+  designation                                                      String?              @db.VarChar(100)
+  avatar_url                                                       String?              @db.VarChar(500)
+  is_active                                                        Boolean              @default(true)
+  last_login_at                                                    DateTime?
+  last_google_login                                                DateTime?
+  // SSO: enforce unique google_sub to prevent duplicate account links.
+  // Multiple NULLs allowed in SQL Server, so existing rows remain valid.
+  google_sub                                                       String?              @unique(map: "UQ_users_google_sub") @db.VarChar(255)
+  google_email                                                     String?              @db.VarChar(255)
+  auth_provider                                                    String               @default("LOCAL") @db.VarChar(20)
+  created_at                                                       DateTime             @default(now())
+  updated_at                                                       DateTime             @default(now())
+  audit_logs                                                       audit_logs[]
+  departments_departments_hod_user_idTousers                       departments[]        @relation("departments_hod_user_idTousers")
+  escalation_history                                               escalation_history[]
+  notifications                                                    notifications[]
+  qr_codes                                                         qr_codes[]
+  ticket_updates                                                   ticket_updates[]
+  tickets                                                          tickets[]
+  global_assignments                                               global_assignments[]
+  ticket_assignments_ticket_assignments_assigned_to_user_idTousers ticket_assignments[] @relation("ticket_assignments_assignee")
+  ticket_assignments_ticket_assignments_assigned_byTousers         ticket_assignments[] @relation("ticket_assignments_assigner")
+
+  // FIX 2: Verified inside users model with onDelete: NoAction
+  departments_users_department_idTodepartments departments? @relation("users_department_idTodepartments", fields: [department_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK__users__departmen__3E52440B")
+
+  user_fcm_tokens               user_fcm_tokens[]
+  user_notification_preferences user_notification_preferences?
+  escalation_assignments        escalation_assignments[]
+
+  @@index([department_id], map: "IX_users_department")
+  @@index([email], map: "IX_users_email")
+  @@index([role], map: "IX_users_role")
+}
+
+model user_fcm_tokens {
+  token      String   @id @db.VarChar(500)
+  user_id    String   @db.VarChar(36)
+  device_id  String?  @db.VarChar(100)
+  updated_at DateTime @default(now())
+  users      users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@index([device_id])
+}
+
+model user_notification_preferences {
+  user_id            String   @id @db.VarChar(36)
+  ticket_assignments Boolean  @default(true)
+  escalations        Boolean  @default(true)
+  resolutions        Boolean  @default(true)
+  reminders          Boolean  @default(true)
+  announcements      Boolean  @default(true)
+  updated_at         DateTime @default(now())
+  users              users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model global_assignments {
+  id               Int       @id @default(autoincrement())
+  routing_key      String    @db.VarChar(100)
+  user_id          String    @db.VarChar(36)
+  /// Which escalation level this assignment is for (null = Level 1 / initial assignment).
+  /// For the same routing_key there can be one assignment per escalation_level.
+  escalation_level Int?      @db.SmallInt
+  is_active        Boolean   @default(true)
+  created_at       DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+  users            users     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([routing_key, escalation_level])
+  @@index([routing_key, is_active])
+  @@index([escalation_level])
+}
+
+/// Per-department escalation targets for Level 2 and Level 3.
+/// Falls back when no global_assignment exists for a ticket's routing_key + escalation_level.
+model escalation_assignments {
+  id               Int       @id @default(autoincrement())
+  department_id    Int
+  escalation_level Int       @db.SmallInt   // 2 or 3
+  user_id          String    @db.VarChar(36)
+  is_active        Boolean   @default(true)
+  created_at       DateTime  @default(now())
+  updated_at       DateTime  @updatedAt
+  users            users     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  departments      departments @relation(fields: [department_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([department_id, escalation_level])
+  @@index([department_id, is_active])
+  @@index([escalation_level])
+}
+
+model ticket_assignments {
+  id                  BigInt   @id @default(autoincrement())
+  ticket_id           String   @db.VarChar(30)
+  assigned_to_user_id String?  @db.VarChar(36)
+  assigned_by         String?  @db.VarChar(36)
+  assignment_reason   String   @db.VarChar(500)
+  escalation_level    Int      @default(1) @db.SmallInt
+  assigned_at         DateTime @default(now())
+
+  tickets  tickets @relation(fields: [ticket_id], references: [id], onDelete: Cascade)
+  assignee users?  @relation("ticket_assignments_assignee", fields: [assigned_to_user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  assigner users?  @relation("ticket_assignments_assigner", fields: [assigned_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([ticket_id, assigned_at(sort: Desc)])
+  @@index([assigned_to_user_id])
+  @@index([assigned_by])
+}
+
+model idempotency_keys {
+  key           String    @id @db.VarChar(100)
+  user_id       String    @db.VarChar(36)
+  request_path  String    @db.VarChar(255)
+  request_hash  String    @db.VarChar(64)
+  status        String    @db.VarChar(20)
+  status_code   Int?
+  response_body String?   @db.Text
+  created_at    DateTime  @default(now())
+  expires_at    DateTime?
+
+  @@index([user_id, created_at(sort: Desc)])
+  @@index([status])
+}
+
+model system_settings {
+  key        String   @id @db.VarChar(100)
+  value      String   @db.Text
+  updated_by String?  @db.VarChar(100)
+  updated_at DateTime @updatedAt
+}
+
+model user_sessions {
+  id            String    @id @db.VarChar(100)
+  user_id       String    @db.VarChar(36)
+  jwt_id        String    @db.VarChar(100)
+  device_name   String    @db.VarChar(255)
+  ip_address    String    @db.VarChar(45)
+  is_revoked    Boolean   @default(false)
+  last_activity DateTime  @default(now())
+  created_at    DateTime  @default(now())
+  revoked_at    DateTime?
+
+  @@index([user_id])
+  @@index([jwt_id])
+}
+
+/// Short-lived tokens issued after successful QR scan.
+/// Consumed atomically during ticket creation (used=true via updateMany).
+/// TTL: 5 minutes. Cleaned up hourly by qr-session-cleanup cron.
+model qr_verification_sessions {
+  id            String   @id @default(uuid()) @db.VarChar(36)
+  token         String   @unique @db.VarChar(36) // crypto.randomUUID()
+  user_id       String   @db.VarChar(36)
+  location_id   Int
+  issued_at     DateTime @default(now())
+  expires_at    DateTime // NOW() + 5 minutes
+  used          Boolean  @default(false)
+  created_by_ip String?  @db.VarChar(50)
+  device_id     String?  @db.VarChar(100)
+
+  @@index([token])
+  @@index([user_id, expires_at])
+  @@index([location_id])
+  @@index([used])
+}
+
+/// System-designated privilege levels for staff.
+/// Replaces hardcoded designation strings throughout the codebase.
+model designations {
+  id          Int      @id(map: "PK__designations") @default(autoincrement())
+  name        String   @unique(map: "UQ_designations_name") @db.VarChar(100)
+  description String?  @db.VarChar(255)
+  /// Users with this designation see ALL tickets (e.g. Admin, Principal, Director, Dean)
+  is_privileged  Boolean @default(false)
+  /// Users with this designation act as HODs (Head of Department)
+  is_hod         Boolean @default(false)
+  /// Users with this designation can be auto-escalation targets (Level 2, Level 3)
+  can_escalate   Boolean @default(false)
+  /// Escalation level this designation maps to (null = not an escalation target)
+  escalation_level Int?   @db.SmallInt
+  is_active    Boolean  @default(true)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  @@index([is_privileged])
+  @@index([can_escalate])
+  @@index([escalation_level])
+}
+
+model QR_MASTER {
+  Id          Int      @id @default(autoincrement())
+  QrNumber    String   @unique(map: "UQ_QR_MASTER_QrNumber") @db.VarChar(50)
+  Location    String   @db.VarChar(100)
+  Block       String   @db.VarChar(100)
+  Floor       String   @db.VarChar(100)
+  QrValue     String   @db.VarChar(500)
+  PngPath     String   @db.VarChar(500)
+  PdfPath     String?  @db.VarChar(500)
+  CreatedDate    DateTime @default(now())
+  UpdatedDate    DateTime @default(now()) @updatedAt
+  Status         String   @default("Active") @db.VarChar(50)
+  QrImageBase64  String?  @db.Text
+}

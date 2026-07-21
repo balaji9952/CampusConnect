@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Designations — Campus Connect</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/admin-shared.css">
+  <script src="assets/js/theme.js"></script>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-badge">
+        <div class="logo-icon">
+          <img src="assets/images/mzcetlogo.jpg" alt="Campus Connect Logo">
+        </div>
+        <div>
+          <div class="logo-text">Campus Connect</div>
+          <div class="logo-sub">Admin Portal</div>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-nav">
+      <div class="nav-group">
+        <div class="nav-section-label">Management</div>
+        <a class="nav-item" href="user-management.html">
+          <span class="nav-icon-wrap"><i class="ti ti-users nav-icon"></i></span>
+          <span class="nav-label">User Management</span>
+        </a>
+        <a class="nav-item" href="department-management.html">
+          <span class="nav-icon-wrap"><i class="ti ti-building nav-icon"></i></span>
+          <span class="nav-label">Department Management</span>
+        </a>
+        <a class="nav-item" href="department-dashboards.html">
+          <span class="nav-icon-wrap"><i class="ti ti-layout-dashboard nav-icon"></i></span>
+          <span class="nav-label">Department Dashboards</span>
+        </a>
+        <a class="nav-item" href="location-qr.html">
+          <span class="nav-icon-wrap"><i class="ti ti-map-pin nav-icon"></i></span>
+          <span class="nav-label">Location and QR</span>
+        </a>
+        <a class="nav-item" href="complaint-categories.html">
+          <span class="nav-icon-wrap"><i class="ti ti-tag nav-icon"></i></span>
+          <span class="nav-label">Complaint Categories</span>
+        </a>
+        <a class="nav-item" href="escalation-routing.html">
+          <span class="nav-icon-wrap"><i class="ti ti-arrows-exchange nav-icon"></i></span>
+          <span class="nav-label">Escalation Routing</span>
+        </a>
+        <a class="nav-item" href="escalation-settings.html">
+          <span class="nav-icon-wrap"><i class="ti ti-trending-up nav-icon"></i></span>
+          <span class="nav-label">Escalation Settings</span>
+        </a>
+        <a class="nav-item active" href="designations.html">
+          <span class="nav-icon-wrap"><i class="ti ti-id-badge nav-icon"></i></span>
+          <span class="nav-label">Designations</span>
+        </a>
+        <a class="nav-item" href="security-settings.html">
+          <span class="nav-icon-wrap"><i class="ti ti-shield-lock nav-icon"></i></span>
+          <span class="nav-label">Security Settings</span>
+        </a>
+        <a class="nav-item" href="backup-restore.html">
+          <span class="nav-icon-wrap"><i class="ti ti-database nav-icon"></i></span>
+          <span class="nav-label">Backup and Restore</span>
+        </a>
+        <a class="nav-item" href="audit-logs.html">
+          <span class="nav-icon-wrap"><i class="ti ti-clipboard-list nav-icon"></i></span>
+          <span class="nav-label">Audit Logs</span>
+        </a>
+        <a class="nav-item" href="profile-settings.html">
+          <span class="nav-icon-wrap"><i class="ti ti-user-circle nav-icon"></i></span>
+          <span class="nav-label">Profile Settings</span>
+        </a>
+        <a class="nav-item" href="login.html" onclick="return confirm('Are you sure you want to logout?')">
+          <span class="nav-icon-wrap"><i class="ti ti-logout nav-icon"></i></span>
+          <span class="nav-label">Logout</span>
+        </a>
+      </div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="admin-card">
+        <div class="admin-avatar" id="sidebar-avatar">RK</div>
+        <div>
+          <div class="admin-name" id="sidebar-name">Admin</div>
+          <div class="admin-role" id="sidebar-role">Administrator</div>
+        </div>
+        <div class="admin-menu-btn"><i class="ti ti-dots-vertical"></i></div>
+      </div>
+    </div>
+  </nav>
+  <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="btn btn-outline btn-icon mobile-nav-btn" onclick="openSidebar()"><i class="ti ti-menu-2"></i></button>
+        <div>
+          <div class="page-title">Designations</div>
+          <div class="breadcrumb">Admin <i class="ti ti-chevron-right" style="font-size:10px"></i> <span>Designations</span></div>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button id="theme-toggle-btn" class="btn-theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode"><i class="ti ti-moon"></i></button>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Staff Designations</div>
+          <div class="section-desc">Define roles and escalation levels for staff members. Changes take effect immediately.</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <div class="input-icon-wrap">
+            <i class="ti ti-search"></i>
+            <input type="text" id="search-input" class="form-control" placeholder="Search designations..." style="width:200px;padding:8px 12px 8px 38px" oninput="filterDesignations()">
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openModal()"><i class="ti ti-plus"></i> Add Designation</button>
+        </div>
+      </div>
+
+      <!-- Stats row -->
+      <div class="grid-4" id="stats-row" style="margin-bottom:20px">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:var(--primary-bg);color:var(--primary)"><i class="ti ti-id-badge"></i></div>
+          <div class="stat-info"><div class="stat-value" id="stat-total">—</div><div class="stat-label">Total</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:var(--success-bg);color:var(--success)"><i class="ti ti-shield-check"></i></div>
+          <div class="stat-info"><div class="stat-value" id="stat-privileged">—</div><div class="stat-label">Privileged</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:var(--warning-bg);color:var(--warning)"><i class="ti ti-user-star"></i></div>
+          <div class="stat-info"><div class="stat-value" id="stat-hod">—</div><div class="stat-label">HODs</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:var(--danger-bg);color:var(--danger)"><i class="ti ti-trending-up"></i></div>
+          <div class="stat-info"><div class="stat-value" id="stat-escalate">—</div><div class="stat-label">Can Escalate</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Designation</th>
+                <th>Description</th>
+                <th>Privileged</th>
+                <th>HOD</th>
+                <th>Escalation Level</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="desig-table-body">
+              <tr><td colspan="7" style="text-align:center">Loading designations...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DESIGNATION MODAL -->
+  <div class="modal-overlay" id="desig-modal">
+    <div class="modal-card" style="max-width:500px">
+      <div class="modal-header">
+        <div class="modal-title" id="modal-title">Add Designation</div>
+        <button class="modal-close" onclick="closeModalFn('desig-modal')"><i class="ti ti-x"></i></button>
+      </div>
+      <input type="hidden" id="desig-original-name">
+
+      <div class="form-group">
+        <label class="form-label">Designation Name <span style="color:var(--danger)">*</span></label>
+        <input type="text" class="form-control" id="desig-name" placeholder="e.g. Dean, Lab Technician">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <input type="text" class="form-control" id="desig-desc" placeholder="Brief description of this role">
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Privileged</label>
+          <select class="form-control" id="desig-privileged">
+            <option value="false">No</option>
+            <option value="true">Yes — can see all tickets</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">HOD</label>
+          <select class="form-control" id="desig-hod">
+            <option value="false">No</option>
+            <option value="true">Yes — Head of Department</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Can Escalate</label>
+          <select class="form-control" id="desig-escalate" onchange="toggleEscalateLevel()">
+            <option value="false">No</option>
+            <option value="true">Yes — auto-escalation target</option>
+          </select>
+        </div>
+        <div class="form-group" id="esc-level-group" style="display:none">
+          <label class="form-label">Escalation Level</label>
+          <select class="form-control" id="desig-esc-level">
+            <option value="1">Level 1</option>
+            <option value="2">Level 2</option>
+            <option value="3">Level 3</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Status</label>
+        <select class="form-control" id="desig-active">
+          <option value="true">Active</option>
+          <option value="false">Inactive</option>
+        </select>
+      </div>
+
+      <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:24px">
+        <button class="btn btn-outline" onclick="closeModalFn('desig-modal')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveDesignation()"><i class="ti ti-check"></i> Save Designation</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"><i class="ti ti-circle-check"></i><span id="toast-msg">Changes saved!</span></div>
+
+  <script src="api/api.js"></script>
+  <script>
+    function toast(msg, isError = false) {
+      const t = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = msg;
+      t.style.background = isError ? 'var(--danger)' : 'var(--success)';
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3500);
+    }
+    function openSidebar() { document.getElementById('sidebar').classList.add('open'); document.getElementById('overlay').classList.add('show'); }
+    function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); }
+    function closeModalFn(id) { document.getElementById(id).classList.remove('show'); }
+
+    const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
+    let designations = [];
+
+    async function fetchDesignations() {
+      try {
+        document.getElementById('desig-table-body').innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px">Loading designations...</td></tr>';
+        const res = await fetch(`${API_BASE}/designations/admin`, { headers });
+        if (res.status === 401 || res.status === 403) return window.location.href = 'login.html';
+        const json = await res.json();
+        if (json.success) {
+          designations = json.data || [];
+          updateStats();
+          renderTable();
+        } else {
+          toast('Failed to load designations', true);
+        }
+      } catch (err) { toast('Network error loading designations', true); console.error(err); }
+    }
+
+    function updateStats() {
+      const total = designations.length;
+      const privileged = designations.filter(d => d.is_privileged).length;
+      const hod = designations.filter(d => d.is_hod).length;
+      const escalate = designations.filter(d => d.can_escalate).length;
+      document.getElementById('stat-total').textContent = total;
+      document.getElementById('stat-privileged').textContent = privileged;
+      document.getElementById('stat-hod').textContent = hod;
+      document.getElementById('stat-escalate').textContent = escalate;
+    }
+
+    function filterDesignations() {
+      const q = document.getElementById('search-input').value.toLowerCase().trim();
+      const filtered = designations.filter(d =>
+        d.name.toLowerCase().includes(q) ||
+        (d.description || '').toLowerCase().includes(q)
+      );
+      renderTable(filtered);
+    }
+
+    function renderTable(data) {
+      const rows = data || designations;
+      const tbody = document.getElementById('desig-table-body');
+      if (rows.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-hint)">No designations found.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = rows.map(d => {
+        const privBadge = d.is_privileged
+          ? '<span class="badge badge-success">Privileged</span>'
+          : '<span class="badge" style="background:var(--bg-surface);color:var(--text-hint)">No</span>';
+        const hodBadge = d.is_hod
+          ? '<span class="badge badge-primary">HOD</span>'
+          : '<span class="badge" style="background:var(--bg-surface);color:var(--text-hint)">No</span>';
+        const escBadge = d.can_escalate
+          ? `<span class="badge badge-warning">Level ${d.escalation_level}</span>`
+          : '<span class="badge" style="background:var(--bg-surface);color:var(--text-hint)">No</span>';
+        const statusBadge = d.is_active
+          ? '<span class="badge badge-success">Active</span>'
+          : '<span class="badge badge-danger">Inactive</span>';
+
+        return `<tr>
+          <td><span style="font-weight:600">${escHtml(d.name)}</span></td>
+          <td><span style="color:var(--text-hint)">${escHtml(d.description || '—')}</span></td>
+          <td>${privBadge}</td>
+          <td>${hodBadge}</td>
+          <td>${escBadge}</td>
+          <td>${statusBadge}</td>
+          <td>
+            <div class="td-actions">
+              <button class="btn btn-outline btn-icon btn-sm" onclick="editDesignation('${escAttr(d.name)}')" title="Edit"><i class="ti ti-edit"></i></button>
+              <button class="btn btn-danger btn-icon btn-sm" onclick="deleteDesignation('${escAttr(d.name)}')" title="Delete"><i class="ti ti-trash"></i></button>
+            </div>
+          </td>
+        </tr>`;
+      }).join('');
+    }
+
+    function escHtml(s) { return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+    function escAttr(s) { return (s || '').replace(/'/g, "\\'").replace(/"/g, '&quot;'); }
+
+    function toggleEscalateLevel() {
+      const val = document.getElementById('desig-escalate').value === 'true';
+      document.getElementById('esc-level-group').style.display = val ? '' : 'none';
+    }
+
+    function openModal() {
+      document.getElementById('desig-original-name').value = '';
+      document.getElementById('modal-title').textContent = 'Add Designation';
+      document.getElementById('desig-name').value = '';
+      document.getElementById('desig-desc').value = '';
+      document.getElementById('desig-privileged').value = 'false';
+      document.getElementById('desig-hod').value = 'false';
+      document.getElementById('desig-escalate').value = 'false';
+      document.getElementById('desig-esc-level').value = '2';
+      document.getElementById('desig-active').value = 'true';
+      toggleEscalateLevel();
+      document.getElementById('desig-modal').classList.add('show');
+    }
+
+    function editDesignation(name) {
+      const d = designations.find(x => x.name === name);
+      if (!d) return;
+      document.getElementById('desig-original-name').value = d.name;
+      document.getElementById('modal-title').textContent = 'Edit Designation';
+      document.getElementById('desig-name').value = d.name;
+      document.getElementById('desig-desc').value = d.description || '';
+      document.getElementById('desig-privileged').value = String(d.is_privileged);
+      document.getElementById('desig-hod').value = String(d.is_hod);
+      document.getElementById('desig-escalate').value = String(d.can_escalate);
+      document.getElementById('desig-esc-level').value = String(d.escalation_level || 2);
+      document.getElementById('desig-active').value = String(d.is_active);
+      toggleEscalateLevel();
+      document.getElementById('desig-modal').classList.add('show');
+    }
+
+    async function saveDesignation() {
+      const originalName = document.getElementById('desig-original-name').value;
+      const name = document.getElementById('desig-name').value.trim();
+      if (!name) { toast('Designation name is required', true); return; }
+
+      const payload = {
+        name,
+        description: document.getElementById('desig-desc').value.trim() || null,
+        is_privileged: document.getElementById('desig-privileged').value === 'true',
+        is_hod: document.getElementById('desig-hod').value === 'true',
+        can_escalate: document.getElementById('desig-escalate').value === 'true',
+        escalation_level: document.getElementById('desig-escalate').value === 'true'
+          ? parseInt(document.getElementById('desig-esc-level').value) : null,
+        is_active: document.getElementById('desig-active').value === 'true',
+      };
+
+      try {
+        let res;
+        if (originalName) {
+          res = await fetch(`${API_BASE}/designations/${encodeURIComponent(originalName)}`, {
+            method: 'PUT', headers, body: JSON.stringify(payload)
+          });
+        } else {
+          res = await fetch(`${API_BASE}/designations`, { method: 'POST', headers, body: JSON.stringify(payload) });
+        }
+        const json = await res.json();
+        if (json.success) {
+          toast(originalName ? 'Designation updated!' : 'Designation created!');
+          closeModalFn('desig-modal');
+          fetchDesignations();
+        } else {
+          toast(json.message || 'Operation failed', true);
+        }
+      } catch (err) { toast('Network error', true); console.error(err); }
+    }
+
+    async function deleteDesignation(name) {
+      if (!confirm(`Delete designation "${name}"?\n\nThis will only succeed if no users are using this designation.`)) return;
+      try {
+        const res = await fetch(`${API_BASE}/designations/${encodeURIComponent(name)}`, { method: 'DELETE', headers });
+        const json = await res.json();
+        if (json.success) {
+          toast('Designation deleted');
+          fetchDesignations();
+        } else {
+          toast(json.message || 'Cannot delete — users are using this designation', true);
+        }
+      } catch (err) { toast('Network error', true); }
+    }
+
+    fetchDesignations();
+  </script>
+  <script type="module" src="firebase.js"></script>
+</body>
+</html>

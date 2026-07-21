@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus Connect | Complaints Tracking Console</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Auth Protection Guard -->
+  <script src="js/auth.js"></script>
+  <style>
+    .filter-card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin-bottom: 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .search-group {
+      grid-column: span 2;
+      position: relative;
+    }
+
+    @media(max-width: 768px) {
+      .search-group {
+        grid-column: span 1;
+      }
+    }
+
+    .search-group input {
+      padding-left: 36px;
+    }
+
+    .search-group i {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--ink-faint);
+    }
+  </style>
+</head>
+<body class="role-dean">
+
+<div class="app-shell" id="appShell">
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <i class="fa-solid fa-shield-halved" style="font-size: 24px; color: var(--accent);"></i>
+      <div class="brand-text">
+        <div class="brand-name">Campus Connect</div>
+        <div class="brand-sub" id="sidebarBrandSub">Dean Console</div>
+      </div>
+    </div>
+
+    <div class="sidebar-authority">
+      <div class="badge-ring" id="sidebarBadgeRing">L2</div>
+      <div class="authority-text">
+        <div class="t1" id="sidebarAuthTitle">L2 Authority</div>
+        <div class="t2" id="sidebarAuthSub">Dean Escalation</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Overview</div>
+      <a href="dashboard.html" class="nav-link"><i class="fa-solid fa-house"></i><span>Dashboard</span></a>
+      <a href="complaints.html" class="nav-link active"><i class="fa-solid fa-layer-group"></i><span id="navEscalatedText">Level 2 Escalated</span></a>
+      
+      <div class="nav-section-title">Insights</div>
+      <a href="analytics.html" class="nav-link"><i class="fa-solid fa-chart-pie"></i><span>Analytics</span></a>
+      <a href="reports.html" class="nav-link"><i class="fa-solid fa-file-lines"></i><span>Reports</span></a>
+      
+      <div class="nav-section-title">Account</div>
+      <a href="notifications.html" class="nav-link"><i class="fa-solid fa-bell"></i><span>Notifications</span></a>
+      <a href="profile.html" class="nav-link"><i class="fa-solid fa-user-gear"></i><span>Profile & Settings</span></a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="#" class="nav-link" onclick="performLogout(); return false;" style="margin-top:auto;"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN CONTENT ============ -->
+  <main class="main-col">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="sidebar-toggle" id="sidebarToggle"><i class="fa-solid fa-bars"></i></button>
+        <div class="page-title">
+          <h1 id="pageHeadingTitle">Complaints tracking</h1>
+          <div class="breadcrumb" id="currentDateTime">Loading date...</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <!-- Notification Icon -->
+        <a href="notifications.html" class="icon-btn" style="position:relative; text-decoration:none;">
+          <i class="fa-solid fa-bell"></i>
+          <span id="notifBadge" style="display:none; position:absolute; top:-4px; right:-4px; background:#ef4444; color:white; font-size:9px; font-weight:bold; width:16px; height:16px; border-radius:50%; align-items:center; justify-content:center; border:2px solid white;">0</span>
+        </a>
+
+        <!-- User Profile Dropdown -->
+        <button class="profile-chip" id="profileChipBtn" onclick="toggleProfileDropdown(event)">
+          <div class="avatar-initial" id="profileAvatar">U</div>
+          <div style="text-align:left;">
+            <div class="p-name" id="profileName">Loading User...</div>
+            <div class="p-role" id="profileRole">Role</div>
+          </div>
+          <i class="fa-solid fa-chevron-down chev"></i>
+        </button>
+        
+        <div class="dropdown-panel" id="profileDropdown">
+          <a href="profile.html" class="dd-item"><i class="fa-solid fa-user"></i> My Profile</a>
+          <a href="settings.html" class="dd-item"><i class="fa-solid fa-gear"></i> Settings</a>
+          <div class="dd-divider"></div>
+          <a href="#" class="dd-item" onclick="performLogout(); return false;"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <div class="content">
+      <!-- Filter controls -->
+      <div class="filter-card">
+        <div class="search-group">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" class="form-control" id="searchBar" placeholder="Search by student, ID, department..." oninput="filterTickets()">
+        </div>
+        <div>
+          <select class="form-control" id="statusFilter" onchange="filterTickets()">
+            <option value="all">All Statuses</option>
+            <option value="0">Open (Pending)</option>
+            <option value="1">In Progress</option>
+            <option value="2">Resolved</option>
+            <option value="4">Closed</option>
+          </select>
+        </div>
+        <div>
+          <select class="form-control" id="priorityFilter" onchange="filterTickets()">
+            <option value="all">All Priorities</option>
+            <option value="1">Low</option>
+            <option value="2">Medium</option>
+            <option value="3">Critical</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Complaints List Card -->
+      <div class="card">
+        <div class="card-header">
+          <h3 id="tableTitleText">Complaints Console</h3>
+          <span id="ticketCountBadge" class="badge badge-open" style="border-radius:12px; font-size:11px;">0 Complaints</span>
+        </div>
+        <div class="card-body table-wrap">
+          <table class="data-table" id="complaintsTable">
+            <thead>
+              <tr>
+                <th>Complaint ID</th>
+                <th>Student</th>
+                <th>Department</th>
+                <th>Category</th>
+                <th>Priority</th>
+                <th>Date Filed</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="complaintsTableBody">
+              <tr>
+                <td colspan="8" style="text-align:center; padding:40px; color:var(--ink-faint);">
+                  <i class="fa-solid fa-spinner fa-spin" style="margin-right:8px;"></i> Loading complaints from database...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Detailed Complaint Modal Root -->
+<div class="modal-overlay" id="detailModalRoot"></div>
+
+<!-- API & Page Logic scripts -->
+<script src="js/api.js"></script>
+<script src="js/complaint-modal.js"></script>
+<script>
+  let allTickets = [];
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    // Skin body and sidebar based on role
+    const role = window.currentRole; // 'dean', 'director', or 'principal'
+    document.body.className = `role-${role}`;
+
+    // Update branding elements
+    const brandSub = document.getElementById('sidebarBrandSub');
+    const badgeRing = document.getElementById('sidebarBadgeRing');
+    const authTitle = document.getElementById('sidebarAuthTitle');
+    const authSub = document.getElementById('sidebarAuthSub');
+    const navEscalatedText = document.getElementById('navEscalatedText');
+    const pageHeadingTitle = document.getElementById('pageHeadingTitle');
+    const tableTitleText = document.getElementById('tableTitleText');
+
+    if (role === 'principal') {
+      brandSub.textContent = 'Principal Console';
+      badgeRing.textContent = 'L3';
+      authTitle.textContent = 'L3 Authority';
+      authSub.textContent = 'Principal Escalation';
+      navEscalatedText.innerHTML = 'Level 3 Escalated';
+      pageHeadingTitle.textContent = 'Principal Console';
+      tableTitleText.textContent = 'Level 3 Escalated Cases';
+    } else if (role === 'director') {
+      brandSub.textContent = 'Director Console';
+      badgeRing.textContent = 'DIR';
+      authTitle.textContent = 'Executive';
+      authSub.textContent = 'Director Review';
+      navEscalatedText.innerHTML = 'All Complaints';
+      pageHeadingTitle.textContent = 'Director Review Console';
+      tableTitleText.textContent = 'General Complaints';
+    } else {
+      // dean
+      brandSub.textContent = 'Dean Console';
+      badgeRing.textContent = 'L2';
+      authTitle.textContent = 'L2 Authority';
+      authSub.textContent = 'Dean Escalation';
+      navEscalatedText.innerHTML = 'Level 2 Escalated';
+      pageHeadingTitle.textContent = 'Dean Console';
+      tableTitleText.textContent = 'Level 2 Escalated Cases';
+    }
+
+    // Set Date & Time
+    const now = new Date();
+    document.getElementById('currentDateTime').textContent = now.toLocaleDateString("en-IN", {
+      weekday: "long", day: "numeric", month: "long", year: "numeric"
+    }) + " · " + now.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
+
+    // Set active user credentials
+    const user = window.currentUser;
+    if (user) {
+      document.getElementById('profileName').textContent = user.name;
+      document.getElementById('profileRole').textContent = `${user.designation} · Portal`;
+      document.getElementById('profileAvatar').textContent = user.name.split(' ').map(n=>n[0]).join('').substring(0, 2).toUpperCase();
+    }
+
+    // Sidebar Toggle
+    const toggleBtn = document.getElementById('sidebarToggle');
+    const shell = document.getElementById('appShell');
+    toggleBtn.addEventListener('click', () => {
+      shell.classList.toggle('collapsed');
+    });
+
+    // Initial data load
+    await loadComplaints();
+  });
+
+  async function loadComplaints() {
+    const role = window.currentRole;
+    
+    // Fetch notifications unread badge count
+    const unreadCount = await API.getUnreadCount();
+    const badge = document.getElementById('notifBadge');
+    if (unreadCount > 0) {
+      badge.textContent = unreadCount;
+      badge.style.display = 'flex';
+    } else {
+      badge.style.display = 'none';
+    }
+
+    // Fetch tickets from database
+    const ticketsResult = await API.getTickets();
+    let tickets = ticketsResult.data || [];
+
+    // Filter tickets based on role constraints
+    if (role === 'dean') {
+      tickets = tickets.filter(t => t.escalation_level === 2);
+    } else if (role === 'principal') {
+      tickets = tickets.filter(t => t.escalation_level === 3);
+    }
+
+    allTickets = tickets;
+    filterTickets();
+  }
+
+  function filterTickets() {
+    const searchQuery = document.getElementById('searchBar').value.toLowerCase().trim();
+    const statusVal = document.getElementById('statusFilter').value;
+    const priorityVal = document.getElementById('priorityFilter').value;
+
+    let filtered = [...allTickets];
+
+    // Status filter
+    if (statusVal !== 'all') {
+      filtered = filtered.filter(t => t.status === parseInt(statusVal));
+    }
+
+    // Priority filter
+    if (priorityVal !== 'all') {
+      filtered = filtered.filter(t => t.priority === parseInt(priorityVal));
+    }
+
+    // Search query
+    if (searchQuery) {
+      filtered = filtered.filter(t => 
+        (t.ticket_number && t.ticket_number.toLowerCase().includes(searchQuery)) ||
+        t.creator_name.toLowerCase().includes(searchQuery) ||
+        t.category_name.toLowerCase().includes(searchQuery) ||
+        t.location_name.toLowerCase().includes(searchQuery) ||
+        t.description.toLowerCase().includes(searchQuery)
+      );
+    }
+
+    // Update count badge
+    document.getElementById('ticketCountBadge').textContent = `${filtered.length} Complaints`;
+
+    // Render Table
+    const tbody = document.getElementById('complaintsTableBody');
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="8" style="text-align:center; padding:40px; color:var(--ink-faint);">
+            <i class="fa-solid fa-folder-open" style="font-size:24px; margin-bottom:8px; display:block;"></i>
+            No complaints matching the selected filters.
+          </td>
+        </tr>`;
+      return;
+    }
+
+    tbody.innerHTML = filtered.map(t => {
+      const s = getStatusLabelAndCls(t.status);
+      const p = getPriorityLabelAndCls(t.priority);
+      const dateStr = new Date(t.created_at).toLocaleDateString('en-IN', {
+        day: '2-digit', month: 'short', year: 'numeric'
+      });
+      return `
+        <tr>
+          <td class="id-cell">${t.ticket_number || t.id.substring(0, 8).toUpperCase()}</td>
+          <td>${t.creator_name}</td>
+          <td>${t.location_name.split(' - ')[0]}</td>
+          <td>${t.category_name}</td>
+          <td><span class="badge ${p.cls}">${p.label}</span></td>
+          <td class="mono">${dateStr}</td>
+          <td><span class="badge ${s.cls}">${s.label}</span></td>
+          <td>
+            <button class="btn btn-outline btn-sm" onclick="viewTicketDetails('${t.id}')">
+              <i class="fa-solid fa-eye"></i> View
+            </button>
+          </td>
+        </tr>`;
+    }).join('');
+  }
+
+  function getStatusLabelAndCls(status) {
+    if (status === 2) return { label: 'Resolved', cls: 'badge-resolved' };
+    if (status === 1) return { label: 'In Progress', cls: 'badge-in-progress' };
+    if (status === 4) return { label: 'Closed', cls: 'badge-closed' };
+    return { label: 'Open', cls: 'badge-pending' };
+  }
+
+  function getPriorityLabelAndCls(priority) {
+    if (priority === 3) return { label: 'Critical', cls: 'badge-critical' };
+    if (priority === 2) return { label: 'Medium', cls: 'badge-in-progress' };
+    return { label: 'Low', cls: 'badge-pending' };
+  }
+
+  async function viewTicketDetails(ticketId) {
+    const ticket = await API.getTicketById(ticketId);
+    if (ticket) {
+      ComplaintModal.open(ticket, loadComplaints);
+    } else {
+      alert('Could not retrieve ticket details.');
+    }
+  }
+
+  function toggleProfileDropdown(e) {
+    e.stopPropagation();
+    document.getElementById('profileDropdown').classList.toggle('open');
+  }
+
+  document.addEventListener('click', () => {
+    document.getElementById('profileDropdown').classList.remove('open');
+  });
+</script>
+</body>
+</html>

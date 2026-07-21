@@ -1,0 +1,78 @@
+# ==========================
+# Environment & Secrets
+# ==========================
+.env
+.env.*
+!.env.example
+
+firebase-service-account.json
+*firebase-adminsdk*.json
+*service-account*.json
+GoogleService-Info.plist
+google-services.json
+
+# ==========================
+# Node.js
+# ==========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+dist/
+build/
+coverage/
+
+# Prisma
+/src/generated/prisma/
+prisma/dev.db
+
+# ==========================
+# Flutter / Dart
+# ==========================
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub/
+.pub-cache/
+build/
+
+# Android
+android/.gradle/
+android/local.properties
+
+# iOS
+ios/Pods/
+ios/.symlinks/
+
+# ==========================
+# IDE
+# ==========================
+.vscode/
+.idea/
+
+# ==========================
+# Logs
+# ==========================
+*.log
+
+# ==========================
+# OS
+# ==========================
+.DS_Store
+Thumbs.db
+
+# ==========================
+# SQL Backups
+# ==========================
+*.bak
+
+# ==========================
+# Temporary Files
+# ==========================
+*.tmp
+*.cache
+tracked_files.txt
+*_diff.txt
+scratch/

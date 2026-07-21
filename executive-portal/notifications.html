@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus Connect | Executive Notifications Console</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Auth Protection Guard -->
+  <script src="js/auth.js"></script>
+  <style>
+    .notif-list-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .notif-card-item {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: all 0.2s;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .notif-card-item:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .notif-card-item.unread {
+      border-left: 4px solid var(--primary);
+      background: var(--bg-alt);
+    }
+
+    .notif-item-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #F1F5F9;
+      color: var(--ink-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .notif-card-item.unread .notif-item-icon {
+      background: #EFF6FF;
+      color: var(--primary);
+    }
+
+    .notif-item-content {
+      flex: 1;
+    }
+
+    .notif-item-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+
+    .notif-item-body {
+      font-size: 13px;
+      color: var(--ink-soft);
+      line-height: 1.4;
+    }
+
+    .notif-item-date {
+      font-size: 11px;
+      color: var(--ink-faint);
+      margin-top: 6px;
+    }
+
+    .mark-read-btn {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--primary);
+      cursor: pointer;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--card-border);
+      background: #FFFFFF;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .mark-read-btn:hover {
+      background: var(--bg-alt);
+    }
+  </style>
+</head>
+<body class="role-dean">
+
+<div class="app-shell" id="appShell">
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <i class="fa-solid fa-shield-halved" style="font-size: 24px; color: var(--accent);"></i>
+      <div class="brand-text">
+        <div class="brand-name">Campus Connect</div>
+        <div class="brand-sub" id="sidebarBrandSub">Dean Console</div>
+      </div>
+    </div>
+
+    <div class="sidebar-authority">
+      <div class="badge-ring" id="sidebarBadgeRing">L2</div>
+      <div class="authority-text">
+        <div class="t1" id="sidebarAuthTitle">L2 Authority</div>
+        <div class="t2" id="sidebarAuthSub">Dean Escalation</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Overview</div>
+      <a href="dashboard.html" class="nav-link"><i class="fa-solid fa-house"></i><span>Dashboard</span></a>
+      <a href="complaints.html" class="nav-link"><i class="fa-solid fa-layer-group"></i><span id="navEscalatedText">Level 2 Escalated</span></a>
+      
+      <div class="nav-section-title">Insights</div>
+      <a href="analytics.html" class="nav-link"><i class="fa-solid fa-chart-pie"></i><span>Analytics</span></a>
+      <a href="reports.html" class="nav-link"><i class="fa-solid fa-file-lines"></i><span>Reports</span></a>
+      
+      <div class="nav-section-title">Account</div>
+      <a href="notifications.html" class="nav-link active"><i class="fa-solid fa-bell"></i><span>Notifications</span></a>
+      <a href="profile.html" class="nav-link"><i class="fa-solid fa-user-gear"></i><span>Profile & Settings</span></a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="#" class="nav-link" onclick="performLogout(); return false;" style="margin-top:auto;"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN CONTENT ============ -->
+  <main class="main-col">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="sidebar-toggle" id="sidebarToggle"><i class="fa-solid fa-bars"></i></button>
+        <div class="page-title">
+          <h1 id="pageHeadingTitle">Notifications feed</h1>
+          <div class="breadcrumb" id="currentDateTime">Loading date...</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <!-- Notification Icon -->
+        <a href="notifications.html" class="icon-btn" style="position:relative; text-decoration:none;">
+          <i class="fa-solid fa-bell"></i>
+          <span id="notifBadge" style="display:none; position:absolute; top:-4px; right:-4px; background:#ef4444; color:white; font-size:9px; font-weight:bold; width:16px; height:16px; border-radius:50%; align-items:center; justify-content:center; border:2px solid white;">0</span>
+        </a>
+
+        <!-- User Profile Dropdown -->
+        <button class="profile-chip" id="profileChipBtn" onclick="toggleProfileDropdown(event)">
+          <div class="avatar-initial" id="profileAvatar">U</div>
+          <div style="text-align:left;">
+            <div class="p-name" id="profileName">Loading User...</div>
+            <div class="p-role" id="profileRole">Role</div>
+          </div>
+          <i class="fa-solid fa-chevron-down chev"></i>
+        </button>
+        
+        <div class="dropdown-panel" id="profileDropdown">
+          <a href="profile.html" class="dd-item"><i class="fa-solid fa-user"></i> My Profile</a>
+          <a href="settings.html" class="dd-item"><i class="fa-solid fa-gear"></i> Settings</a>
+          <div class="dd-divider"></div>
+          <a href="#" class="dd-item" onclick="performLogout(); return false;"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <div class="content">
+      <div class="card">
+        <div class="card-header">
+          <h3>Your Notification Feed</h3>
+          <span id="unreadCountBadge" class="badge badge-open">0 Unread</span>
+        </div>
+        <div class="card-body">
+          <div class="notif-list-container" id="notifList">
+            <div style="text-align:center; padding:30px; color:var(--ink-faint);">
+              <i class="fa-solid fa-spinner fa-spin" style="margin-right:8px;"></i> Loading notification feed from database...
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- API & Page Logic scripts -->
+<script src="js/api.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    // Skin body and sidebar based on role
+    const role = window.currentRole; // 'dean', 'director', or 'principal'
+    document.body.className = `role-${role}`;
+
+    // Update branding elements
+    const brandSub = document.getElementById('sidebarBrandSub');
+    const badgeRing = document.getElementById('sidebarBadgeRing');
+    const authTitle = document.getElementById('sidebarAuthTitle');
+    const authSub = document.getElementById('sidebarAuthSub');
+    const navEscalatedText = document.getElementById('navEscalatedText');
+    const pageHeadingTitle = document.getElementById('pageHeadingTitle');
+
+    if (role === 'principal') {
+      brandSub.textContent = 'Principal Console';
+      badgeRing.textContent = 'L3';
+      authTitle.textContent = 'L3 Authority';
+      authSub.textContent = 'Principal Escalation';
+      navEscalatedText.innerHTML = 'Level 3 Escalated';
+      pageHeadingTitle.textContent = 'Principal Notifications';
+    } else if (role === 'director') {
+      brandSub.textContent = 'Director Console';
+      badgeRing.textContent = 'DIR';
+      authTitle.textContent = 'Executive';
+      authSub.textContent = 'Director Review';
+      navEscalatedText.innerHTML = 'All Complaints';
+      pageHeadingTitle.textContent = 'Director Notifications';
+    } else {
+      // dean
+      brandSub.textContent = 'Dean Console';
+      badgeRing.textContent = 'L2';
+      authTitle.textContent = 'L2 Authority';
+      authSub.textContent = 'Dean Escalation';
+      navEscalatedText.innerHTML = 'Level 2 Escalated';
+      pageHeadingTitle.textContent = 'Dean Notifications';
+    }
+
+    // Set Date & Time
+    const now = new Date();
+    document.getElementById('currentDateTime').textContent = now.toLocaleDateString("en-IN", {
+      weekday: "long", day: "numeric", month: "long", year: "numeric"
+    }) + " · " + now.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
+
+    // Set active user credentials
+    const user = window.currentUser;
+    if (user) {
+      document.getElementById('profileName').textContent = user.name;
+      document.getElementById('profileRole').textContent = `${user.designation} · Portal`;
+      document.getElementById('profileAvatar').textContent = user.name.split(' ').map(n=>n[0]).join('').substring(0, 2).toUpperCase();
+    }
+
+    // Sidebar Toggle
+    const toggleBtn = document.getElementById('sidebarToggle');
+    const shell = document.getElementById('appShell');
+    toggleBtn.addEventListener('click', () => {
+      shell.classList.toggle('collapsed');
+    });
+
+    // Initial data load
+    await loadNotifications();
+  });
+
+  async function loadNotifications() {
+    // Fetch notifications count
+    const unreadCount = await API.getUnreadCount();
+    const badge = document.getElementById('notifBadge');
+    const unreadBadge = document.getElementById('unreadCountBadge');
+
+    if (unreadCount > 0) {
+      badge.textContent = unreadCount;
+      badge.style.display = 'flex';
+      unreadBadge.textContent = `${unreadCount} Unread`;
+      unreadBadge.className = 'badge badge-critical';
+    } else {
+      badge.style.display = 'none';
+      unreadBadge.textContent = '0 Unread';
+      unreadBadge.className = 'badge badge-resolved';
+    }
+
+    // Fetch all notifications from database
+    const list = await API.getNotifications();
+    const notifContainer = document.getElementById('notifList');
+
+    if (list.length === 0) {
+      notifContainer.innerHTML = `
+        <div style="text-align:center; padding:30px; color:var(--ink-faint);">
+          <i class="fa-solid fa-bell-slash" style="font-size:24px; margin-bottom:8px; display:block;"></i>
+          No notifications found in your feed.
+        </div>`;
+      return;
+    }
+
+    notifContainer.innerHTML = list.map(n => {
+      const dateStr = new Date(n.created_at).toLocaleString('en-IN');
+      const unreadClass = !n.is_read ? 'unread' : '';
+      const icon = n.type.includes('RESOLVED') ? 'fa-circle-check' : 'fa-envelope-open-text';
+      
+      const markReadBtnHtml = !n.is_read 
+        ? `<button class="mark-read-btn" onclick="markNotificationRead('${n.id}')">Mark Read</button>` 
+        : '';
+
+      return `
+        <div class="notif-card-item ${unreadClass}">
+          <div class="notif-item-icon">
+            <i class="fa-solid ${icon}"></i>
+          </div>
+          <div class="notif-item-content">
+            <div class="notif-item-title">${n.title}</div>
+            <div class="notif-item-body">${n.body}</div>
+            <div class="notif-item-date">${dateStr}</div>
+          </div>
+          ${markReadBtnHtml}
+        </div>`;
+    }).join('');
+  }
+
+  async function markNotificationRead(id) {
+    const success = await API.markNotificationRead(id);
+    if (success) {
+      await loadNotifications();
+    } else {
+      alert('Could not update notification read status.');
+    }
+  }
+
+  function toggleProfileDropdown(e) {
+    e.stopPropagation();
+    document.getElementById('profileDropdown').classList.toggle('open');
+  }
+
+  document.addEventListener('click', () => {
+    document.getElementById('profileDropdown').classList.remove('open');
+  });
+</script>
+</body>
+</html>

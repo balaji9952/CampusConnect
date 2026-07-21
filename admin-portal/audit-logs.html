@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Audit Logs — Campus Connect</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/admin-shared.css">
+  <script src="assets/js/theme.js"></script>
+</head>
+
+<body>
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-badge">
+        <div class="logo-icon">
+          <img src="assets/images/mzcetlogo.jpg" alt="Campus Connect Logo">
+        </div>
+        <div>
+          <div class="logo-text">Campus Connect</div>
+          <div class="logo-sub">Admin Portal</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-nav">
+      <div class="nav-group">
+        <div class="nav-section-label">Management</div>
+        <a class="nav-item" href="user-management.html">
+          <span class="nav-icon-wrap"><i class="ti ti-users nav-icon"></i></span>
+          <span class="nav-label">User Management</span>
+        </a>
+        <a class="nav-item" href="department-management.html">
+          <span class="nav-icon-wrap"><i class="ti ti-building nav-icon"></i></span>
+          <span class="nav-label">Department Management</span>
+        </a>
+        <a class="nav-item" href="department-dashboards.html">
+          <span class="nav-icon-wrap"><i class="ti ti-layout-dashboard nav-icon"></i></span>
+          <span class="nav-label">Department Dashboards</span>
+        </a>
+        <a class="nav-item" href="location-qr.html">
+          <span class="nav-icon-wrap"><i class="ti ti-map-pin nav-icon"></i></span>
+          <span class="nav-label">Location and QR</span>
+        </a>
+        <a class="nav-item" href="complaint-categories.html">
+          <span class="nav-icon-wrap"><i class="ti ti-tag nav-icon"></i></span>
+          <span class="nav-label">Complaint Categories</span>
+        </a>
+        <a class="nav-item" href="escalation-routing.html">
+          <span class="nav-icon-wrap"><i class="ti ti-arrows-exchange nav-icon"></i></span>
+          <span class="nav-label">Escalation Routing</span>
+        </a>
+        <a class="nav-item" href="escalation-settings.html">
+          <span class="nav-icon-wrap"><i class="ti ti-trending-up nav-icon"></i></span>
+          <span class="nav-label">Escalation Settings</span>
+        </a>
+        <a class="nav-item" href="designations.html">
+          <span class="nav-icon-wrap"><i class="ti ti-id-badge nav-icon"></i></span>
+          <span class="nav-label">Designations</span>
+        </a>
+        <a class="nav-item" href="security-settings.html">
+          <span class="nav-icon-wrap"><i class="ti ti-shield-lock nav-icon"></i></span>
+          <span class="nav-label">Security Settings</span>
+        </a>
+        <a class="nav-item" href="backup-restore.html">
+          <span class="nav-icon-wrap"><i class="ti ti-database nav-icon"></i></span>
+          <span class="nav-label">Backup and Restore</span>
+        </a>
+        <a class="nav-item active" href="audit-logs.html">
+          <span class="nav-icon-wrap"><i class="ti ti-clipboard-list nav-icon"></i></span>
+          <span class="nav-label">Audit Logs</span>
+        </a>
+        <a class="nav-item" href="profile-settings.html">
+          <span class="nav-icon-wrap"><i class="ti ti-user-circle nav-icon"></i></span>
+          <span class="nav-label">Profile Settings</span>
+        </a>
+        <a class="nav-item" href="login.html" onclick="return confirm('Are you sure you want to logout?')">
+          <span class="nav-icon-wrap">
+            <i class="ti ti-logout nav-icon"></i>
+          </span>
+          <span class="nav-label">Logout</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="admin-card">
+        <div class="admin-avatar">RK</div>
+        <div>
+          <div class="admin-name">Raj Kumar</div>
+          <div class="admin-role">Super Administrator</div>
+        </div>
+        <div class="admin-menu-btn"><i class="ti ti-dots-vertical"></i></div>
+      </div>
+    </div>
+  </nav>
+  <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="btn btn-outline btn-icon mobile-nav-btn" onclick="openSidebar()"><i
+            class="ti ti-menu-2"></i></button>
+        <div>
+          <div class="page-title">Audit Logs</div>
+          <div class="breadcrumb">Admin <i class="ti ti-chevron-right" style="font-size:10px"></i> <span>Audit
+              Logs</span></div>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button id="theme-toggle-btn" class="btn-theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">
+          <i class="ti ti-moon"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="section-header">
+        <div class="section-title">Audit Logs</div>
+        <div class="section-desc">Track all admin and system actions.</div>
+      </div>
+
+      <div class="card">
+        <div
+          style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+          <div class="card-title" style="margin-bottom:0"><i class="ti ti-clipboard-list"></i> Recent Activity</div>
+          <div style="display:flex;gap:8px">
+            <select class="form-control" id="audit-filter" style="width:180px;padding:8px 12px;font-size:13px"
+              onchange="filterAuditLogs()">
+              <option value="all">All Actions</option>
+              <option value="login">User Login</option>
+              <option value="complaint">Complaint Changes</option>
+              <option value="user">User Management</option>
+            </select>
+            <button class="btn btn-outline btn-sm" onclick="exportAuditLogs()"><i class="ti ti-download"></i>
+              Export</button>
+          </div>
+        </div>
+
+        <div id="audit-log-list"></div>
+
+        <div style="display:flex;justify-content:center;margin-top:16px">
+          <button class="btn btn-outline btn-sm" id="load-more-btn" onclick="loadMoreLogs()"><i
+              class="ti ti-refresh"></i> Load More Logs</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"><i class="ti ti-circle-check"></i><span id="toast-msg">Changes saved
+      successfully!</span></div>
+
+  <script src="api/api.js"></script>
+  <script>
+    function saveToast(msg) {
+      const t = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = msg || 'Changes saved successfully!';
+      t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000);
+    }
+    function openSidebar() { document.getElementById('sidebar').classList.add('open'); document.getElementById('overlay').classList.add('show'); }
+    function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); }
+
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    };
+
+    let auditPage = 1;
+    const AUDIT_PAGE_SIZE = 10;
+    let auditLogs = [];
+    let hasMore = true;
+
+    function filterAuditLogs() { 
+      auditPage = 1; 
+      auditLogs = [];
+      document.getElementById('audit-log-list').innerHTML = '';
+      fetchAuditLogs(); 
+    }
+
+    async function fetchAuditLogs() {
+      const filter = document.getElementById('audit-filter').value;
+      let url = `${API_BASE}/audit-logs?page=${auditPage}&limit=${AUDIT_PAGE_SIZE}`;
+      
+      // Basic mapping for action filter if needed
+      if (filter !== 'all') {
+        url += `&action=${encodeURIComponent(filter)}`;
+      }
+
+      try {
+        const loadBtn = document.getElementById('load-more-btn');
+        loadBtn.disabled = true;
+        loadBtn.textContent = 'Loading...';
+
+        const res = await fetch(url, { headers });
+        if (res.status === 401 || res.status === 403) return window.location.href = 'login.html';
+        
+        const json = await res.json();
+        if (json.success) {
+          const logs = json.data || [];
+          auditLogs = [...auditLogs, ...logs];
+          
+          hasMore = auditPage < (json.pagination?.totalPages || json.totalPages || 1);
+          renderAuditLogs(logs);
+        } else {
+          saveToast('Failed to load audit logs');
+        }
+      } catch (err) {
+        console.error(err);
+        saveToast('Network error loading audit logs');
+      } finally {
+        const loadBtn = document.getElementById('load-more-btn');
+        loadBtn.disabled = false;
+        loadBtn.innerHTML = '<i class="ti ti-refresh"></i> Load More Logs';
+        loadBtn.style.display = hasMore ? 'inline-flex' : 'none';
+      }
+    }
+
+    function renderAuditLogs(newLogs) {
+      const list = document.getElementById('audit-log-list');
+      
+      if (auditLogs.length === 0) {
+        list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-hint)">No logs found for this filter</div>';
+        return;
+      }
+
+      // If it's the first page, clear the list
+      if (auditPage === 1) {
+        list.innerHTML = '';
+      }
+
+      const html = newLogs.map(l => {
+        // Map backend action strings to UI colors
+        let color = 'var(--secondary)';
+        let typeStr = l.action || 'Unknown';
+        if (typeStr.includes('LOGIN')) color = 'var(--success)';
+        else if (typeStr.includes('CREATE')) color = 'var(--primary)';
+        else if (typeStr.includes('UPDATE')) color = 'var(--warning)';
+        else if (typeStr.includes('DELETE')) color = 'var(--danger)';
+        else if (typeStr.includes('TICKET') || typeStr.includes('COMPLAINT')) color = '#00cec9';
+
+        const dateObj = new Date(l.created_at);
+        const dateStr = dateObj.toLocaleString();
+
+        const entityInfo = l.entity_type && l.entity_id ? ` | ${l.entity_type} #${l.entity_id}` : '';
+
+        return `
+        <div class="log-item">
+          <div class="log-dot" style="background:${color}"></div>
+          <div class="log-line">
+            <div class="log-text"><strong>${l.user_name || 'System'}</strong>: ${l.description}</div>
+            <div class="log-meta">${dateStr} · Action: ${typeStr}${entityInfo}</div>
+          </div>
+        </div>`;
+      }).join('');
+
+      list.insertAdjacentHTML('beforeend', html);
+    }
+
+    function loadMoreLogs() { 
+      if (hasMore) {
+        auditPage++; 
+        fetchAuditLogs(); 
+      }
+    }
+
+    function exportAuditLogs() {
+      // For a real export, we might fetch all pages or use a backend export endpoint
+      // We will export currently loaded logs for now
+      if (auditLogs.length === 0) {
+        saveToast('No logs to export');
+        return;
+      }
+      const csv = [['Time', 'User', 'Action', 'Description', 'Entity Type', 'Entity ID'], 
+        ...auditLogs.map(l => [
+          new Date(l.created_at).toLocaleString(),
+          l.user_name || 'System',
+          l.action,
+          (l.description || '').replace(/"/g, '""'),
+          l.entity_type || '',
+          l.entity_id || ''
+        ])
+      ].map(r => r.map(c => `"${c}"`).join(',')).join('\n');
+      
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); 
+      a.href = url; 
+      a.download = 'audit_logs_export.csv'; 
+      a.click();
+      URL.revokeObjectURL(url); 
+      saveToast('Audit logs exported!');
+    }
+
+    fetchAuditLogs();
+  </script>
+  <script type="module" src="firebase.js"></script>
+</body>
+
+</html>
+

@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile Settings — Campus Connect</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/admin-shared.css">
+  <script src="assets/js/theme.js"></script>
+  <style>
+    /* Skeleton loading */
+    .skeleton {
+      background: linear-gradient(90deg, var(--border) 25%, color-mix(in srgb, var(--border) 50%, var(--bg-secondary)) 50%, var(--border) 75%);
+      background-size: 200% 100%;
+      animation: skeleton-shimmer 1.4s ease-in-out infinite;
+      border-radius: 8px;
+    }
+    @keyframes skeleton-shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .skeleton-avatar {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .skeleton-text {
+      height: 14px;
+      border-radius: 6px;
+    }
+    .skeleton-input {
+      height: 44px;
+      border-radius: 10px;
+      width: 100%;
+    }
+    .profile-skeleton { display: flex; flex-direction: column; gap: 24px; }
+    .profile-skeleton-header { display: flex; align-items: center; gap: 20px; }
+    .profile-skeleton-lines { display: flex; flex-direction: column; gap: 10px; flex: 1; }
+    .profile-skeleton-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .profile-skeleton-field { display: flex; flex-direction: column; gap: 8px; }
+    /* Fade-in for real content */
+    #profile-content {
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    #profile-content.loaded {
+      opacity: 1;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-badge">
+        <div class="logo-icon">
+          <img src="assets/images/mzcetlogo.jpg" alt="Campus Connect Logo">
+        </div>
+        <div>
+          <div class="logo-text">Campus Connect</div>
+          <div class="logo-sub">Admin Portal</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-nav">
+      <div class="nav-group">
+        <div class="nav-section-label">Management</div>
+        <a class="nav-item" href="user-management.html">
+          <span class="nav-icon-wrap"><i class="ti ti-users nav-icon"></i></span>
+          <span class="nav-label">User Management</span>
+        </a>
+        <a class="nav-item" href="department-management.html">
+          <span class="nav-icon-wrap"><i class="ti ti-building nav-icon"></i></span>
+          <span class="nav-label">Department Management</span>
+        </a>
+        <a class="nav-item" href="department-dashboards.html">
+          <span class="nav-icon-wrap"><i class="ti ti-layout-dashboard nav-icon"></i></span>
+          <span class="nav-label">Department Dashboards</span>
+        </a>
+        <a class="nav-item" href="location-qr.html">
+          <span class="nav-icon-wrap"><i class="ti ti-map-pin nav-icon"></i></span>
+          <span class="nav-label">Location and QR</span>
+        </a>
+        <a class="nav-item" href="complaint-categories.html">
+          <span class="nav-icon-wrap"><i class="ti ti-tag nav-icon"></i></span>
+          <span class="nav-label">Complaint Categories</span>
+        </a>
+        <a class="nav-item" href="escalation-routing.html">
+          <span class="nav-icon-wrap"><i class="ti ti-arrows-exchange nav-icon"></i></span>
+          <span class="nav-label">Escalation Routing</span>
+        </a>
+        <a class="nav-item" href="escalation-settings.html">
+          <span class="nav-icon-wrap"><i class="ti ti-trending-up nav-icon"></i></span>
+          <span class="nav-label">Escalation Settings</span>
+        </a>
+        <a class="nav-item" href="designations.html">
+          <span class="nav-icon-wrap"><i class="ti ti-id-badge nav-icon"></i></span>
+          <span class="nav-label">Designations</span>
+        </a>
+        <a class="nav-item" href="security-settings.html">
+          <span class="nav-icon-wrap"><i class="ti ti-shield-lock nav-icon"></i></span>
+          <span class="nav-label">Security Settings</span>
+        </a>
+        <a class="nav-item" href="backup-restore.html">
+          <span class="nav-icon-wrap"><i class="ti ti-database nav-icon"></i></span>
+          <span class="nav-label">Backup and Restore</span>
+        </a>
+        <a class="nav-item" href="audit-logs.html">
+          <span class="nav-icon-wrap"><i class="ti ti-clipboard-list nav-icon"></i></span>
+          <span class="nav-label">Audit Logs</span>
+        </a>
+        <a class="nav-item active" href="profile-settings.html">
+          <span class="nav-icon-wrap"><i class="ti ti-user-circle nav-icon"></i></span>
+          <span class="nav-label">Profile Settings</span>
+        </a>
+        <a class="nav-item" href="login.html" onclick="return confirm('Are you sure you want to logout?')">
+          <span class="nav-icon-wrap">
+            <i class="ti ti-logout nav-icon"></i>
+          </span>
+          <span class="nav-label">Logout</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="admin-card">
+        <div class="admin-avatar" id="sidebar-avatar"></div>
+        <div>
+          <div class="admin-name" id="sidebar-name"></div>
+          <div class="admin-role" id="sidebar-role"></div>
+        </div>
+        <div class="admin-menu-btn"><i class="ti ti-dots-vertical"></i></div>
+      </div>
+    </div>
+  </nav>
+  <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="btn btn-outline btn-icon mobile-nav-btn" onclick="openSidebar()">
+          <i class="ti ti-menu-2"></i>
+        </button>
+        <div>
+          <div class="page-title">Profile Settings</div>
+          <div class="breadcrumb">Admin <i class="ti ti-chevron-right" style="font-size:10px"></i> <span>Profile</span>
+          </div>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button id="theme-toggle-btn" class="btn-theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">
+          <i class="ti ti-moon"></i>
+        </button>
+        <button class="btn btn-outline btn-icon" title="Notifications" style="position:relative">
+          <i class="ti ti-bell"></i>
+          <span
+            style="position:absolute;top:7px;right:7px;width:8px;height:8px;background:var(--danger);border-radius:50%;border:2px solid #fff"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+      <div class="section-header">
+        <div class="section-title">Profile Settings</div>
+        <div class="section-desc">Manage your admin account information and credentials.</div>
+      </div>
+
+      <!-- Loading skeleton -->
+      <div class="card" id="profile-skeleton">
+        <div class="profile-skeleton">
+          <div class="profile-skeleton-header">
+            <div class="skeleton skeleton-avatar"></div>
+            <div class="profile-skeleton-lines">
+              <div class="skeleton skeleton-text" style="width:40%"></div>
+              <div class="skeleton skeleton-text" style="width:65%"></div>
+            </div>
+          </div>
+          <div class="profile-skeleton-grid">
+            <div class="profile-skeleton-field"><div class="skeleton skeleton-text" style="width:50%"></div><div class="skeleton skeleton-input"></div></div>
+            <div class="profile-skeleton-field"><div class="skeleton skeleton-text" style="width:50%"></div><div class="skeleton skeleton-input"></div></div>
+            <div class="profile-skeleton-field"><div class="skeleton skeleton-text" style="width:50%"></div><div class="skeleton skeleton-input"></div></div>
+            <div class="profile-skeleton-field"><div class="skeleton skeleton-text" style="width:50%"></div><div class="skeleton skeleton-input"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Real profile content (hidden until loaded) -->
+      <div class="card" id="profile-content" style="display:none">
+        <div class="avatar-section">
+          <div class="big-avatar" id="profile-avatar"></div>
+          <div class="avatar-info">
+            <h3 id="profile-avatar-name"></h3>
+            <p id="profile-avatar-sub"></p>
+            <div class="avatar-actions">
+              <input type="file" id="avatar-upload" accept="image/png,image/jpeg,image/gif,image/webp"
+                style="display:none">
+              <button class="btn btn-outline btn-sm" id="btn-upload-photo" onclick="document.getElementById('avatar-upload').click()" style="display:none"><i
+                  class="ti ti-upload"></i> Upload Photo</button>
+              <button class="btn btn-danger btn-sm" id="avatar-remove-btn" onclick="removeAvatar()"
+                style="display:none"><i class="ti ti-trash"></i> Remove</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">Admin Name</label>
+            <div class="input-icon-wrap">
+              <i class="ti ti-user"></i>
+              <input type="text" id="profile-name" class="form-control" placeholder="Full name" readonly>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <div class="input-icon-wrap">
+              <i class="ti ti-mail"></i>
+              <input type="email" id="profile-email" class="form-control" readonly oninput="validateEmail()"
+                onblur="validateEmail()">
+            </div>
+            <div class="validation-msg error" id="email-error"><i class="ti ti-alert-circle"></i> <span>Please enter a
+                valid email address</span></div>
+            <div class="validation-msg success" id="email-success"><i class="ti ti-circle-check"></i> <span>Email format
+                is valid</span></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Role</label>
+            <div class="input-icon-wrap">
+              <i class="ti ti-shield"></i>
+              <input type="text" id="profile-role" class="form-control" readonly disabled>
+            </div>
+          </div>
+        </div>
+
+        <hr class="card-divider">
+
+        <!-- Change Password — collapsed by default, revealed in edit mode -->
+        <div id="pwd-section-trigger" style="display:none">
+          <button class="btn btn-outline" id="btn-toggle-pwd" onclick="togglePwdPanel()">
+            <i class="ti ti-lock"></i> Change Password
+          </button>
+        </div>
+
+        <div id="pwd-panel" style="display:none;margin-top:16px">
+          <div class="card-title" style="margin-bottom:4px"><i class="ti ti-lock"></i> Change Password</div>
+          <div class="card-desc" style="margin-bottom:16px">Leave blank to keep existing password</div>
+          <div class="grid-3">
+            <div class="form-group">
+              <label class="form-label">Current Password</label>
+              <div class="input-icon-wrap">
+                <i class="ti ti-lock"></i>
+                <input type="password" class="form-control has-toggle" placeholder="••••••••" id="pwd-current">
+                <i class="ti ti-eye pwd-toggle" onclick="togglePassword('pwd-current', this)"></i>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">New Password</label>
+              <div class="input-icon-wrap">
+                <i class="ti ti-key"></i>
+                <input type="password" class="form-control has-toggle" placeholder="••••••••" id="pwd-new">
+                <i class="ti ti-eye pwd-toggle" onclick="togglePassword('pwd-new', this)"></i>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Confirm Password</label>
+              <div class="input-icon-wrap">
+                <i class="ti ti-key"></i>
+                <input type="password" class="form-control has-toggle" placeholder="••••••••" id="pwd-confirm">
+                <i class="ti ti-eye pwd-toggle" onclick="togglePassword('pwd-confirm', this)"></i>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:4px">
+            <button class="btn btn-outline btn-sm" onclick="collapsePwdPanel()">
+              Cancel
+            </button>
+            <button class="btn btn-primary btn-sm" id="btn-update-pwd" onclick="updatePassword()">
+              <i class="ti ti-check"></i> Update Password
+            </button>
+          </div>
+        </div>
+
+        <hr class="card-divider" id="pwd-bottom-divider" style="display:none">
+
+        <div style="display:flex;gap:12px;justify-content:flex-end">
+          <button class="btn btn-outline" id="btn-edit-profile" onclick="enableEdit()">
+            Edit
+          </button>
+          <button class="btn btn-primary" id="btn-save-profile" onclick="saveProfile()" style="display:none">
+            Save Profile
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PASSWORD PROMPT MODAL -->
+  <div class="modal" id="pwd-prompt-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;justify-content:center;align-items:center;">
+    <div class="card" style="width:100%;max-width:400px;margin:20px;">
+      <div class="card-title">Verify Password</div>
+      <div class="card-desc">Please enter your password to edit your profile.</div>
+      <div class="form-group" style="margin-top:20px;">
+        <label class="form-label">Password</label>
+        <div class="input-icon-wrap">
+          <i class="ti ti-lock"></i>
+          <input type="password" class="form-control" id="verify-pwd-input" placeholder="••••••••">
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:20px;">
+        <button class="btn btn-outline" onclick="document.getElementById('pwd-prompt-modal').style.display='none'">Cancel</button>
+        <button class="btn btn-primary" id="btn-verify-pwd" onclick="verifyEditPassword()">Verify</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast">
+    <i class="ti ti-circle-check"></i>
+    <span id="toast-msg">Changes saved successfully!</span>
+  </div>
+
+  <script src="api/api.js"></script>
+  <script>
+    // Attempt to decode the token (basic check for expiration)
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      if (payload.exp && Date.now() >= payload.exp * 1000) {
+        localStorage.removeItem('admin_token');
+        localStorage.removeItem('admin_user');
+        window.location.href = 'login.html';
+      }
+    } catch (e) {
+      localStorage.removeItem('admin_token');
+      localStorage.removeItem('admin_user');
+      window.location.href = 'login.html';
+    }
+
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    };
+
+    function saveToast(msg, isError = false) {
+      const t = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = msg || 'Changes saved successfully!';
+
+      const icon = t.querySelector('i');
+      if (isError) {
+        t.style.background = 'var(--danger)';
+        icon.className = 'ti ti-alert-triangle';
+      } else {
+        t.style.background = 'var(--success)';
+        icon.className = 'ti ti-circle-check';
+      }
+
+      t.classList.add('show');
+      setTimeout(() => {
+        t.classList.remove('show');
+        setTimeout(() => {
+          t.style.background = 'var(--success)';
+          icon.className = 'ti ti-circle-check';
+        }, 300);
+      }, 3000);
+    }
+    function openSidebar() {
+      document.getElementById('sidebar').classList.add('open');
+      document.getElementById('overlay').classList.add('show');
+    }
+    function closeSidebar() {
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('overlay').classList.remove('show');
+    }
+
+    document.getElementById('avatar-upload').addEventListener('change', async function (e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const allowedTypes = ['image/png', 'image/jpeg', 'image/gif', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) { saveToast('Invalid file type.', true); this.value = ''; return; }
+      if (file.size > 2 * 1024 * 1024) { saveToast('File too large. Max 2MB.', true); this.value = ''; return; }
+      
+      const formData = new FormData();
+      formData.append('photo', file);
+
+      try {
+        saveToast('Uploading photo...');
+        const res = await fetch(`${API_BASE}/users/me/photo`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          body: formData
+        });
+        const json = await res.json();
+        if (json.success && json.data) {
+          const avatarUrl = json.data.avatarUrl;
+          if (avatarUrl) {
+            const fullAvatarUrl = resolveImageUrl(avatarUrl);
+            const avatar = document.getElementById('profile-avatar');
+            avatar.textContent = '';
+            const img = document.createElement('img');
+            img.src = fullAvatarUrl;
+            img.alt = 'Profile Photo';
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'cover';
+            img.style.borderRadius = 'inherit';
+            avatar.appendChild(img);
+            
+            const sidebarAvatar = document.querySelector('.admin-avatar');
+            if (sidebarAvatar) {
+              sidebarAvatar.textContent = '';
+              const sidebarImg = document.createElement('img');
+              sidebarImg.src = fullAvatarUrl;
+              sidebarImg.alt = 'Profile Photo';
+              sidebarImg.style.width = '100%';
+              sidebarImg.style.height = '100%';
+              sidebarImg.style.objectFit = 'cover';
+              sidebarImg.style.borderRadius = 'inherit';
+              sidebarAvatar.appendChild(sidebarImg);
+            }
+            
+            if (user) {
+              user.avatarUrl = avatarUrl;
+              localStorage.setItem('user', JSON.stringify(user));
+            }
+            
+            document.getElementById('avatar-remove-btn').style.display = 'inline-flex';
+            saveToast('Photo uploaded successfully!');
+          }
+        } else {
+          saveToast(json.message || 'Upload failed', true);
+        }
+      } catch (err) {
+        saveToast('Network error during upload', true);
+      }
+      this.value = '';
+    });
+
+    async function removeAvatar() {
+      const btn = document.getElementById('avatar-remove-btn');
+      try {
+        btn.disabled = true;
+        btn.textContent = 'Removing...';
+        
+        const res = await fetch(`${API_BASE}/users/me/photo`, {
+          method: 'DELETE',
+          headers
+        });
+        
+        const json = await res.json();
+        if (json.success) {
+          const avatar = document.getElementById('profile-avatar');
+          if (user && user.name) {
+            const initials = user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+            avatar.innerHTML = initials;
+            const sidebarAvatar = document.querySelector('.admin-avatar');
+            if (sidebarAvatar) sidebarAvatar.innerHTML = initials;
+          } else {
+            avatar.innerHTML = 'A';
+          }
+          
+          document.getElementById('avatar-upload').value = '';
+          btn.style.display = 'none';
+          
+          if (user) {
+            user.avatarUrl = null;
+            localStorage.setItem('user', JSON.stringify(user));
+          }
+          saveToast('Photo removed successfully!');
+        } else {
+          saveToast(json.message || 'Failed to remove photo', true);
+        }
+      } catch (err) {
+        saveToast('Network error removing photo', true);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="ti ti-trash"></i> Remove';
+      }
+    }
+
+    function validateEmail() {
+      const input = document.getElementById('profile-email');
+      const errorEl = document.getElementById('email-error');
+      const successEl = document.getElementById('email-success');
+      const value = input.value.trim();
+      const emailRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
+      if (value === '') {
+        input.classList.remove('input-error', 'input-success');
+        errorEl.classList.remove('show'); successEl.classList.remove('show'); return false;
+      }
+      if (!emailRegex.test(value)) {
+        input.classList.add('input-error'); input.classList.remove('input-success');
+        errorEl.classList.add('show'); successEl.classList.remove('show'); return false;
+      } else {
+        input.classList.remove('input-error'); input.classList.add('input-success');
+        errorEl.classList.remove('show'); successEl.classList.add('show'); return true;
+      }
+    }
+
+    function togglePassword(inputId, icon) {
+      const input = document.getElementById(inputId);
+      if (input.type === 'password') {
+        input.type = 'text'; icon.classList.remove('ti-eye'); icon.classList.add('ti-eye-off');
+      } else {
+        input.type = 'password'; icon.classList.remove('ti-eye-off'); icon.classList.add('ti-eye');
+      }
+    }
+    async function fetchProfile() {
+      try {
+        const res = await fetch(`${API_BASE}/users/me`, { headers });
+        if (res.status === 401 || res.status === 403) return window.location.href = 'login.html';
+        const json = await res.json();
+
+        if (json.success && json.data) {
+          const u = json.data;
+          document.getElementById('profile-name').value = u.name || '';
+          document.getElementById('profile-email').value = u.email || '';
+          document.getElementById('profile-role').value = u.roleLabel || u.role || '';
+
+          document.getElementById('profile-avatar-name').textContent = u.name || 'Admin';
+          document.getElementById('profile-avatar-sub').textContent = `${u.roleLabel || u.role || 'Admin'} · ${u.email || ''}`;
+
+          // Sidebar
+          const sidebarName = document.getElementById('sidebar-name');
+          const sidebarRole = document.getElementById('sidebar-role');
+          if (sidebarName) sidebarName.textContent = u.name || 'Admin';
+          if (sidebarRole) sidebarRole.textContent = u.roleLabel || u.role || 'Admin';
+
+          const sidebarAvatar = document.getElementById('sidebar-avatar');
+
+          if (u.avatarUrl) {
+            const fullAvatarUrl = resolveImageUrl(u.avatarUrl);
+            const avatar = document.getElementById('profile-avatar');
+            avatar.textContent = '';
+            const img = document.createElement('img');
+            img.src = fullAvatarUrl;
+            img.alt = 'Profile Photo';
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'cover';
+            img.style.borderRadius = 'inherit';
+            avatar.appendChild(img);
+
+            if (sidebarAvatar) {
+              sidebarAvatar.textContent = '';
+              const sidebarImg = document.createElement('img');
+              sidebarImg.src = fullAvatarUrl;
+              sidebarImg.alt = 'Profile Photo';
+              sidebarImg.style.width = '100%';
+              sidebarImg.style.height = '100%';
+              sidebarImg.style.objectFit = 'cover';
+              sidebarImg.style.borderRadius = 'inherit';
+              sidebarAvatar.appendChild(sidebarImg);
+            }
+            document.getElementById('avatar-remove-btn').style.display = 'none';
+          } else if (u.name) {
+            const initials = u.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+            document.getElementById('profile-avatar').innerHTML = initials;
+            if (sidebarAvatar) sidebarAvatar.innerHTML = initials;
+            document.getElementById('avatar-remove-btn').style.display = 'none';
+          }
+
+          // Swap skeleton for real content
+          document.getElementById('profile-skeleton').style.display = 'none';
+          const content = document.getElementById('profile-content');
+          content.style.display = 'block';
+          // Trigger fade-in on next frame
+          requestAnimationFrame(() => content.classList.add('loaded'));
+        }
+      } catch (err) {
+        saveToast('Failed to load profile details', true);
+        // Still hide skeleton on error so user sees an empty state rather than endless shimmer
+        document.getElementById('profile-skeleton').style.display = 'none';
+        const content = document.getElementById('profile-content');
+        content.style.display = 'block';
+        requestAnimationFrame(() => content.classList.add('loaded'));
+      }
+    }
+
+    function enableEdit() {
+      document.getElementById('pwd-prompt-modal').style.display = 'flex';
+      document.getElementById('verify-pwd-input').value = '';
+    }
+
+    async function verifyEditPassword() {
+      const pwd = document.getElementById('verify-pwd-input').value;
+      if (!pwd) {
+        saveToast('Please enter your password', true);
+        return;
+      }
+      
+      const btn = document.getElementById('btn-verify-pwd');
+      btn.disabled = true;
+      btn.textContent = 'Verifying...';
+      
+      try {
+        const res = await fetch(`${API_BASE}/users/me/verify-password`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({ password: pwd })
+        });
+        
+        const json = await res.json();
+        if (json.success) {
+          document.getElementById('pwd-prompt-modal').style.display = 'none';
+          document.getElementById("profile-email").removeAttribute("readonly");
+          document.getElementById("profile-name").removeAttribute("readonly");
+          
+          document.getElementById("btn-edit-profile").style.display = "none";
+          document.getElementById("btn-save-profile").style.display = "inline-flex";
+          document.getElementById("btn-upload-photo").style.display = "inline-flex";
+          
+          if (user && user.avatarUrl) {
+            document.getElementById("avatar-remove-btn").style.display = "inline-flex";
+          }
+          
+          saveToast("Edit mode enabled");
+          document.getElementById("pwd-section-trigger").style.display = "block";
+        } else {
+          saveToast(json.message || 'Incorrect password', true);
+        }
+      } catch (e) {
+        saveToast('Network error', true);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Verify';
+      }
+    }
+
+    function togglePwdPanel() {
+      const panel = document.getElementById('pwd-panel');
+      const divider = document.getElementById('pwd-bottom-divider');
+      const isOpen = panel.style.display !== 'none';
+      if (isOpen) {
+        collapsePwdPanel();
+      } else {
+        panel.style.display = 'block';
+        divider.style.display = 'block';
+        document.getElementById('btn-toggle-pwd').innerHTML = '<i class="ti ti-lock"></i> Cancel Password Change';
+        // Clear fields when opening
+        document.getElementById('pwd-current').value = '';
+        document.getElementById('pwd-new').value = '';
+        document.getElementById('pwd-confirm').value = '';
+      }
+    }
+
+    function collapsePwdPanel() {
+      const panel = document.getElementById('pwd-panel');
+      const divider = document.getElementById('pwd-bottom-divider');
+      panel.style.display = 'none';
+      divider.style.display = 'none';
+      document.getElementById('btn-toggle-pwd').innerHTML = '<i class="ti ti-lock"></i> Change Password';
+      // Clear fields
+      document.getElementById('pwd-current').value = '';
+      document.getElementById('pwd-new').value = '';
+      document.getElementById('pwd-confirm').value = '';
+    }
+
+    async function saveProfile() {
+      const name = document.getElementById("profile-name").value.trim();
+      const email = document.getElementById("profile-email").value.trim();
+      const btn = document.getElementById('btn-save-profile');
+
+      if (!name || !email) {
+        saveToast("Name and Email are required", true);
+        return;
+      }
+
+      try {
+        btn.disabled = true;
+        btn.textContent = 'Saving...';
+
+        const res = await fetch(`${API_BASE}/users/me`, {
+          method: 'PUT',
+          headers,
+          body: JSON.stringify({ name, email })
+        });
+
+        const json = await res.json();
+        if (json.success) {
+          saveToast("Profile saved successfully!");
+
+          // Re-lock fields
+          document.getElementById("profile-name").setAttribute("readonly", true);
+          
+          document.getElementById("btn-edit-profile").style.display = "inline-flex";
+          document.getElementById("btn-save-profile").style.display = "none";
+          document.getElementById("btn-upload-photo").style.display = "none";
+          document.getElementById("avatar-remove-btn").style.display = "none";
+          // Hide the change password button and collapse any open panel
+          document.getElementById("pwd-section-trigger").style.display = "none";
+          collapsePwdPanel();
+
+          // Update visual info
+          document.getElementById('profile-avatar-name').textContent = name;
+          document.getElementById('profile-avatar-sub').textContent = `${document.getElementById('profile-role').value} · ${email}`;
+          
+          if (user) {
+            user.name = name;
+            user.email = email;
+            localStorage.setItem('user', JSON.stringify(user));
+            
+            const sidebarName = document.getElementById('sidebar-name');
+            if (sidebarName) sidebarName.textContent = name;
+            
+            if (!user.avatarUrl) {
+              const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+              document.getElementById('profile-avatar').innerHTML = initials;
+              const sidebarAvatar = document.getElementById('sidebar-avatar');
+              if (sidebarAvatar) sidebarAvatar.innerHTML = initials;
+            }
+          }
+        } else {
+          saveToast(json.message || "Failed to save profile", true);
+        }
+      } catch (err) {
+        saveToast("Network error saving profile", true);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Save Profile';
+      }
+    }
+
+    fetchProfile();
+
+    async function updatePassword() {
+      const currentPwd = document.getElementById('pwd-current');
+      const newPwd = document.getElementById('pwd-new');
+      const confirmPwd = document.getElementById('pwd-confirm');
+      const btn = document.getElementById('btn-update-pwd');
+
+      const currentPassword = currentPwd.value;
+      const newPassword = newPwd.value;
+      const confirmPassword = confirmPwd.value;
+
+      if (!currentPassword || !newPassword || !confirmPassword) {
+        saveToast('All password fields are required.', true);
+        return;
+      }
+      if (newPassword !== confirmPassword) {
+        saveToast('New password and confirm password do not match.', true);
+        return;
+      }
+      if (currentPassword === newPassword) {
+        saveToast('New password cannot be the same as current password.', true);
+        return;
+      }
+
+      try {
+        btn.disabled = true;
+        btn.textContent = 'Updating...';
+
+        const res = await fetch(`${API_BASE}/users/me/password`, {
+          method: 'PUT',
+          headers,
+          body: JSON.stringify({ currentPassword, newPassword, confirmPassword })
+        });
+
+        if (res.status === 401 || res.status === 403) {
+          window.location.href = 'login.html';
+          return;
+        }
+
+        const json = await res.json();
+        if (json.success) {
+          saveToast('Password updated successfully!');
+          currentPwd.value = '';
+          newPwd.value = '';
+          confirmPwd.value = '';
+        } else {
+          saveToast(json.message || 'Failed to update password', true);
+        }
+      } catch (err) {
+        saveToast('Network error updating password', true);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Update Password';
+      }
+    }
+
+  </script>
+
+  <script type="module" src="firebase.js"></script>
+</body>
+
+</html>

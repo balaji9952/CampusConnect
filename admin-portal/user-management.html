@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Management — Campus Connect</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/admin-shared.css">
+  <script src="assets/js/theme.js"></script>
+</head>
+
+<body>
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-badge">
+        <div class="logo-icon">
+          <img src="assets/images/mzcetlogo.jpg" alt="Campus Connect Logo">
+        </div>
+        <div>
+          <div class="logo-text">Campus Connect</div>
+          <div class="logo-sub">Admin Portal</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-nav">
+      <div class="nav-group">
+        <div class="nav-section-label">Management</div>
+        <a class="nav-item active" href="user-management.html">
+          <span class="nav-icon-wrap"><i class="ti ti-users nav-icon"></i></span>
+          <span class="nav-label">User Management</span>
+        </a>
+        <a class="nav-item" href="department-management.html">
+          <span class="nav-icon-wrap"><i class="ti ti-building nav-icon"></i></span>
+          <span class="nav-label">Department Management</span>
+        </a>
+        <a class="nav-item" href="department-dashboards.html">
+          <span class="nav-icon-wrap"><i class="ti ti-layout-dashboard nav-icon"></i></span>
+          <span class="nav-label">Department Dashboards</span>
+        </a>
+        <a class="nav-item" href="location-qr.html">
+          <span class="nav-icon-wrap"><i class="ti ti-map-pin nav-icon"></i></span>
+          <span class="nav-label">Location and QR</span>
+        </a>
+        <a class="nav-item" href="complaint-categories.html">
+          <span class="nav-icon-wrap"><i class="ti ti-tag nav-icon"></i></span>
+          <span class="nav-label">Complaint Categories</span>
+        </a>
+        <a class="nav-item" href="escalation-routing.html">
+          <span class="nav-icon-wrap"><i class="ti ti-arrows-exchange nav-icon"></i></span>
+          <span class="nav-label">Escalation Routing</span>
+        </a>
+        <a class="nav-item" href="escalation-settings.html">
+          <span class="nav-icon-wrap"><i class="ti ti-trending-up nav-icon"></i></span>
+          <span class="nav-label">Escalation Settings</span>
+        </a>
+        <a class="nav-item" href="designations.html">
+          <span class="nav-icon-wrap"><i class="ti ti-id-badge nav-icon"></i></span>
+          <span class="nav-label">Designations</span>
+        </a>
+        <a class="nav-item" href="security-settings.html">
+          <span class="nav-icon-wrap"><i class="ti ti-shield-lock nav-icon"></i></span>
+          <span class="nav-label">Security Settings</span>
+        </a>
+        <a class="nav-item" href="backup-restore.html">
+          <span class="nav-icon-wrap"><i class="ti ti-database nav-icon"></i></span>
+          <span class="nav-label">Backup and Restore</span>
+        </a>
+        <a class="nav-item" href="audit-logs.html">
+          <span class="nav-icon-wrap"><i class="ti ti-clipboard-list nav-icon"></i></span>
+          <span class="nav-label">Audit Logs</span>
+        </a>
+        <a class="nav-item" href="profile-settings.html">
+          <span class="nav-icon-wrap"><i class="ti ti-user-circle nav-icon"></i></span>
+          <span class="nav-label">Profile Settings</span>
+        </a>
+        <a class="nav-item" href="login.html" onclick="return confirm('Are you sure you want to logout?')">
+          <span class="nav-icon-wrap">
+            <i class="ti ti-logout nav-icon"></i>
+          </span>
+          <span class="nav-label">Logout</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="admin-card">
+        <div class="admin-avatar">RK</div>
+        <div>
+          <div class="admin-name">Raj Kumar</div>
+          <div class="admin-role">Super Administrator</div>
+        </div>
+        <div class="admin-menu-btn"><i class="ti ti-dots-vertical"></i></div>
+      </div>
+    </div>
+  </nav>
+  <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="btn btn-outline btn-icon mobile-nav-btn" onclick="openSidebar()"><i
+            class="ti ti-menu-2"></i></button>
+        <div>
+          <div class="page-title">User Management</div>
+          <div class="breadcrumb">Admin <i class="ti ti-chevron-right" style="font-size:10px"></i> <span>User
+              Management</span></div>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button id="theme-toggle-btn" class="btn-theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">
+          <i class="ti ti-moon"></i>
+        </button>
+        <button class="btn btn-outline btn-icon" title="Notifications" style="position:relative">
+          <i class="ti ti-bell"></i>
+          <span
+            style="position:absolute;top:7px;right:7px;width:8px;height:8px;background:var(--danger);border-radius:50%;border:2px solid #fff"></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="section-header">
+        <div class="section-title">User Management</div>
+        <div class="section-desc">Add, edit, delete users and manage their roles.</div>
+      </div>
+
+      <div class="grid-4" style="margin-bottom:20px">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:var(--bg-stat-icon-1);color:var(--primary)"><i class="ti ti-users"></i></div>
+          <div>
+            <div class="stat-value" id="stat-total">0</div>
+            <div class="stat-label">Total Users</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:var(--bg-stat-icon-4);color:var(--success)"><i class="ti ti-user-check"></i></div>
+          <div>
+            <div class="stat-value" id="stat-active">0</div>
+            <div class="stat-label">Active</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:var(--bg-stat-icon-3);color:var(--danger)"><i class="ti ti-user-off"></i></div>
+          <div>
+            <div class="stat-value" id="stat-inactive">0</div>
+            <div class="stat-label">Inactive</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:var(--bg-stat-icon-2);color:#d4a017"><i class="ti ti-user-star"></i></div>
+          <div>
+            <div class="stat-value" id="stat-staff">0</div>
+            <div class="stat-label">Staff</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div
+          style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+          <div class="card-title" style="margin-bottom:0"><i class="ti ti-users"></i> All Users</div>
+          <div style="display:flex;gap:8px">
+            <div class="input-icon-wrap">
+              <i class="ti ti-search"></i>
+              <input type="text" id="user-search" class="form-control" placeholder="Search users..."
+                style="width:200px;padding:8px 12px 8px 38px" oninput="renderUsers()">
+            </div>
+            <select class="form-control" id="user-role-filter" style="width:130px;padding:8px 12px"
+              onchange="renderUsers()">
+              <option value="All">All Roles</option>
+              <option value="Student">Student</option>
+              <option value="Staff">Staff</option>
+              <option value="Parent">Parent</option>
+              <option value="Admin">Admin</option>
+            </select>
+            <select class="form-control" id="user-status-filter" style="width:130px;padding:8px 12px"
+              onchange="renderUsers()">
+              <option value="All">All Status</option>
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </select>
+
+            <button id="btn-add-user" class="btn btn-primary btn-sm" onclick="openUserModal()"><i class="ti ti-plus"></i> Add User</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Joined</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="users-table-body"></tbody>
+          </table>
+        </div>
+        <!-- Pagination Controls -->
+        <div style="display:flex; justify-content:space-between; align-items:center; padding: 16px;">
+          <div id="pagination-info" style="font-size: 13px; color: var(--text-hint);">Showing 0 to 0 of 0 users</div>
+          <div style="display:flex; gap: 8px;">
+            <button class="btn btn-outline btn-sm" id="btn-prev" onclick="changePage(-1)">Previous</button>
+            <button class="btn btn-outline btn-sm" id="btn-next" onclick="changePage(1)">Next</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- USER MODAL -->
+  <div class="modal-overlay" id="user-modal">
+    <div class="modal-card" style="max-height: 90vh; overflow-y: auto;">
+      <div class="modal-header">
+        <div class="modal-title" id="user-modal-title">Add User</div>
+        <button class="modal-close" onclick="closeModal('user-modal')"><i class="ti ti-x"></i></button>
+      </div>
+
+      <div id="role-selection-screen" style="display: none; padding: 40px 20px; text-align: center;">
+        <div style="font-size: 16px; font-weight: 700; margin-bottom: 24px; color: var(--text-primary);">Select the type
+          of user you want to add:</div>
+        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+          <button class="btn btn-primary" onclick="selectRoleAndContinue('Student')"><i class="ti ti-user"></i>
+            Student</button>
+          <button class="btn btn-primary" style="background: var(--warning); border-color: var(--warning);"
+            onclick="selectRoleAndContinue('Staff')"><i class="ti ti-briefcase"></i> Staff</button>
+          <button class="btn btn-primary"
+            style="background: var(--text-secondary); border-color: var(--text-secondary);"
+            onclick="selectRoleAndContinue('Parent')"><i class="ti ti-users"></i> Parent</button>
+          <button class="btn btn-primary" style="background: var(--danger); border-color: var(--danger);"
+            onclick="selectRoleAndContinue('Admin')"><i class="ti ti-shield"></i> Admin</button>
+        </div>
+      </div>
+
+      <div id="user-form-content">
+        <input type="hidden" id="um-id">
+        <input type="hidden" id="um-role">
+
+        <div class="grid-2" id="group-status-wrap">
+          <div class="form-group" id="group-status" style="grid-column: span 2;">
+            <label class="form-label">Status</label>
+            <select class="form-control" id="um-status">
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group" id="group-name">
+          <label class="form-label" id="label-name">Full Name</label>
+          <input type="text" class="form-control" id="um-name">
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group" id="group-email">
+            <label class="form-label" id="label-email">Email Address</label>
+            <input type="email" class="form-control" id="um-email">
+          </div>
+        </div>
+
+        <!-- Specific IDs -->
+        <div class="grid-2" id="group-id-fields">
+          <div class="form-group" id="group-staff-id">
+            <label class="form-label">Staff ID</label>
+            <input type="text" class="form-control" id="um-staff-id">
+          </div>
+          <div class="form-group" id="group-admin-id">
+            <label class="form-label">Admin ID</label>
+            <input type="text" class="form-control" id="um-admin-id">
+          </div>
+          <div class="form-group" id="group-register-number">
+            <label class="form-label">Register Number</label>
+            <input type="text" class="form-control" id="um-register-number">
+          </div>
+        </div>
+
+        <!-- Student Fields -->
+        <div class="grid-2" id="group-student-fields">
+          <div class="form-group">
+            <label class="form-label">Program Type</label>
+            <select class="form-control" id="um-program-type" onchange="handleProgramTypeChange()">
+              <option value="">Select Program Type</option>
+              <option value="UG">UG</option>
+              <option value="PG">PG</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Branch / Degree</label>
+            <select class="form-control" id="um-branch" onchange="handleBranchChange()">
+              <option value="">Select Branch</option>
+            </select>
+          </div>
+          <div class="form-group" style="grid-column: span 2;">
+            <label class="form-label">Study Year</label>
+            <select class="form-control" id="um-study-year">
+              <option value="">Select Year</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Shared fields for Staff, Admin, Student -->
+        <div class="grid-2" id="group-dept-pos">
+          <div class="form-group" id="group-department">
+            <label class="form-label">Department</label>
+            <select class="form-control" id="um-department">
+              <!-- Options dynamically added -->
+            </select>
+          </div>
+          <div class="form-group" id="group-designation">
+            <label class="form-label">Designation</label>
+            <select class="form-control" id="um-designation">
+              <!-- Options dynamically added -->
+            </select>
+          </div>
+        </div>
+
+        <div class="grid-2" id="group-passwords">
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" class="form-control" id="um-password">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Confirm Password</label>
+            <input type="password" class="form-control" id="um-confirm-password">
+          </div>
+        </div>
+
+        <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:24px">
+          <button class="btn btn-outline" onclick="closeModal('user-modal')">Cancel</button>
+          <button class="btn btn-primary" onclick="saveUser()">Save User</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"><i class="ti ti-circle-check"></i><span id="toast-msg">Changes saved
+      successfully!</span></div>
+
+  <script src="api/api.js"></script>
+  <script>
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    };
+
+    function openSidebar() { document.getElementById('sidebar').classList.add('open'); document.getElementById('overlay').classList.add('show'); }
+    function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+    function saveToast(msg, isError = false) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-msg');
+      toastMsg.textContent = msg;
+      if (isError) {
+        toast.style.background = 'var(--danger)';
+      } else {
+        toast.style.background = '#28a745';
+      }
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    let users = [];
+    let allDepartments = [];
+    let allDesignations = [];
+
+    // Map DB numeric roles to string (0=Student, 1=Staff, 2=Parent, 3=Admin)
+    function getRoleString(roleNum) {
+      if (roleNum === 1) return 'Staff';
+      if (roleNum === 2) return 'Parent';
+      if (roleNum === 3) return 'Admin';
+      return 'Student';
+    }
+
+    function getRoleNum(roleStr) {
+      if (roleStr === 'Staff') return 1;
+      if (roleStr === 'Parent') return 2;
+      if (roleStr === 'Admin') return 3;
+      return 0;
+    }
+
+    let currentPage = 1;
+    const limit = 10;
+    let totalPages = 1;
+
+    async function fetchDepartments() {
+      try {
+        const res = await fetch(`${API_BASE}/departments?limit=100`, { headers });
+        const json = await res.json();
+        if (json.success) {
+          allDepartments = json.data;
+        }
+      } catch (err) {
+        console.error('Failed to fetch departments', err);
+      }
+    }
+
+    async function fetchDesignations() {
+      try {
+        const res = await fetch(`${API_BASE}/designations`, { headers });
+        const json = await res.json();
+        if (json.success) {
+          allDesignations = json.data;
+        }
+      } catch (err) {
+        console.error('Failed to fetch designations', err);
+      }
+    }
+
+    async function fetchStats() {
+      try {
+        const res = await fetch(`${API_BASE}/admin/users/stats`, { headers });
+        if (res.status === 401 || res.status === 403) return window.location.href = 'login.html';
+        const json = await res.json();
+        if (json.success && json.data) {
+          document.getElementById('stat-total').textContent = json.data.total || 0;
+          document.getElementById('stat-active').textContent = json.data.active || 0;
+          document.getElementById('stat-inactive').textContent = json.data.inactive || 0;
+          document.getElementById('stat-staff').textContent = json.data.staff || 0;
+        }
+      } catch (err) {
+        console.error('Failed to fetch stats', err);
+      }
+    }
+
+    async function fetchUsers() {
+      const q = document.getElementById('user-search').value.trim();
+      const roleFilterStr = document.getElementById('user-role-filter').value;
+      const statusFilterStr = document.getElementById('user-status-filter').value;
+
+      let url = `${API_BASE}/admin/users?page=${currentPage}&limit=${limit}`;
+
+      if (q) url += `&search=${encodeURIComponent(q)}`;
+      if (roleFilterStr !== 'All') {
+        url += `&role=${getRoleNum(roleFilterStr)}`;
+      }
+      if (statusFilterStr !== 'All') {
+        url += `&status=${statusFilterStr.toLowerCase()}`;
+      }
+
+      try {
+        document.getElementById('users-table-body').innerHTML = '<tr><td colspan="6" style="text-align:center">Loading...</td></tr>';
+        const res = await fetch(url, { headers });
+        if (res.status === 401 || res.status === 403) return window.location.href = 'login.html';
+        const json = await res.json();
+        if (json.success) {
+          users = json.data || [];
+          totalPages = json.pagination?.totalPages || json.totalPages || 1;
+          const total = json.pagination?.total || json.total || 0;
+
+          document.getElementById('pagination-info').textContent = `Showing page ${currentPage} of ${totalPages} (${total} total users)`;
+          document.getElementById('btn-prev').disabled = currentPage <= 1;
+          document.getElementById('btn-next').disabled = currentPage >= totalPages;
+
+          renderUsersTable();
+        } else {
+          saveToast('Failed to load users', true);
+        }
+      } catch (err) {
+        saveToast('Failed to fetch users', true);
+        console.error(err);
+      }
+    }
+
+    // Called when filters change
+    function renderUsers() {
+      currentPage = 1;
+      fetchUsers();
+    }
+
+    function changePage(delta) {
+      const newPage = currentPage + delta;
+      if (newPage >= 1 && newPage <= totalPages) {
+        currentPage = newPage;
+        fetchUsers();
+      }
+    }
+
+    function renderUsersTable() {
+      const html = users.map(u => {
+        const roleStr = getRoleString(u.role);
+        const isActive = u.isActive !== undefined ? u.isActive : u.is_active;
+        const statusStr = isActive ? 'Active' : 'Inactive';
+
+        let roleBadge = 'badge-primary';
+        if (roleStr === 'Staff') roleBadge = 'badge-warning';
+        if (roleStr === 'Parent') roleBadge = 'badge-gray';
+        if (roleStr === 'Admin') roleBadge = 'badge-danger'; // replaced dynamic style with danger class
+
+        let statBadge = isActive ? 'badge-success' : 'badge-danger';
+
+        const init = u.name ? u.name.substring(0, 2).toUpperCase() : 'U';
+        const bg = 'linear-gradient(135deg,var(--primary),var(--accent))';
+        const joinedDate = u.createdAt || u.created_at;
+        const joined = joinedDate ? new Date(joinedDate).toLocaleDateString() : 'Unknown';
+
+        return `<tr>
+          <td><div style="display:flex;align-items:center;gap:10px"><div style="width:34px;height:34px;border-radius:10px;background:${bg};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff">${init}</div>
+          <div><div style="font-weight:600">${u.name}</div><div style="font-size:11px;color:var(--text-hint)">ID: ${u.id.substring(0, 8)}...</div></div></div></td>
+          <td>${u.email}</td><td><span class="badge ${roleBadge}">${roleStr}</span></td>
+          <td><span class="badge ${statBadge}">${statusStr}</span></td><td>${joined}</td>
+          <td><div class="td-actions"><button class="btn btn-outline btn-icon btn-sm" onclick="editUser('${u.id}')"><i class="ti ti-edit"></i></button>
+          <button class="btn btn-danger btn-icon btn-sm" onclick="deleteUser('${u.id}')"><i class="ti ti-trash"></i></button></div></td></tr>`;
+      }).join('');
+      document.getElementById('users-table-body').innerHTML = html || '<tr><td colspan="6" style="text-align:center">No users found</td></tr>';
+    } async function setupFormForRole(role) {
+      document.getElementById('um-role').value = role;
+
+      // Wait for departments and designations if they haven't loaded yet
+      if (!allDepartments || allDepartments.length === 0) {
+        await fetchDepartments();
+      }
+      if (!allDesignations || allDesignations.length === 0) {
+        await fetchDesignations();
+      }
+
+      const lblName = document.getElementById('label-name');
+      const lblEmail = document.getElementById('label-email');
+      const lblMobile = document.getElementById('label-mobile');
+
+      const grpStatusWrap = document.getElementById('group-status-wrap');
+      const grpStatus = document.getElementById('group-status');
+
+      const grpStaffId = document.getElementById('group-staff-id');
+      const grpAdminId = document.getElementById('group-admin-id');
+      const grpRegNum = document.getElementById('group-register-number');
+      const grpIdFields = document.getElementById('group-id-fields');
+
+      const grpStudentFields = document.getElementById('group-student-fields');
+
+      const grpDeptPos = document.getElementById('group-dept-pos');
+      const grpDepartment = document.getElementById('group-department');
+      const grpDesignation = document.getElementById('group-designation');
+
+      const selDepartment = document.getElementById('um-department');
+      const selDesignation = document.getElementById('um-designation');
+      const grpPasswords = document.getElementById('group-passwords');
+
+      function hide(el) { if (el) el.style.setProperty('display', 'none', 'important'); }
+      function show(el, d = 'block') { if (el) el.style.setProperty('display', d, 'important'); }
+
+      // Hide specific groups
+      hide(grpStatusWrap);
+      hide(grpStatus);
+      hide(grpIdFields);
+      hide(grpStaffId);
+      hide(grpAdminId);
+      hide(grpRegNum);
+      hide(grpStudentFields);
+      hide(grpDeptPos);
+      hide(grpDepartment);
+      hide(grpDesignation);
+      hide(grpPasswords);
+
+      // Default Labels
+      lblName.textContent = 'Full Name';
+      lblEmail.textContent = 'Email Address';
+
+
+      document.getElementById('user-modal-title').textContent = `Add ${role}`;
+
+      if (role === 'Student') {
+        show(grpStatusWrap, 'grid');
+        show(grpStatus);
+        show(grpIdFields, 'grid');
+        show(grpRegNum);
+        show(grpStudentFields, 'grid');
+        show(grpDeptPos, 'grid');
+        show(grpDepartment);
+        show(grpPasswords, 'grid');
+
+        // Clear dependent dropdowns
+        document.getElementById('um-program-type').value = '';
+        document.getElementById('um-branch').innerHTML = '<option value="">Select Branch</option>';
+        document.getElementById('um-department').innerHTML = '<option value="">Select Department</option>';
+        document.getElementById('um-study-year').innerHTML = '<option value="">Select Year</option>';
+
+      } else if (role === 'Staff' || role === 'Admin') {
+        show(grpStatusWrap, 'grid');
+        show(grpStatus);
+        show(grpIdFields, 'grid');
+
+        if (role === 'Staff') {
+          show(grpStaffId);
+        } else {
+          show(grpAdminId);
+        }
+
+        show(grpDeptPos, 'grid');
+        show(grpDepartment);
+        show(grpDesignation);
+        show(grpPasswords, 'grid');
+
+        selDepartment.innerHTML = '<option value="">Select Department</option>';
+        selDepartment.innerHTML += '<option value="Global">Global / Non-Departmental</option>';
+        allDepartments.forEach(d => { selDepartment.innerHTML += `<option value="${d.name}">${d.name}</option>`; });
+
+        selDesignation.innerHTML = '<option value="">Select Designation</option>';
+        if (allDesignations && allDesignations.length > 0) {
+          allDesignations.forEach(d => { selDesignation.innerHTML += `<option value="${d.name}">${d.name}</option>`; });
+        } else {
+          const designations = ['Admin', 'Principal', 'Director', 'Dean', 'HOD', 'Lab Technician', 'Super Admin', 'Assistant Professor'];
+          designations.forEach(p => { selDesignation.innerHTML += `<option value="${p}">${p}</option>`; });
+        }
+
+      } else if (role === 'Parent') {
+        lblName.textContent = 'Parent Name';
+        lblEmail.textContent = 'Email Address';
+
+
+        show(grpStatusWrap, 'grid');
+        show(grpStatus);
+      }
+    }
+
+    function handleProgramTypeChange() {
+      const pType = document.getElementById('um-program-type').value;
+      const selBranch = document.getElementById('um-branch');
+      const selDept = document.getElementById('um-department');
+      const selYear = document.getElementById('um-study-year');
+
+      selBranch.innerHTML = '<option value="">Select Branch</option>';
+      selDept.innerHTML = '<option value="">Select Department</option>';
+      selYear.innerHTML = '<option value="">Select Year</option>';
+
+      if (pType === 'UG') {
+        selBranch.innerHTML += `<option value="B.E">B.E</option><option value="B.Tech">B.Tech</option>`;
+        ['I-Year', 'II-Year', 'III-Year', 'IV-Year'].forEach(y => { selYear.innerHTML += `<option value="${y}">${y}</option>`; });
+      } else if (pType === 'PG') {
+        selBranch.innerHTML += `<option value="M.BA">M.BA</option>`;
+        ['I-Year', 'II-Year'].forEach(y => { selYear.innerHTML += `<option value="${y}">${y}</option>`; });
+      }
+    }
+
+    function handleBranchChange() {
+      const pType = document.getElementById('um-program-type').value;
+      const branch = document.getElementById('um-branch').value;
+      const selDept = document.getElementById('um-department');
+
+      selDept.innerHTML = '<option value="">Select Department</option>';
+
+      // Filter departments based on branch selection      
+      const filtered = allDepartments.filter(d => {
+        if (pType === 'UG' && branch === 'B.E') return ['Civil Engineering', 'Computer Science and Engineering', 'Electrical and Electronics Engineering', 'Electronics and Communication Engineering', 'Mechanical Engineering'].includes(d.name);
+        if (pType === 'UG' && branch === 'B.Tech') return ['Artificial Intelligence and Data Science', 'Information Technology'].includes(d.name);
+        if (pType === 'PG' && branch === 'M.BA') return ['Master of Business Administration'].includes(d.name);
+        return false;
+      });
+      filtered.forEach(d => { selDept.innerHTML += `<option value="${d.name}">${d.name}</option>`; });
+    }
+
+    function openUserModal() {
+      document.getElementById('um-id').value = '';
+      document.getElementById('um-name').value = '';
+      document.getElementById('um-email').value = '';
+
+      document.getElementById('um-status').value = 'Active';
+
+      // Clear hidden specific fields
+      document.getElementById('um-staff-id').value = '';
+      document.getElementById('um-admin-id').value = '';
+      document.getElementById('um-register-number').value = '';
+      document.getElementById('um-password').value = '';
+      document.getElementById('um-confirm-password').value = '';
+
+      document.getElementById('user-modal-title').textContent = 'Select User Type';
+      document.getElementById('role-selection-screen').style.display = 'block';
+      document.getElementById('user-form-content').style.display = 'none';
+
+      document.getElementById('user-modal').classList.add('show');
+    }
+
+    async function selectRoleAndContinue(role) {
+      document.getElementById('role-selection-screen').style.display = 'none';
+      document.getElementById('user-form-content').style.display = 'block';
+      await setupFormForRole(role);
+    }
+
+    async function editUser(id) {
+      const u = users.find(x => x.id === id); if (!u) return;
+
+      const roleStr = getRoleString(u.role);
+
+      document.getElementById('role-selection-screen').style.display = 'none';
+      document.getElementById('user-form-content').style.display = 'block';
+
+      await setupFormForRole(roleStr);
+
+      document.getElementById('um-id').value = u.id;
+      document.getElementById('um-name').value = u.name || '';
+      document.getElementById('um-email').value = u.email || '';
+
+      
+      const isActive = u.isActive !== undefined ? u.isActive : u.is_active;
+      document.getElementById('um-status').value = isActive ? 'Active' : 'Inactive';
+
+      if (roleStr === 'Student') {
+        const programType = u.programType || u.program_type;
+        if (programType) {
+          document.getElementById('um-program-type').value = programType;
+          handleProgramTypeChange();
+          if (u.branch) {
+            let selBranch = document.getElementById('um-branch');
+            if (!Array.from(selBranch.options).some(opt => opt.value === u.branch)) {
+              selBranch.innerHTML += `<option value="${u.branch}">${u.branch}</option>`;
+            }
+            selBranch.value = u.branch;
+            handleBranchChange();
+          }
+        }
+        document.getElementById('um-department').value = u.departmentName || u.department || '';
+        
+        const studyYear = u.studyYear || u.study_year || '';
+        let selYear = document.getElementById('um-study-year');
+        if (studyYear) {
+          if (!Array.from(selYear.options).some(opt => opt.value === studyYear)) {
+            selYear.innerHTML += `<option value="${studyYear}">${studyYear}</option>`;
+          }
+          selYear.value = studyYear;
+        } else {
+          selYear.value = '';
+        }
+        
+        document.getElementById('um-register-number').value = u.rollNo || u.register_number || '';
+      } else if (roleStr === 'Staff') {
+        document.getElementById('um-staff-id').value = u.rollNo || u.staff_id || '';
+        document.getElementById('um-department').value = u.departmentName || u.department || 'Global';
+        document.getElementById('um-designation').value = u.designation || u.position || '';
+      } else if (roleStr === 'Admin') {
+        document.getElementById('um-admin-id').value = u.rollNo || u.admin_id || '';
+        document.getElementById('um-department').value = u.departmentName || u.department || 'Global';
+        document.getElementById('um-designation').value = u.designation || u.position || '';
+      }
+
+      document.getElementById('user-modal-title').textContent = `Edit ${roleStr}`;
+      document.getElementById('user-modal').classList.add('show');
+    }
+
+    async function saveUser() {
+      try {
+        const id = document.getElementById('um-id').value;
+        const name = document.getElementById('um-name').value;
+        const email = document.getElementById('um-email').value;
+
+        const roleStr = document.getElementById('um-role').value;
+        const statusStr = document.getElementById('um-status').value;
+
+        if (!name || !email) { saveToast('Please fill required basic fields (Name, Email)', true); return; }
+
+        const payload = {
+          name,
+          email,
+
+          role: getRoleNum(roleStr),
+          isActive: statusStr === 'Active'
+        };
+
+        const pass = document.getElementById('um-password').value;
+        const cpass = document.getElementById('um-confirm-password').value;
+
+        if (roleStr !== 'Parent') {
+          if (!id && (!pass || !cpass)) {
+            saveToast('Please enter password', true); return;
+          }
+          if (pass && pass !== cpass) {
+            saveToast('Passwords do not match', true); return;
+          }
+          if (pass) payload.password = pass;
+        }
+
+        if (roleStr === 'Student') {
+          const programType = document.getElementById('um-program-type').value;
+          const branch = document.getElementById('um-branch').value;
+          const dept = document.getElementById('um-department').value;
+          const studyYear = document.getElementById('um-study-year').value;
+          const registerNumber = document.getElementById('um-register-number').value;
+
+          if (!programType || !branch || !dept || !studyYear || !registerNumber) {
+            saveToast('Please fill all Student fields', true); return;
+          }
+
+          payload.programType = programType;
+          payload.branch = branch;
+          
+          let deptId = null;
+          if (dept) {
+            const found = allDepartments.find(d => d.name.toLowerCase() === dept.toLowerCase());
+            if (found) deptId = found.id;
+          }
+          payload.departmentId = deptId;
+          payload.studyYear = studyYear;
+          payload.rollNo = registerNumber;
+
+        } else if (roleStr === 'Staff') {
+          const staffId = document.getElementById('um-staff-id').value;
+          const dept = document.getElementById('um-department').value;
+          const desig = document.getElementById('um-designation').value;
+
+          if (!staffId || !dept || !desig) {
+            saveToast('Please fill all Staff fields', true); return;
+          }
+
+          payload.rollNo = staffId;
+          let deptId = null;
+          if (dept && dept !== 'Global') {
+            const found = allDepartments.find(d => d.name.toLowerCase() === dept.toLowerCase());
+            if (found) deptId = found.id;
+          }
+          payload.departmentId = deptId;
+          payload.designation = desig;
+
+        } else if (roleStr === 'Admin') {
+          const adminId = document.getElementById('um-admin-id').value;
+          const dept = document.getElementById('um-department').value;
+          const desig = document.getElementById('um-designation').value;
+
+          if (!adminId || !dept || !desig) {
+            saveToast('Please fill all Admin fields', true); return;
+          }
+
+          payload.rollNo = adminId;
+          let deptId = null;
+          if (dept && dept !== 'Global') {
+            const found = allDepartments.find(d => d.name.toLowerCase() === dept.toLowerCase());
+            if (found) deptId = found.id;
+          }
+          payload.departmentId = deptId;
+          payload.designation = desig;
+
+        } else if (roleStr === 'Parent') {
+          // Phone is already set in payload
+        }
+
+        try {
+          let res;
+          if (id) {
+            res = await fetch(`${API_BASE}/admin/users/${id}`, {
+              method: 'PUT',
+              headers,
+              body: JSON.stringify(payload)
+            });
+          } else {
+            res = await fetch(`${API_BASE}/admin/users`, {
+              method: 'POST',
+              headers,
+              body: JSON.stringify(payload)
+            });
+          }
+
+          const json = await res.json();
+          if (json.success) {
+            saveToast(id ? 'User updated successfully' : 'User added successfully');
+            closeModal('user-modal');
+            fetchUsers();
+            fetchStats();
+          } else {
+            saveToast(json.message || 'Operation failed', true);
+          }
+        } catch (err) {
+          saveToast('Network error', true);
+          console.error(err);
+        }
+      } catch (err) {
+        saveToast('Error: ' + err.message, true);
+        console.error('saveUser crash:', err);
+      }
+    }
+
+    async function deleteUser(id) {
+      if (!confirm('Are you sure you want to delete this user?')) return;
+      try {
+        const res = await fetch(`${API_BASE}/admin/users/${id}`, {
+          method: 'DELETE',
+          headers
+        });
+        const json = await res.json();
+        if (json.success) {
+          saveToast('User deleted successfully');
+          fetchUsers();
+          fetchStats();
+        } else {
+          saveToast(json.message || 'Failed to delete user', true);
+        }
+      } catch (err) {
+        saveToast('Network error', true);
+        console.error(err);
+      }
+    }
+
+    // Init
+    fetchDepartments();
+    fetchDesignations();
+    fetchStats();
+    fetchUsers();
+  </script>
+  <script type="module" src="firebase.js"></script>
+</body>
+
+</html>
+

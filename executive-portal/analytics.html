@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus Connect | Executive Analytics Console</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <!-- ChartJS -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Auth Protection Guard -->
+  <script src="js/auth.js"></script>
+  <style>
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 24px;
+      margin-top: 24px;
+    }
+    
+    @media (max-width: 768px) {
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .chart-container {
+      position: relative;
+      height: 300px;
+      width: 100%;
+    }
+  </style>
+</head>
+<body class="role-dean">
+
+<div class="app-shell" id="appShell">
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <i class="fa-solid fa-shield-halved" style="font-size: 24px; color: var(--accent);"></i>
+      <div class="brand-text">
+        <div class="brand-name">Campus Connect</div>
+        <div class="brand-sub" id="sidebarBrandSub">Dean Console</div>
+      </div>
+    </div>
+
+    <div class="sidebar-authority">
+      <div class="badge-ring" id="sidebarBadgeRing">L2</div>
+      <div class="authority-text">
+        <div class="t1" id="sidebarAuthTitle">L2 Authority</div>
+        <div class="t2" id="sidebarAuthSub">Dean Escalation</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Overview</div>
+      <a href="dashboard.html" class="nav-link"><i class="fa-solid fa-house"></i><span>Dashboard</span></a>
+      <a href="complaints.html" class="nav-link"><i class="fa-solid fa-layer-group"></i><span id="navEscalatedText">Level 2 Escalated</span></a>
+      
+      <div class="nav-section-title">Insights</div>
+      <a href="analytics.html" class="nav-link active"><i class="fa-solid fa-chart-pie"></i><span>Analytics</span></a>
+      <a href="reports.html" class="nav-link"><i class="fa-solid fa-file-lines"></i><span>Reports</span></a>
+      
+      <div class="nav-section-title">Account</div>
+      <a href="notifications.html" class="nav-link"><i class="fa-solid fa-bell"></i><span>Notifications</span></a>
+      <a href="profile.html" class="nav-link"><i class="fa-solid fa-user-gear"></i><span>Profile & Settings</span></a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="#" class="nav-link" onclick="performLogout(); return false;" style="margin-top:auto;"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN CONTENT ============ -->
+  <main class="main-col">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="sidebar-toggle" id="sidebarToggle"><i class="fa-solid fa-bars"></i></button>
+        <div class="page-title">
+          <h1 id="pageHeadingTitle">Executive Analytics Console</h1>
+          <div class="breadcrumb" id="currentDateTime">Loading date...</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <!-- Notification Icon -->
+        <a href="notifications.html" class="icon-btn" style="position:relative; text-decoration:none;">
+          <i class="fa-solid fa-bell"></i>
+          <span id="notifBadge" style="display:none; position:absolute; top:-4px; right:-4px; background:#ef4444; color:white; font-size:9px; font-weight:bold; width:16px; height:16px; border-radius:50%; align-items:center; justify-content:center; border:2px solid white;">0</span>
+        </a>
+
+        <!-- User Profile Dropdown -->
+        <button class="profile-chip" id="profileChipBtn" onclick="toggleProfileDropdown(event)">
+          <div class="avatar-initial" id="profileAvatar">U</div>
+          <div style="text-align:left;">
+            <div class="p-name" id="profileName">Loading User...</div>
+            <div class="p-role" id="profileRole">Role</div>
+          </div>
+          <i class="fa-solid fa-chevron-down chev"></i>
+        </button>
+        
+        <div class="dropdown-panel" id="profileDropdown">
+          <a href="profile.html" class="dd-item"><i class="fa-solid fa-user"></i> My Profile</a>
+          <a href="settings.html" class="dd-item"><i class="fa-solid fa-gear"></i> Settings</a>
+          <div class="dd-divider"></div>
+          <a href="#" class="dd-item" onclick="performLogout(); return false;"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <div class="content">
+      <!-- Overview Numbers -->
+      <div class="stat-grid" id="statGrid">
+        <div class="stat-card" data-tone="blue">
+          <div class="s-icon"><i class="fa-solid fa-clipboard-list"></i></div>
+          <div class="s-value mono" id="statTotal">--</div>
+          <div class="s-label">Active Database Tickets</div>
+        </div>
+        <div class="stat-card" data-tone="green">
+          <div class="s-icon"><i class="fa-solid fa-percent"></i></div>
+          <div class="s-value mono" id="statResolvedRate">--</div>
+          <div class="s-label">Resolution Rate</div>
+        </div>
+      </div>
+
+      <!-- Charts Area -->
+      <div class="charts-grid">
+        <!-- Chart 1: Categories -->
+        <div class="card">
+          <div class="card-header">
+            <h3>Complaints by Category</h3>
+          </div>
+          <div class="card-body">
+            <div class="chart-container">
+              <canvas id="categoryChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chart 2: Locations -->
+        <div class="card">
+          <div class="card-header">
+            <h3>Complaints by Location Block</h3>
+          </div>
+          <div class="card-body">
+            <div class="chart-container">
+              <canvas id="locationChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chart 3: Status Breakdown -->
+        <div class="card" style="grid-column: span 2;">
+          <div class="card-header">
+            <h3>Resolution Status Distribution</h3>
+          </div>
+          <div class="card-body">
+            <div class="chart-container" style="height: 350px;">
+              <canvas id="statusChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- API & Page Logic scripts -->
+<script src="js/api.js"></script>
+<script>
+  let categoryChartInstance = null;
+  let locationChartInstance = null;
+  let statusChartInstance = null;
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    // Skin body and sidebar based on role
+    const role = window.currentRole; // 'dean', 'director', or 'principal'
+    document.body.className = `role-${role}`;
+
+    // Update branding elements
+    const brandSub = document.getElementById('sidebarBrandSub');
+    const badgeRing = document.getElementById('sidebarBadgeRing');
+    const authTitle = document.getElementById('sidebarAuthTitle');
+    const authSub = document.getElementById('sidebarAuthSub');
+    const navEscalatedText = document.getElementById('navEscalatedText');
+    const pageHeadingTitle = document.getElementById('pageHeadingTitle');
+
+    if (role === 'principal') {
+      brandSub.textContent = 'Principal Console';
+      badgeRing.textContent = 'L3';
+      authTitle.textContent = 'L3 Authority';
+      authSub.textContent = 'Principal Escalation';
+      navEscalatedText.innerHTML = 'Level 3 Escalated';
+      pageHeadingTitle.textContent = 'Principal Insights & Analytics';
+    } else if (role === 'director') {
+      brandSub.textContent = 'Director Console';
+      badgeRing.textContent = 'DIR';
+      authTitle.textContent = 'Executive';
+      authSub.textContent = 'Director Review';
+      navEscalatedText.innerHTML = 'All Complaints';
+      pageHeadingTitle.textContent = 'Director Analysis Console';
+    } else {
+      // dean
+      brandSub.textContent = 'Dean Console';
+      badgeRing.textContent = 'L2';
+      authTitle.textContent = 'L2 Authority';
+      authSub.textContent = 'Dean Escalation';
+      navEscalatedText.innerHTML = 'Level 2 Escalated';
+      pageHeadingTitle.textContent = 'Dean Insights & Analytics';
+    }
+
+    // Set Date & Time
+    const now = new Date();
+    document.getElementById('currentDateTime').textContent = now.toLocaleDateString("en-IN", {
+      weekday: "long", day: "numeric", month: "long", year: "numeric"
+    }) + " · " + now.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
+
+    // Set active user credentials
+    const user = window.currentUser;
+    if (user) {
+      document.getElementById('profileName').textContent = user.name;
+      document.getElementById('profileRole').textContent = `${user.designation} · Portal`;
+      document.getElementById('profileAvatar').textContent = user.name.split(' ').map(n=>n[0]).join('').substring(0, 2).toUpperCase();
+    }
+
+    // Sidebar Toggle
+    const toggleBtn = document.getElementById('sidebarToggle');
+    const shell = document.getElementById('appShell');
+    toggleBtn.addEventListener('click', () => {
+      shell.classList.toggle('collapsed');
+    });
+
+    // Initial data load
+    await renderAnalytics();
+  });
+
+  async function renderAnalytics() {
+    // Fetch notifications unread badge count
+    const unreadCount = await API.getUnreadCount();
+    const badge = document.getElementById('notifBadge');
+    if (unreadCount > 0) {
+      badge.textContent = unreadCount;
+      badge.style.display = 'flex';
+    } else {
+      badge.style.display = 'none';
+    }
+
+    // Fetch stats and tickets
+    const statsResult = await API.getStats();
+    const ticketsResult = await API.getTickets();
+    let tickets = ticketsResult.data || [];
+
+    // Filter tickets based on role constraints
+    const role = window.currentRole;
+    if (role === 'dean') {
+      tickets = tickets.filter(t => t.escalation_level === 2);
+    } else if (role === 'principal') {
+      tickets = tickets.filter(t => t.escalation_level === 3);
+    }
+
+    // Metrics calculation
+    const totalCount = tickets.length;
+    const resolvedCount = tickets.filter(t => t.status === 2).length;
+    const pendingCount = tickets.filter(t => t.status === 0 || t.status === 1).length;
+    const closedCount = tickets.filter(t => t.status === 4).length;
+
+    const resRate = totalCount > 0 ? Math.round((resolvedCount / totalCount) * 100) : 0;
+    
+    document.getElementById('statTotal').textContent = totalCount;
+    document.getElementById('statResolvedRate').textContent = `${resRate}%`;
+
+    // 1. Calculate Categories count locally for correctness (based on matching role filter)
+    const categoryCounts = {};
+    tickets.forEach(t => {
+      categoryCounts[t.category_name] = (categoryCounts[t.category_name] || 0) + 1;
+    });
+
+    // 2. Calculate Location block counts locally
+    const locationCounts = {};
+    tickets.forEach(t => {
+      const block = t.location_name.split(' - ')[0];
+      locationCounts[block] = (locationCounts[block] || 0) + 1;
+    });
+
+    // Color definitions
+    const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#1565C0';
+
+    // RENDER CATEGORIES CHART
+    const catLabels = Object.keys(categoryCounts);
+    const catData = Object.values(categoryCounts);
+    
+    if (categoryChartInstance) categoryChartInstance.destroy();
+    categoryChartInstance = new Chart(document.getElementById('categoryChart'), {
+      type: 'doughnut',
+      data: {
+        labels: catLabels,
+        datasets: [{
+          data: catData,
+          backgroundColor: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#6366F1'],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'right' }
+        }
+      }
+    });
+
+    // RENDER LOCATIONS CHART
+    const locLabels = Object.keys(locationCounts);
+    const locData = Object.values(locationCounts);
+
+    if (locationChartInstance) locationChartInstance.destroy();
+    locationChartInstance = new Chart(document.getElementById('locationChart'), {
+      type: 'bar',
+      data: {
+        labels: locLabels,
+        datasets: [{
+          label: 'Complaints filed',
+          data: locData,
+          backgroundColor: primaryColor,
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: { beginAtZero: true, ticks: { stepSize: 1 } }
+        }
+      }
+    });
+
+    // RENDER STATUS DISTRIBUTION CHART
+    if (statusChartInstance) statusChartInstance.destroy();
+    statusChartInstance = new Chart(document.getElementById('statusChart'), {
+      type: 'bar',
+      data: {
+        labels: ['Open (Pending)', 'In Progress', 'Resolved', 'Closed'],
+        datasets: [{
+          label: 'Number of Tickets',
+          data: [
+            tickets.filter(t => t.status === 0).length,
+            tickets.filter(t => t.status === 1).length,
+            tickets.filter(t => t.status === 2).length,
+            tickets.filter(t => t.status === 4).length
+          ],
+          backgroundColor: ['#EFF6FF', '#FFFBEB', '#ECFDF5', '#F1F5F9'],
+          borderColor: ['#3B82F6', '#F59E0B', '#10B981', '#64748B'],
+          borderWidth: 1.5,
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: { beginAtZero: true, ticks: { stepSize: 1 } }
+        }
+      }
+    });
+  }
+
+  function toggleProfileDropdown(e) {
+    e.stopPropagation();
+    document.getElementById('profileDropdown').classList.toggle('open');
+  }
+
+  document.addEventListener('click', () => {
+    document.getElementById('profileDropdown').classList.remove('open');
+  });
+</script>
+</body>
+</html>

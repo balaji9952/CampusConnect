@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Department Management — Campus Connect</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/admin-shared.css">
+  <script src="assets/js/theme.js"></script>
+</head>
+
+<body>
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-badge">
+        <div class="logo-icon">
+          <img src="assets/images/mzcetlogo.jpg" alt="Campus Connect Logo">
+        </div>
+        <div>
+          <div class="logo-text">Campus Connect</div>
+          <div class="logo-sub">Admin Portal</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-nav">
+      <div class="nav-group">
+        <div class="nav-section-label">Management</div>
+        <a class="nav-item" href="user-management.html">
+          <span class="nav-icon-wrap"><i class="ti ti-users nav-icon"></i></span>
+          <span class="nav-label">User Management</span>
+        </a>
+        <a class="nav-item active" href="department-management.html">
+          <span class="nav-icon-wrap"><i class="ti ti-building nav-icon"></i></span>
+          <span class="nav-label">Department Management</span>
+        </a>
+        <a class="nav-item" href="department-dashboards.html">
+          <span class="nav-icon-wrap"><i class="ti ti-layout-dashboard nav-icon"></i></span>
+          <span class="nav-label">Department Dashboards</span>
+        </a>
+        <a class="nav-item" href="location-qr.html">
+          <span class="nav-icon-wrap"><i class="ti ti-map-pin nav-icon"></i></span>
+          <span class="nav-label">Location and QR</span>
+        </a>
+        <a class="nav-item" href="complaint-categories.html">
+          <span class="nav-icon-wrap"><i class="ti ti-tag nav-icon"></i></span>
+          <span class="nav-label">Complaint Categories</span>
+        </a>
+        <a class="nav-item" href="escalation-routing.html">
+          <span class="nav-icon-wrap"><i class="ti ti-arrows-exchange nav-icon"></i></span>
+          <span class="nav-label">Escalation Routing</span>
+        </a>
+        <a class="nav-item" href="escalation-settings.html">
+          <span class="nav-icon-wrap"><i class="ti ti-trending-up nav-icon"></i></span>
+          <span class="nav-label">Escalation Settings</span>
+        </a>
+        <a class="nav-item" href="designations.html">
+          <span class="nav-icon-wrap"><i class="ti ti-id-badge nav-icon"></i></span>
+          <span class="nav-label">Designations</span>
+        </a>
+        <a class="nav-item" href="security-settings.html">
+          <span class="nav-icon-wrap"><i class="ti ti-shield-lock nav-icon"></i></span>
+          <span class="nav-label">Security Settings</span>
+        </a>
+        <a class="nav-item" href="backup-restore.html">
+          <span class="nav-icon-wrap"><i class="ti ti-database nav-icon"></i></span>
+          <span class="nav-label">Backup and Restore</span>
+        </a>
+        <a class="nav-item" href="audit-logs.html">
+          <span class="nav-icon-wrap"><i class="ti ti-clipboard-list nav-icon"></i></span>
+          <span class="nav-label">Audit Logs</span>
+        </a>
+        <a class="nav-item" href="profile-settings.html">
+          <span class="nav-icon-wrap"><i class="ti ti-user-circle nav-icon"></i></span>
+          <span class="nav-label">Profile Settings</span>
+        </a>
+        <a class="nav-item" href="login.html" onclick="return confirm('Are you sure you want to logout?')">
+          <span class="nav-icon-wrap">
+            <i class="ti ti-logout nav-icon"></i>
+          </span>
+          <span class="nav-label">Logout</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="admin-card">
+        <div class="admin-avatar">RK</div>
+        <div>
+          <div class="admin-name">Raj Kumar</div>
+          <div class="admin-role">Super Administrator</div>
+        </div>
+        <div class="admin-menu-btn"><i class="ti ti-dots-vertical"></i></div>
+      </div>
+    </div>
+  </nav>
+  <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="btn btn-outline btn-icon mobile-nav-btn" onclick="openSidebar()"><i
+            class="ti ti-menu-2"></i></button>
+        <div>
+          <div class="page-title">Department Management</div>
+          <div class="breadcrumb">Admin <i class="ti ti-chevron-right" style="font-size:10px"></i>
+            <span>Departments</span>
+          </div>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button id="theme-toggle-btn" class="btn-theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">
+          <i class="ti ti-moon"></i>
+        </button>
+        <button class="btn btn-outline btn-icon" title="Notifications" style="position:relative">
+          <i class="ti ti-bell"></i>
+          <span
+            style="position:absolute;top:7px;right:7px;width:8px;height:8px;background:var(--danger);border-radius:50%;border:2px solid #fff"></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="section-header">
+        <div class="section-title">Department Management</div>
+        <div class="section-desc">Manage college departments for complaint routing.</div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:8px">
+          <div class="card-title" style="margin-bottom:0"><i class="ti ti-building"></i> Departments</div>
+          <div style="display:flex;gap:8px">
+            <div class="input-icon-wrap">
+              <i class="ti ti-search"></i>
+              <input type="text" id="dept-search" class="form-control" placeholder="Search departments..."
+                style="width:220px;padding:8px 12px 8px 38px" oninput="fetchDepartments()">
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="openDeptModal()"><i class="ti ti-plus"></i> Add
+              Department</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Department</th>
+                <th>Code</th>
+                <th>HOD</th>
+                <th>Students</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="dept-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:24px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:8px">
+          <div class="card-title" style="margin-bottom:0"><i class="ti ti-world"></i> Global Assignments</div>
+          <button class="btn btn-primary btn-sm" onclick="openGlobalModal()"><i class="ti ti-plus"></i> Assign Global Head</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Routing Key</th>
+                <th>Assigned To</th>
+                <th>Designation</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="global-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEPT MODAL -->
+  <div class="modal-overlay" id="dept-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title" id="dept-modal-title">Add Department</div>
+        <button class="modal-close" onclick="closeModal('dept-modal')"><i class="ti ti-x"></i></button>
+      </div>
+      <input type="hidden" id="dm-id">
+      <div class="form-group">
+        <label class="form-label">Department Name</label>
+        <input type="text" class="form-control" id="dm-name">
+      </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Code</label>
+          <input type="text" class="form-control" id="dm-code">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <select class="form-control" id="dm-status">
+            <option value="true">Active</option>
+            <option value="false">Inactive</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">HOD Assignment</label>
+        <select class="form-control" id="dm-hod">
+          <option value="">-- No HOD Assigned --</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:24px">
+        <button class="btn btn-outline" onclick="closeModal('dept-modal')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveDept()">Save Department</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GLOBAL MODAL -->
+  <div class="modal-overlay" id="global-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">Assign Global Head</div>
+        <button class="modal-close" onclick="closeModal('global-modal')"><i class="ti ti-x"></i></button>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Routing Key</label>
+        <select class="form-control" id="gm-routing-key">
+          <option value="">-- Loading Keys --</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Assignee</label>
+        <select class="form-control" id="gm-assignee">
+          <option value="">-- Select Staff Member --</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:24px">
+        <button class="btn btn-outline" onclick="closeModal('global-modal')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveGlobal()">Save Assignment</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"><i class="ti ti-circle-check"></i><span id="toast-msg">Changes saved
+      successfully!</span></div>
+
+  <script src="api/api.js"></script>
+  <script>
+    // API_BASE is globally available via api.js
+
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    };
+
+    function saveToast(msg, isError = false) {
+      const t = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = msg || 'Changes saved successfully!';
+      t.style.background = isError ? 'var(--danger)' : 'var(--success)';
+      t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000);
+    }
+    
+    function openSidebar() { document.getElementById('sidebar').classList.add('open'); document.getElementById('overlay').classList.add('show'); }
+    function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+    let depts = [];
+    let staffUsers = [];
+
+    async function loadStaff() {
+      try {
+        const res = await fetch(`${API_BASE}/admin/users?role=1&limit=500`, { headers }); // role 1 = Staff
+        const json = await res.json();
+        if (json.success) {
+          staffUsers = json.data.filter(u => (u.isActive !== undefined ? u.isActive : u.is_active));
+          const hodSelect = document.getElementById('dm-hod');
+          hodSelect.innerHTML = '<option value="">-- No HOD Assigned --</option>' + 
+            staffUsers.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+
+          const gmAssignee = document.getElementById('gm-assignee');
+          if (gmAssignee) {
+            gmAssignee.innerHTML = '<option value="">-- Select Staff Member --</option>' + 
+              staffUsers.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load staff for dropdowns', err);
+      }
+    }
+
+    async function fetchDepartments() {
+      const q = document.getElementById('dept-search')?.value.trim() || '';
+      let url = `${API_BASE}/departments`;
+      if (q) url += `?search=${encodeURIComponent(q)}`;
+
+      try {
+        document.getElementById('dept-table-body').innerHTML = '<tr><td colspan="6" style="text-align:center">Loading departments...</td></tr>';
+        const res = await fetch(url, { headers });
+        if (res.status === 401 || res.status === 403) return window.location.href = 'login.html';
+        const json = await res.json();
+        if (json.success) {
+          depts = json.data || [];
+          renderDepts();
+        } else {
+          saveToast('Failed to load departments', true);
+        }
+      } catch (err) {
+        saveToast('Network error loading departments', true);
+        console.error(err);
+      }
+    }
+
+    function renderDepts() {
+      if (depts.length === 0) {
+        document.getElementById('dept-table-body').innerHTML = '<tr><td colspan="6" style="text-align:center">No departments found.</td></tr>';
+        return;
+      }
+      
+      const icons = ['ti-cpu', 'ti-radio', 'ti-bolt', 'ti-engine', 'ti-building-bridge', 'ti-brain', 'ti-server', 'ti-briefcase'];
+      const colors = ['primary', 'success', 'warning', 'danger', 'gray', 'primary', 'primary', 'success'];
+
+      const html = depts.map((d, i) => {
+        const icon = icons[i % icons.length];
+        const colorClass = colors[i % colors.length];
+        
+        return `
+        <tr>
+          <td>${d.id}</td>
+          <td><div style="display:flex;align-items:center;gap:10px">
+            <div style="width:32px;height:32px;border-radius:9px;background:var(--${colorClass}-bg,var(--bg-stat-icon-1));display:flex;align-items:center;justify-content:center;color:var(--${colorClass},#6C5CE7);font-size:16px"><i class="ti ${icon}"></i></div>
+            <span style="font-weight:600">${d.name}</span></div></td>
+          <td><span class="badge badge-${colorClass}">${d.code || 'N/A'}</span></td>
+          <td>${d.hodName || '<span style="color:var(--text-hint)">Unassigned</span>'}</td>
+          <td>${d.studentCount || 0}</td>
+          <td><div class="td-actions">
+            <button class="btn btn-outline btn-icon btn-sm" onclick="editDept('${d.id}')"><i class="ti ti-edit"></i></button>
+            <button class="btn btn-danger btn-icon btn-sm" onclick="deleteDept('${d.id}')"><i class="ti ti-trash"></i></button>
+          </div></td>
+        </tr>`
+      }).join('');
+      document.getElementById('dept-table-body').innerHTML = html;
+    }
+
+    function openDeptModal() {
+      document.getElementById('dm-id').value = '';
+      document.getElementById('dm-name').value = '';
+      document.getElementById('dm-code').value = '';
+      document.getElementById('dm-status').value = 'true';
+      document.getElementById('dm-hod').value = '';
+      document.getElementById('dept-modal-title').textContent = 'Add Department';
+      document.getElementById('dept-modal').classList.add('show');
+    }
+
+    function editDept(id) {
+      const d = depts.find(x => x.id == id); 
+      if (!d) return;
+      document.getElementById('dm-id').value = d.id;
+      document.getElementById('dm-name').value = d.name;
+      document.getElementById('dm-code').value = d.code || '';
+      
+      const isActive = 
+          d.status === "active" ||
+          d.status === true ||
+          d.status === 1 ||
+          d.is_active === true ||
+          d.is_active === 1 ||
+          d.isActive === true ||
+          d.isActive === 1;
+
+      document.getElementById('dm-status').value = isActive ? 'true' : 'false';
+      document.getElementById('dm-hod').value = d.hodUserId || '';
+      document.getElementById('dept-modal-title').textContent = 'Edit Department';
+      document.getElementById('dept-modal').classList.add('show');
+    }
+
+    async function saveDept() {
+      const id = document.getElementById('dm-id').value;
+      const name = document.getElementById('dm-name').value.trim();
+      const code = document.getElementById('dm-code').value.trim();
+      const isActive = document.getElementById('dm-status').value === 'true';
+      const hodUserId = document.getElementById('dm-hod').value || null;
+
+      if (!name) { saveToast('Department Name is required', true); return; }
+
+      const payload = { name, code: code || null, isActive, hodUserId };
+
+      try {
+        let res;
+        if (id) {
+          res = await fetch(`${API_BASE}/departments/${id}`, { method: 'PUT', headers, body: JSON.stringify(payload) });
+        } else {
+          res = await fetch(`${API_BASE}/departments`, { method: 'POST', headers, body: JSON.stringify(payload) });
+        }
+
+        const json = await res.json();
+        if (json.success) {
+          saveToast(id ? 'Department updated successfully' : 'Department added successfully');
+          closeModal('dept-modal');
+          fetchDepartments();
+        } else {
+          saveToast(json.message || 'Operation failed', true);
+        }
+      } catch (err) {
+        saveToast('Network error', true);
+        console.error(err);
+      }
+    }
+
+    async function deleteDept(id) {
+      if (!confirm('Are you sure you want to disable this department?')) return;
+      try {
+        const res = await fetch(`${API_BASE}/departments/${id}`, { method: 'DELETE', headers });
+        const json = await res.json();
+        if (json.success) {
+          saveToast('Department disabled successfully');
+          fetchDepartments();
+        } else {
+          saveToast(json.message || 'Failed to delete', true);
+        }
+      } catch (err) {
+        saveToast('Network error', true);
+        console.error(err);
+      }
+    }
+
+    let globalKeys = [];
+    let globalKeyLabels = {};
+
+    async function loadRoutingKeys() {
+      try {
+        const res = await fetch(`${API_BASE}/admin/routing/keys`, { headers });
+        const json = await res.json();
+        if (json.success && json.data) {
+          globalKeys = json.data.map(k => k.key);
+          json.data.forEach(k => globalKeyLabels[k.key] = k.label);
+          
+          const select = document.getElementById('gm-routing-key');
+          select.innerHTML = json.data.map(k => `<option value="${k.key}">${k.key}</option>`).join('');
+        }
+      } catch (err) {
+        console.error('Failed to load routing keys', err);
+      }
+    }
+
+    async function fetchGlobals() {
+      try {
+        const res = await fetch(`${API_BASE}/admin/routing/assignments`, { headers });
+        if (res.status === 401 || res.status === 403) return window.location.href = 'login.html';
+        const json = await res.json();
+        if (json.success) {
+          globals = json.data || [];
+          renderGlobals();
+        } else {
+          saveToast('Failed to load global assignments', true);
+        }
+      } catch (err) {
+        saveToast('Network error loading global assignments', true);
+        console.error(err);
+      }
+    }
+
+    function renderGlobals() {
+      const tbody = document.getElementById('global-table-body');
+      if (!tbody) return;
+
+      const html = globalKeys.map(key => {
+        const assignment = globals.find(g => g.routingKey === key || g.routing_key === key);
+        let assigneeName = '<span style="color:var(--text-hint)">Unassigned</span>';
+        let designation = 'N/A';
+        let userId = '';
+        
+        if (assignment && (assignment.assignedUserId || assignment.user_id)) {
+          userId = assignment.assignedUserId || assignment.user_id;
+          const staff = staffUsers.find(s => s.id == userId);
+          if (staff) {
+            assigneeName = `<span style="font-weight:600">${staff.name}</span>`;
+            designation = staff.designation || 'Staff';
+          } else {
+            assigneeName = `User ID: ${userId}`;
+          }
+        }
+
+        return `
+        <tr>
+          <td><span class="badge badge-gray" style="font-family:monospace">${key}</span></td>
+          <td>${assigneeName}</td>
+          <td>${designation}</td>
+          <td><div class="td-actions">
+            <button class="btn btn-outline btn-icon btn-sm" onclick="editGlobal('${key}', '${userId}')"><i class="ti ti-edit"></i></button>
+          </div></td>
+        </tr>`;
+      }).join('');
+      
+      tbody.innerHTML = html;
+    }
+
+    function openGlobalModal() {
+      document.getElementById('gm-routing-key').value = globalKeys[0];
+      document.getElementById('gm-assignee').value = '';
+      document.getElementById('global-modal').classList.add('show');
+    }
+
+    function editGlobal(key, userId) {
+      document.getElementById('gm-routing-key').value = key;
+      document.getElementById('gm-assignee').value = userId || '';
+      document.getElementById('global-modal').classList.add('show');
+    }
+
+    async function saveGlobal() {
+      const routingKey = document.getElementById('gm-routing-key').value;
+      const userId = document.getElementById('gm-assignee').value || null;
+
+      try {
+        const res = await fetch(`${API_BASE}/admin/routing/assignments`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({ routingKey, userId })
+        });
+        const json = await res.json();
+        if (json.success) {
+          saveToast('Global assignment saved successfully');
+          closeModal('global-modal');
+          fetchGlobals();
+        } else {
+          saveToast(json.message || 'Operation failed', true);
+        }
+      } catch (err) {
+        saveToast('Network error', true);
+        console.error(err);
+      }
+    }
+
+    // Initialize Page
+    loadRoutingKeys().then(() => loadStaff()).then(() => { fetchDepartments(); fetchGlobals(); });
+  </script>
+  <script type="module" src="firebase.js"></script>
+</body>
+
+</html>

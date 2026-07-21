@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complaint Categories — Campus Connect</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/admin-shared.css">
+  <script src="assets/js/theme.js"></script>
+</head>
+
+<body>
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-badge">
+        <div class="logo-icon">
+          <img src="assets/images/mzcetlogo.jpg" alt="Campus Connect Logo">
+        </div>
+        <div>
+          <div class="logo-text">Campus Connect</div>
+          <div class="logo-sub">Admin Portal</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-nav">
+      <div class="nav-group">
+        <div class="nav-section-label">Management</div>
+        <a class="nav-item" href="user-management.html">
+          <span class="nav-icon-wrap"><i class="ti ti-users nav-icon"></i></span>
+          <span class="nav-label">User Management</span>
+        </a>
+        <a class="nav-item" href="department-management.html">
+          <span class="nav-icon-wrap"><i class="ti ti-building nav-icon"></i></span>
+          <span class="nav-label">Department Management</span>
+        </a>
+        <a class="nav-item" href="department-dashboards.html">
+          <span class="nav-icon-wrap"><i class="ti ti-layout-dashboard nav-icon"></i></span>
+          <span class="nav-label">Department Dashboards</span>
+        </a>
+        <a class="nav-item" href="location-qr.html">
+          <span class="nav-icon-wrap"><i class="ti ti-map-pin nav-icon"></i></span>
+          <span class="nav-label">Location and QR</span>
+        </a>
+        <a class="nav-item active" href="complaint-categories.html">
+          <span class="nav-icon-wrap"><i class="ti ti-tag nav-icon"></i></span>
+          <span class="nav-label">Complaint Categories</span>
+        </a>
+        <a class="nav-item" href="escalation-routing.html">
+          <span class="nav-icon-wrap"><i class="ti ti-arrows-exchange nav-icon"></i></span>
+          <span class="nav-label">Escalation Routing</span>
+        </a>
+        <a class="nav-item" href="escalation-settings.html">
+          <span class="nav-icon-wrap"><i class="ti ti-trending-up nav-icon"></i></span>
+          <span class="nav-label">Escalation Settings</span>
+        </a>
+        <a class="nav-item" href="designations.html">
+          <span class="nav-icon-wrap"><i class="ti ti-id-badge nav-icon"></i></span>
+          <span class="nav-label">Designations</span>
+        </a>
+        <a class="nav-item" href="security-settings.html">
+          <span class="nav-icon-wrap"><i class="ti ti-shield-lock nav-icon"></i></span>
+          <span class="nav-label">Security Settings</span>
+        </a>
+        <a class="nav-item" href="backup-restore.html">
+          <span class="nav-icon-wrap"><i class="ti ti-database nav-icon"></i></span>
+          <span class="nav-label">Backup and Restore</span>
+        </a>
+        <a class="nav-item" href="audit-logs.html">
+          <span class="nav-icon-wrap"><i class="ti ti-clipboard-list nav-icon"></i></span>
+          <span class="nav-label">Audit Logs</span>
+        </a>
+
+        <a class="nav-item" href="profile-settings.html">
+          <span class="nav-icon-wrap">
+            <i class="ti ti-user-circle nav-icon"></i>
+          </span>
+          <span class="nav-label">Profile Settings</span>
+        </a>
+        <a class="nav-item" href="login.html" onclick="return confirm('Are you sure you want to logout?')">
+          <span class="nav-icon-wrap">
+            <i class="ti ti-logout nav-icon"></i>
+          </span>
+          <span class="nav-label">Logout</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="admin-card">
+        <div class="admin-avatar">RK</div>
+        <div>
+          <div class="admin-name">Raj Kumar</div>
+          <div class="admin-role">Super Administrator</div>
+        </div>
+        <div class="admin-menu-btn"><i class="ti ti-dots-vertical"></i></div>
+      </div>
+    </div>
+  </nav>
+  <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="btn btn-outline btn-icon mobile-nav-btn" onclick="openSidebar()"><i
+            class="ti ti-menu-2"></i></button>
+        <div>
+          <div class="page-title">Complaint Categories</div>
+          <div class="breadcrumb">Admin <i class="ti ti-chevron-right" style="font-size:10px"></i>
+            <span>Categories</span>
+          </div>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button id="theme-toggle-btn" class="btn-theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">
+          <i class="ti ti-moon"></i>
+        </button>
+        <button class="btn btn-outline btn-icon" title="Notifications" style="position:relative">
+          <i class="ti ti-bell"></i>
+          <span
+            style="position:absolute;top:7px;right:7px;width:8px;height:8px;background:var(--danger);border-radius:50%;border:2px solid #fff"></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="section-header">
+        <div class="section-title">Complaint Categories</div>
+        <div class="section-desc">Define complaint types for proper routing and resolution.</div>
+      </div>
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:8px">
+          <div class="card-title" style="margin-bottom:0"><i class="ti ti-tag"></i> Categories</div>
+          <div style="display:flex;gap:8px">
+            <div class="input-icon-wrap">
+              <i class="ti ti-search"></i>
+              <input type="text" id="cat-search" class="form-control" placeholder="Search categories..."
+                style="width:200px;padding:8px 12px 8px 38px" oninput="renderCats()">
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="openCatModal()"><i class="ti ti-plus"></i> Add Category</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Category</th>
+                <th>Description</th>
+                <th>Icon</th>
+                <th>Sort Order</th>
+                <th>Open Complaints</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="cat-table-body"></tbody>
+          </table>
+        </div>
+        <!-- Pagination -->
+        <div style="display:flex; justify-content:space-between; align-items:center; padding: 16px;">
+          <div id="pagination-info" style="font-size: 13px; color: var(--text-hint);">Showing 0 to 0 of 0 categories</div>
+          <div style="display:flex; gap: 8px;">
+            <button class="btn btn-outline btn-sm" id="btn-prev" onclick="changePage(-1)">Previous</button>
+            <button class="btn btn-outline btn-sm" id="btn-next" onclick="changePage(1)">Next</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CATEGORY MODAL -->
+  <div class="modal-overlay" id="cat-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title" id="cat-modal-title">Add Category</div>
+        <button class="modal-close" onclick="closeModal('cat-modal')"><i class="ti ti-x"></i></button>
+      </div>
+      <input type="hidden" id="cm-id">
+      <div class="form-group">
+        <label class="form-label">Category Name <span style="color:var(--danger)">*</span></label>
+        <input type="text" class="form-control" id="cm-name" placeholder="e.g. Electrical">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea class="form-control" id="cm-desc" rows="2" placeholder="e.g. Issues related to power, lights, etc."></textarea>
+      </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Icon (ti-bolt, etc.)</label>
+          <input type="text" class="form-control" id="cm-icon" placeholder="ti-bolt">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Sort Order <span style="color:var(--danger)">*</span></label>
+          <input type="number" class="form-control" id="cm-sort" value="1" min="1">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Status</label>
+        <select class="form-control" id="cm-status">
+          <option value="true">Active</option>
+          <option value="false">Disabled</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:24px">
+        <button class="btn btn-outline" onclick="closeModal('cat-modal')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveCat()">Save Category</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"><i class="ti ti-circle-check"></i><span id="toast-msg">Changes saved
+      successfully!</span></div>
+
+  <script src="api/api.js"></script>
+  <script>
+    function saveToast(msg) {
+      const t = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = msg || 'Changes saved successfully!';
+      t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000);
+    }
+    function openSidebar() { document.getElementById('sidebar').classList.add('open'); document.getElementById('overlay').classList.add('show'); }
+    function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    };
+
+    let cats = [];
+    let currentPage = 1;
+    const limit = 10;
+    let totalPages = 1;
+
+    async function fetchCategories() {
+      const q = document.getElementById('cat-search').value.trim();
+      let url = `${API_BASE}/categories/admin?page=${currentPage}&limit=${limit}`;
+      if (q) url += `&search=${encodeURIComponent(q)}`;
+
+      try {
+        document.getElementById('cat-table-body').innerHTML = '<tr><td colspan="7" style="text-align:center">Loading categories...</td></tr>';
+        const res = await fetch(url, { headers });
+        if (res.status === 401 || res.status === 403) return window.location.href = 'login.html';
+        const json = await res.json();
+        if (json.success) {
+          cats = json.data || [];
+          totalPages = json.pagination?.totalPages || json.totalPages || 1;
+          const total = json.pagination?.total || json.total || 0;
+          
+          document.getElementById('pagination-info').textContent = `Showing page ${currentPage} of ${totalPages} (${total} total categories)`;
+          document.getElementById('btn-prev').disabled = currentPage <= 1;
+          document.getElementById('btn-next').disabled = currentPage >= totalPages;
+
+          renderCatsTable();
+        } else {
+          saveToast('Failed to load categories', true);
+        }
+      } catch (err) {
+        saveToast('Network error loading categories', true);
+        console.error(err);
+      }
+    }
+
+    function renderCats() {
+      currentPage = 1;
+      fetchCategories();
+    }
+
+    function changePage(delta) {
+      const newPage = currentPage + delta;
+      if (newPage >= 1 && newPage <= totalPages) {
+        currentPage = newPage;
+        fetchCategories();
+      }
+    }
+
+    function renderCatsTable() {
+      if (cats.length === 0) {
+        document.getElementById('cat-table-body').innerHTML = '<tr><td colspan="7" style="text-align:center">No categories found.</td></tr>';
+        return;
+      }
+
+      const badgeClass = (n) => n > 15 ? 'badge-danger' : n > 8 ? 'badge-warning' : n > 3 ? 'badge-primary' : 'badge-success';
+      document.getElementById('cat-table-body').innerHTML = cats.map(c => {
+        const badge = c.isActive ? 'badge-success' : 'badge-danger';
+        const statusStr = c.isActive ? 'Active' : 'Disabled';
+        return `
+        <tr>
+          <td><span style="font-weight:600">${c.name}</span></td>
+          <td>${c.description || '-'}</td>
+          <td><i class="ti ${c.icon || 'ti-tag'}" style="font-size:18px"></i> ${c.icon || '-'}</td>
+          <td>${c.sortOrder}</td>
+          <td><span class="badge ${badgeClass(c.openComplaints)}">${c.openComplaints}</span></td>
+          <td><span class="badge ${badge}">${statusStr}</span></td>
+          <td>
+            <div class="td-actions">
+              <button class="btn btn-outline btn-icon btn-sm" onclick="editCat('${c.id}')" title="Edit"><i class="ti ti-edit"></i></button>
+              ${c.isActive ? `<button class="btn btn-danger btn-icon btn-sm" onclick="deleteCat('${c.id}')" title="Disable Category"><i class="ti ti-trash"></i></button>` : ''}
+            </div>
+          </td>
+        </tr>`;
+      }).join('');
+    }
+
+    function openCatModal() {
+      document.getElementById('cm-id').value = ''; 
+      document.getElementById('cm-name').value = '';
+      document.getElementById('cm-desc').value = '';
+      document.getElementById('cm-icon').value = 'ti-tag'; 
+      document.getElementById('cm-sort').value = '1';
+      document.getElementById('cm-status').value = 'true';
+      document.getElementById('cat-modal-title').textContent = 'Add Category';
+      document.getElementById('cat-modal').classList.add('show');
+    }
+
+    function editCat(id) {
+      const c = cats.find(x => x.id == id); 
+      if (!c) return;
+      document.getElementById('cm-id').value = c.id; 
+      document.getElementById('cm-name').value = c.name;
+      document.getElementById('cm-desc').value = c.description || '';
+      document.getElementById('cm-icon').value = c.icon || ''; 
+      document.getElementById('cm-sort').value = c.sortOrder;
+      document.getElementById('cm-status').value = c.isActive ? 'true' : 'false';
+      document.getElementById('cat-modal-title').textContent = 'Edit Category';
+      document.getElementById('cat-modal').classList.add('show');
+    }
+
+    async function saveCat() {
+      const id = document.getElementById('cm-id').value;
+      const name = document.getElementById('cm-name').value.trim();
+      const desc = document.getElementById('cm-desc').value.trim();
+      const icon = document.getElementById('cm-icon').value.trim();
+      const sortOrder = parseInt(document.getElementById('cm-sort').value, 10);
+      const isActive = document.getElementById('cm-status').value === 'true';
+
+      if (!name) { saveToast('Category name is required', true); return; }
+      if (isNaN(sortOrder) || sortOrder < 1) { saveToast('Sort Order must be at least 1', true); return; }
+
+      const payload = { name, description: desc || null, icon: icon || null, sortOrder, isActive };
+
+      try {
+        let res;
+        if (id) {
+          res = await fetch(`${API_BASE}/categories/${id}`, { method: 'PUT', headers, body: JSON.stringify(payload) });
+        } else {
+          res = await fetch(`${API_BASE}/categories`, { method: 'POST', headers, body: JSON.stringify(payload) });
+        }
+        const json = await res.json();
+        if (json.success) {
+          saveToast(id ? 'Category updated!' : 'Category added!');
+          closeModal('cat-modal');
+          fetchCategories();
+        } else {
+          saveToast(json.message || 'Operation failed', true);
+        }
+      } catch (err) {
+        saveToast('Network error', true);
+        console.error(err);
+      }
+    }
+
+    async function deleteCat(id) {
+      if (confirm('Are you sure you want to disable this category?')) { 
+        try {
+          const res = await fetch(`${API_BASE}/categories/${id}`, { method: 'DELETE', headers });
+          const json = await res.json();
+          if (json.success) {
+            saveToast('Category disabled successfully');
+            fetchCategories();
+          } else {
+            saveToast(json.message || 'Failed to disable', true);
+          }
+        } catch(err) {
+          saveToast('Network error', true);
+          console.error(err);
+        }
+      }
+    }
+
+    fetchCategories();
+  </script>
+  <script type="module" src="firebase.js"></script>
+</body>
+
+</html>
+

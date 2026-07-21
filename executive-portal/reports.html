@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus Connect | Reports & Exports Console</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <!-- jsPDF CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- Auth Protection Guard -->
+  <script src="js/auth.js"></script>
+  <style>
+    .reports-layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 24px;
+    }
+    
+    @media (max-width: 768px) {
+      .reports-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body class="role-dean">
+
+<div class="app-shell" id="appShell">
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <i class="fa-solid fa-shield-halved" style="font-size: 24px; color: var(--accent);"></i>
+      <div class="brand-text">
+        <div class="brand-name">Campus Connect</div>
+        <div class="brand-sub" id="sidebarBrandSub">Dean Console</div>
+      </div>
+    </div>
+
+    <div class="sidebar-authority">
+      <div class="badge-ring" id="sidebarBadgeRing">L2</div>
+      <div class="authority-text">
+        <div class="t1" id="sidebarAuthTitle">L2 Authority</div>
+        <div class="t2" id="sidebarAuthSub">Dean Escalation</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Overview</div>
+      <a href="dashboard.html" class="nav-link"><i class="fa-solid fa-house"></i><span>Dashboard</span></a>
+      <a href="complaints.html" class="nav-link"><i class="fa-solid fa-layer-group"></i><span id="navEscalatedText">Level 2 Escalated</span></a>
+      
+      <div class="nav-section-title">Insights</div>
+      <a href="analytics.html" class="nav-link"><i class="fa-solid fa-chart-pie"></i><span>Analytics</span></a>
+      <a href="reports.html" class="nav-link active"><i class="fa-solid fa-file-lines"></i><span>Reports</span></a>
+      
+      <div class="nav-section-title">Account</div>
+      <a href="notifications.html" class="nav-link"><i class="fa-solid fa-bell"></i><span>Notifications</span></a>
+      <a href="profile.html" class="nav-link"><i class="fa-solid fa-user-gear"></i><span>Profile & Settings</span></a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="#" class="nav-link" onclick="performLogout(); return false;" style="margin-top:auto;"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN CONTENT ============ -->
+  <main class="main-col">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="sidebar-toggle" id="sidebarToggle"><i class="fa-solid fa-bars"></i></button>
+        <div class="page-title">
+          <h1 id="pageHeadingTitle">Reports compiler</h1>
+          <div class="breadcrumb" id="currentDateTime">Loading date...</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <!-- Notification Icon -->
+        <a href="notifications.html" class="icon-btn" style="position:relative; text-decoration:none;">
+          <i class="fa-solid fa-bell"></i>
+          <span id="notifBadge" style="display:none; position:absolute; top:-4px; right:-4px; background:#ef4444; color:white; font-size:9px; font-weight:bold; width:16px; height:16px; border-radius:50%; align-items:center; justify-content:center; border:2px solid white;">0</span>
+        </a>
+
+        <!-- User Profile Dropdown -->
+        <button class="profile-chip" id="profileChipBtn" onclick="toggleProfileDropdown(event)">
+          <div class="avatar-initial" id="profileAvatar">U</div>
+          <div style="text-align:left;">
+            <div class="p-name" id="profileName">Loading User...</div>
+            <div class="p-role" id="profileRole">Role</div>
+          </div>
+          <i class="fa-solid fa-chevron-down chev"></i>
+        </button>
+        
+        <div class="dropdown-panel" id="profileDropdown">
+          <a href="profile.html" class="dd-item"><i class="fa-solid fa-user"></i> My Profile</a>
+          <a href="settings.html" class="dd-item"><i class="fa-solid fa-gear"></i> Settings</a>
+          <div class="dd-divider"></div>
+          <a href="#" class="dd-item" onclick="performLogout(); return false;"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <div class="content">
+      <div class="reports-layout">
+        <!-- Sidebar filters -->
+        <div class="card">
+          <div class="card-header">
+            <h3>Report parameters</h3>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label>Status</label>
+              <select class="form-control" id="statusFilter" onchange="loadReportPreview()">
+                <option value="all">All Statuses</option>
+                <option value="0">Open (Pending)</option>
+                <option value="1">In Progress</option>
+                <option value="2">Resolved</option>
+                <option value="4">Closed</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Priority</label>
+              <select class="form-control" id="priorityFilter" onchange="loadReportPreview()">
+                <option value="all">All Priorities</option>
+                <option value="1">Low</option>
+                <option value="2">Medium</option>
+                <option value="3">Critical</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Category</label>
+              <select class="form-control" id="categoryFilter" onchange="loadReportPreview()">
+                <option value="all">All Categories</option>
+              </select>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:10px; margin-top:28px;">
+              <button class="btn btn-primary" onclick="exportPDF()" style="justify-content:center;"><i class="fa-solid fa-file-pdf"></i> Export PDF Report</button>
+              <button class="btn btn-outline" onclick="exportCSV()" style="justify-content:center;"><i class="fa-solid fa-file-excel"></i> Export CSV Spreadsheet</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Preview pane -->
+        <div class="card">
+          <div class="card-header">
+            <h3>Report Preview</h3>
+            <span id="previewCount" class="badge badge-open">0 Items</span>
+          </div>
+          <div class="card-body table-wrap" style="max-height: 500px; overflow-y: auto;">
+            <table class="data-table" id="reportTable">
+              <thead>
+                <tr>
+                  <th>Complaint ID</th>
+                  <th>Student</th>
+                  <th>Department</th>
+                  <th>Category</th>
+                  <th>Date Filed</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="reportTableBody">
+                <tr>
+                  <td colspan="6" style="text-align:center; padding:30px; color:var(--ink-faint);">
+                    No query criteria run yet. Select filters to load.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- API & Page Logic scripts -->
+<script src="js/api.js"></script>
+<script>
+  let allTickets = [];
+  let categoriesSet = new Set();
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    // Skin body and sidebar based on role
+    const role = window.currentRole; // 'dean', 'director', or 'principal'
+    document.body.className = `role-${role}`;
+
+    // Update branding elements
+    const brandSub = document.getElementById('sidebarBrandSub');
+    const badgeRing = document.getElementById('sidebarBadgeRing');
+    const authTitle = document.getElementById('sidebarAuthTitle');
+    const authSub = document.getElementById('sidebarAuthSub');
+    const navEscalatedText = document.getElementById('navEscalatedText');
+    const pageHeadingTitle = document.getElementById('pageHeadingTitle');
+
+    if (role === 'principal') {
+      brandSub.textContent = 'Principal Console';
+      badgeRing.textContent = 'L3';
+      authTitle.textContent = 'L3 Authority';
+      authSub.textContent = 'Principal Escalation';
+      navEscalatedText.innerHTML = 'Level 3 Escalated';
+      pageHeadingTitle.textContent = 'Principal Reports Compiler';
+    } else if (role === 'director') {
+      brandSub.textContent = 'Director Console';
+      badgeRing.textContent = 'DIR';
+      authTitle.textContent = 'Executive';
+      authSub.textContent = 'Director Review';
+      navEscalatedText.innerHTML = 'All Complaints';
+      pageHeadingTitle.textContent = 'Director Reports & Exports';
+    } else {
+      // dean
+      brandSub.textContent = 'Dean Console';
+      badgeRing.textContent = 'L2';
+      authTitle.textContent = 'L2 Authority';
+      authSub.textContent = 'Dean Escalation';
+      navEscalatedText.innerHTML = 'Level 2 Escalated';
+      pageHeadingTitle.textContent = 'Dean Reports Compiler';
+    }
+
+    // Set Date & Time
+    const now = new Date();
+    document.getElementById('currentDateTime').textContent = now.toLocaleDateString("en-IN", {
+      weekday: "long", day: "numeric", month: "long", year: "numeric"
+    }) + " · " + now.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
+
+    // Set active user credentials
+    const user = window.currentUser;
+    if (user) {
+      document.getElementById('profileName').textContent = user.name;
+      document.getElementById('profileRole').textContent = `${user.designation} · Portal`;
+      document.getElementById('profileAvatar').textContent = user.name.split(' ').map(n=>n[0]).join('').substring(0, 2).toUpperCase();
+    }
+
+    // Sidebar Toggle
+    const toggleBtn = document.getElementById('sidebarToggle');
+    const shell = document.getElementById('appShell');
+    toggleBtn.addEventListener('click', () => {
+      shell.classList.toggle('collapsed');
+    });
+
+    // Initial data load
+    await loadInitialData();
+  });
+
+  async function loadInitialData() {
+    // Notifications badge count
+    const unreadCount = await API.getUnreadCount();
+    const badge = document.getElementById('notifBadge');
+    if (unreadCount > 0) {
+      badge.textContent = unreadCount;
+      badge.style.display = 'flex';
+    } else {
+      badge.style.display = 'none';
+    }
+
+    // Fetch tickets
+    const result = await API.getTickets();
+    let tickets = result.data || [];
+
+    // Filter tickets based on role constraints
+    const role = window.currentRole;
+    if (role === 'dean') {
+      tickets = tickets.filter(t => t.escalation_level === 2);
+    } else if (role === 'principal') {
+      tickets = tickets.filter(t => t.escalation_level === 3);
+    }
+
+    allTickets = tickets;
+
+    // Populated dynamic Category select filter options
+    const categoryFilter = document.getElementById('categoryFilter');
+    tickets.forEach(t => {
+      categoriesSet.add(t.category_name);
+    });
+
+    categoriesSet.forEach(cat => {
+      const opt = document.createElement('option');
+      opt.value = cat;
+      opt.textContent = cat;
+      categoryFilter.appendChild(opt);
+    });
+
+    loadReportPreview();
+  }
+
+  function getFilteredTickets() {
+    const statusVal = document.getElementById('statusFilter').value;
+    const priorityVal = document.getElementById('priorityFilter').value;
+    const categoryVal = document.getElementById('categoryFilter').value;
+
+    let filtered = [...allTickets];
+
+    if (statusVal !== 'all') {
+      filtered = filtered.filter(t => t.status === parseInt(statusVal));
+    }
+    if (priorityVal !== 'all') {
+      filtered = filtered.filter(t => t.priority === parseInt(priorityVal));
+    }
+    if (categoryVal !== 'all') {
+      filtered = filtered.filter(t => t.category_name === categoryVal);
+    }
+
+    return filtered;
+  }
+
+  function loadReportPreview() {
+    const list = getFilteredTickets();
+    document.getElementById('previewCount').textContent = `${list.length} Items`;
+
+    const tbody = document.getElementById('reportTableBody');
+    if (list.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="6" style="text-align:center; padding:30px; color:var(--ink-faint);">
+            <i class="fa-solid fa-folder-open" style="font-size:24px; margin-bottom:8px; display:block;"></i>
+            No complaints found matching the report criteria.
+          </td>
+        </tr>`;
+      return;
+    }
+
+    tbody.innerHTML = list.map(t => {
+      const s = getStatusLabelAndCls(t.status);
+      const dateStr = new Date(t.created_at).toLocaleDateString('en-IN', {
+        day: '2-digit', month: 'short', year: 'numeric'
+      });
+      return `
+        <tr>
+          <td class="id-cell">${t.ticket_number || t.id.substring(0, 8).toUpperCase()}</td>
+          <td>${t.creator_name}</td>
+          <td>${t.location_name.split(' - ')[0]}</td>
+          <td>${t.category_name}</td>
+          <td class="mono">${dateStr}</td>
+          <td><span class="badge ${s.cls}">${s.label}</span></td>
+        </tr>`;
+    }).join('');
+  }
+
+  function getStatusLabelAndCls(status) {
+    if (status === 2) return { label: 'Resolved', cls: 'badge-resolved' };
+    if (status === 1) return { label: 'In Progress', cls: 'badge-in-progress' };
+    if (status === 4) return { label: 'Closed', cls: 'badge-closed' };
+    return { label: 'Open', cls: 'badge-pending' };
+  }
+
+  function exportCSV() {
+    const list = getFilteredTickets();
+    if (list.length === 0) {
+      alert('No data to export.');
+      return;
+    }
+
+    // Build CSV Content
+    let csv = 'Ticket Number,Creator,Location,Category,Priority,Status,Date Created\n';
+    list.forEach(t => {
+      const statusLabel = getStatusLabelAndCls(t.status).label;
+      const creatorName = t.creator_name.replace(/"/g, '""');
+      const titleStr = t.title.replace(/"/g, '""');
+      const blockStr = t.location_name.replace(/"/g, '""');
+      csv += `"${t.ticket_number || t.id}","${creatorName}","${blockStr}","${t.category_name}","${t.priority}","${statusLabel}","${t.created_at}"\n`;
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `CampusConnect_Report_${new Date().toISOString().slice(0,10)}.csv`;
+    link.click();
+  }
+
+  async function exportPDF() {
+    const { jsPDF } = window.jspdf;
+    if (!jsPDF) {
+      alert('PDF generation library not loaded yet.');
+      return;
+    }
+
+    const list = getFilteredTickets();
+    if (list.length === 0) {
+      alert('No data to export.');
+      return;
+    }
+
+    const doc = new jsPDF();
+    const now = new Date();
+    
+    // Header
+    doc.setFontSize(18);
+    doc.setFont('Helvetica', 'bold');
+    doc.text('CAMPUS CONNECT EXECUTIVE REPORT', 20, 20);
+    
+    doc.setFontSize(11);
+    doc.setFont('Helvetica', 'normal');
+    doc.text(`Compiler Designation: ${window.currentUser?.designation || 'Administrator'}`, 20, 30);
+    doc.text(`Compiled By: ${window.currentUser?.name}`, 20, 36);
+    doc.text(`Run Date & Time: ${now.toLocaleString()}`, 20, 42);
+    doc.text(`Total Records Extracted: ${list.length}`, 20, 48);
+    
+    doc.text('------------------------------------------------------------------------------------------', 20, 54);
+    
+    // Columns
+    doc.setFont('Helvetica', 'bold');
+    doc.text('Ticket #', 20, 62);
+    doc.text('Student / Submitter', 55, 62);
+    doc.text('Block / Location', 110, 62);
+    doc.text('Status', 165, 62);
+    doc.text('------------------------------------------------------------------------------------------', 20, 66);
+    
+    doc.setFont('Helvetica', 'normal');
+    let y = 74;
+    list.forEach((t, i) => {
+      // Handle page break
+      if (y > 270) {
+        doc.addPage();
+        y = 20;
+        doc.setFont('Helvetica', 'bold');
+        doc.text('Ticket #', 20, y);
+        doc.text('Student / Submitter', 55, y);
+        doc.text('Block / Location', 110, y);
+        doc.text('Status', 165, y);
+        doc.text('------------------------------------------------------------------------------------------', 20, y + 4);
+        doc.setFont('Helvetica', 'normal');
+        y += 12;
+      }
+      
+      const ticketNum = t.ticket_number || t.id.substring(0,8).toUpperCase();
+      const statusLabel = getStatusLabelAndCls(t.status).label;
+      const blockStr = t.location_name.split(' - ')[0];
+
+      doc.text(ticketNum, 20, y);
+      doc.text(t.creator_name.substring(0, 24), 55, y);
+      doc.text(blockStr.substring(0, 24), 110, y);
+      doc.text(statusLabel, 165, y);
+      y += 8;
+    });
+
+    doc.save(`CampusConnect_ExecutiveReport_${now.toISOString().slice(0,10)}.pdf`);
+  }
+
+  function toggleProfileDropdown(e) {
+    e.stopPropagation();
+    document.getElementById('profileDropdown').classList.toggle('open');
+  }
+
+  document.addEventListener('click', () => {
+    document.getElementById('profileDropdown').classList.remove('open');
+  });
+</script>
+</body>
+</html>

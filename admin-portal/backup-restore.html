@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Backup and Restore — Campus Connect</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Backup and Restore — Campus Connect</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/admin-shared.css">
+  <script src="assets/js/theme.js"></script>
+</head>
+
+<body>
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-badge">
+        <div class="logo-icon">
+          <img src="assets/images/mzcetlogo.jpg" alt="Campus Connect Logo">
+        </div>
+        <div>
+          <div class="logo-text">Campus Connect</div>
+          <div class="logo-sub">Admin Portal</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-nav">
+      <div class="nav-group">
+        <div class="nav-section-label">Management</div>
+        <a class="nav-item" href="user-management.html">
+          <span class="nav-icon-wrap"><i class="ti ti-users nav-icon"></i></span>
+          <span class="nav-label">User Management</span>
+        </a>
+        <a class="nav-item" href="department-management.html">
+          <span class="nav-icon-wrap"><i class="ti ti-building nav-icon"></i></span>
+          <span class="nav-label">Department Management</span>
+        </a>
+        <a class="nav-item" href="department-dashboards.html">
+          <span class="nav-icon-wrap"><i class="ti ti-layout-dashboard nav-icon"></i></span>
+          <span class="nav-label">Department Dashboards</span>
+        </a>
+        <a class="nav-item" href="location-qr.html">
+          <span class="nav-icon-wrap"><i class="ti ti-map-pin nav-icon"></i></span>
+          <span class="nav-label">Location and QR</span>
+        </a>
+        <a class="nav-item" href="complaint-categories.html">
+          <span class="nav-icon-wrap"><i class="ti ti-tag nav-icon"></i></span>
+          <span class="nav-label">Complaint Categories</span>
+        </a>
+        <a class="nav-item" href="escalation-routing.html">
+          <span class="nav-icon-wrap"><i class="ti ti-arrows-exchange nav-icon"></i></span>
+          <span class="nav-label">Escalation Routing</span>
+        </a>
+        <a class="nav-item" href="escalation-settings.html">
+          <span class="nav-icon-wrap"><i class="ti ti-trending-up nav-icon"></i></span>
+          <span class="nav-label">Escalation Settings</span>
+        </a>
+        <a class="nav-item" href="designations.html">
+          <span class="nav-icon-wrap"><i class="ti ti-id-badge nav-icon"></i></span>
+          <span class="nav-label">Designations</span>
+        </a>
+        <a class="nav-item" href="security-settings.html">
+          <span class="nav-icon-wrap"><i class="ti ti-shield-lock nav-icon"></i></span>
+          <span class="nav-label">Security Settings</span>
+        </a>
+        <a class="nav-item active" href="backup-restore.html">
+          <span class="nav-icon-wrap"><i class="ti ti-database nav-icon"></i></span>
+          <span class="nav-label">Backup and Restore</span>
+        </a>
+        <a class="nav-item" href="audit-logs.html">
+          <span class="nav-icon-wrap"><i class="ti ti-clipboard-list nav-icon"></i></span>
+          <span class="nav-label">Audit Logs</span>
+        </a>
+        <a class="nav-item" href="profile-settings.html">
+          <span class="nav-icon-wrap"><i class="ti ti-user-circle nav-icon"></i></span>
+          <span class="nav-label">Profile Settings</span>
+        </a>
+        <a class="nav-item" href="login.html" onclick="return confirm('Are you sure you want to logout?')">
+          <span class="nav-icon-wrap">
+            <i class="ti ti-logout nav-icon"></i>
+          </span>
+          <span class="nav-label">Logout</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="admin-card">
+        <div class="admin-avatar">RK</div>
+        <div>
+          <div class="admin-name">Raj Kumar</div>
+          <div class="admin-role">Super Administrator</div>
+        </div>
+        <div class="admin-menu-btn"><i class="ti ti-dots-vertical"></i></div>
+      </div>
+    </div>
+  </nav>
+  <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="btn btn-outline btn-icon mobile-nav-btn" onclick="openSidebar()"><i
+            class="ti ti-menu-2"></i></button>
+        <div>
+          <div class="page-title">Backup and Restore</div>
+          <div class="breadcrumb">Admin <i class="ti ti-chevron-right" style="font-size:10px"></i> <span>Backup &
+              Restore</span></div>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button id="theme-toggle-btn" class="btn-theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">
+          <i class="ti ti-moon"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="section-header">
+        <div class="section-title">Backup and Restore</div>
+        <div class="section-desc">Manage database backups and data exports.</div>
+      </div>
+
+      <div class="grid-2" style="align-items:start">
+        <div class="card">
+          <div class="card-title"><i class="ti ti-database"></i> Database Backup</div>
+          <div class="card-desc">Create and manage database backups</div>
+          <div
+            style="background:var(--bg);border-radius:14px;padding:16px;margin-bottom:16px;display:flex;align-items:center;gap:12px">
+            <div
+              style="width:44px;height:44px;border-radius:12px;background:var(--bg-stat-icon-4);display:flex;align-items:center;justify-content:center;color:var(--success);font-size:20px">
+              <i class="ti ti-check"></i>
+            </div>
+            <div>
+              <div style="font-weight:600;font-size:13.5px">Last Backup: <span class="badge badge-success"
+                  style="vertical-align:middle">Successful</span></div>
+              <div style="font-size:11.5px;color:var(--text-hint);margin-top:3px" id="last-backup-time">Calculating...
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <button class="btn btn-primary" id="backup-now-btn" onclick="createBackupNow()"><i
+                class="ti ti-database-export"></i> Create Backup Now</button>
+            <button class="btn btn-outline" onclick="restoreFromBackup()"><i class="ti ti-database-import"></i> Restore
+              from Backup</button>
+          </div>
+          <hr class="card-divider">
+          <div class="form-group"><label class="form-label">Auto Backup Frequency</label>
+            <select class="form-control" id="backup-freq" onchange="saveToast('Backup frequency updated!')">
+              <option>Every 6 hours</option>
+              <option selected>Weekly</option>
+              <option>Monthly</option>
+            </select>
+          </div>
+          <div style="display:flex;justify-content:flex-end;margin-top:8px">
+            <button class="btn btn-primary btn-sm" onclick="saveToast('Backup settings saved!')"><i
+                class="ti ti-check"></i> Save Settings</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><i class="ti ti-file-export"></i> Export Data</div>
+          <div class="card-desc">Export complaint and user data</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <button class="btn btn-outline" style="justify-content:flex-start;gap:14px" onclick="exportToExcel()">
+              <div
+                style="width:36px;height:36px;border-radius:10px;background:var(--bg-stat-icon-4);display:flex;align-items:center;justify-content:center;color:var(--success);font-size:18px">
+                <i class="ti ti-file-spreadsheet"></i>
+              </div>
+              <div style="text-align:left">
+                <div style="font-weight:600">Export to Excel</div>
+                <div style="font-size:11px;color:var(--text-hint)">All complaints, users, departments</div>
+              </div>
+            </button>
+            <button class="btn btn-outline" style="justify-content:flex-start;gap:14px" onclick="exportToPDF()">
+              <div
+                style="width:36px;height:36px;border-radius:10px;background:var(--bg-stat-icon-3);display:flex;align-items:center;justify-content:center;color:var(--danger);font-size:18px">
+                <i class="ti ti-file-type-pdf"></i>
+              </div>
+              <div style="text-align:left">
+                <div style="font-weight:600">Export to PDF</div>
+                <div style="font-size:11px;color:var(--text-hint)">Monthly report, audit logs</div>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESTORE MODAL -->
+  <div class="modal-overlay" id="restore-modal">
+    <div class="modal-card" style="max-width:420px">
+      <div class="modal-header">
+        <div class="modal-title">Restore from Backup</div>
+        <button class="modal-close" onclick="closeModal('restore-modal')"><i class="ti ti-x"></i></button>
+      </div>
+      <div style="background:var(--bg-stat-icon-2);border-radius:12px;padding:14px;margin-bottom:16px;font-size:13px;color:#d4a017">
+        <i class="ti ti-alert-triangle"></i> <strong>Warning:</strong> Restoring will overwrite current data. This
+        action cannot be undone.
+      </div>
+      <div class="form-group"><label class="form-label">Select Backup to Restore</label>
+        <select class="form-control" id="restore-select">
+          <option id="restore-latest-opt">Latest backup (loading...)</option>
+          <option>backup_2025-06-01_02-00-00.sql (48.2 MB)</option>
+          <option>backup_2025-05-25_02-00-00.sql (47.1 MB)</option>
+          <option>backup_2025-05-18_02-00-00.sql (46.8 MB)</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:24px">
+        <button class="btn btn-outline" onclick="closeModal('restore-modal')">Cancel</button>
+        <button class="btn btn-primary" onclick="confirmRestore()"><i class="ti ti-database-import"></i> Restore
+          Now</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"><i class="ti ti-circle-check"></i><span id="toast-msg">Changes saved
+      successfully!</span></div>
+
+  <script src="api/api.js"></script>
+  <script>
+    let lastBackupTime = null;
+
+    function saveToast(msg) {
+      const t = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = msg || 'Changes saved successfully!';
+      t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000);
+    }
+    function openSidebar() { document.getElementById('sidebar').classList.add('open'); document.getElementById('overlay').classList.add('show'); }
+    function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+    function initBackupTime() {
+      const now = new Date();
+      lastBackupTime = new Date(now);
+      lastBackupTime.setHours(2, 0, 0, 0);
+      if (lastBackupTime > now) lastBackupTime.setDate(lastBackupTime.getDate() - 1);
+      const opts = { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true };
+      document.getElementById('last-backup-time').textContent = lastBackupTime.toLocaleString('en-IN', opts) + ' · 48.2 MB';
+      const latestOpt = document.getElementById('restore-latest-opt');
+      if (latestOpt) latestOpt.textContent = 'Latest: ' + lastBackupTime.toLocaleString('en-IN', opts);
+    }
+
+    function createBackupNow() {
+      const btn = document.getElementById('backup-now-btn');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="ti ti-loader" style="animation:spin 1s linear infinite"></i> Creating backup...';
+      setTimeout(() => {
+        lastBackupTime = new Date();
+        const opts = { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true };
+        document.getElementById('last-backup-time').textContent = lastBackupTime.toLocaleString('en-IN', opts) + ' · 48.5 MB';
+        btn.disabled = false;
+        btn.innerHTML = '<i class="ti ti-database-export"></i> Create Backup Now';
+        saveToast('Backup created successfully!');
+      }, 2000);
+    }
+
+    function restoreFromBackup() { document.getElementById('restore-modal').classList.add('show'); }
+
+    function confirmRestore() {
+      const sel = document.getElementById('restore-select').value;
+      closeModal('restore-modal');
+      saveToast('Restore initiated: ' + sel.substring(0, 30) + '...');
+    }
+
+    async function exportToExcel() {
+      try {
+        saveToast('Fetching data for Excel export...');
+        const res = await fetch(`${API_BASE}/tickets?limit=1000`, { headers: getAuthHeaders() });
+        const json = await res.json();
+        if (json.success) {
+          const tickets = json.data.data || json.data;
+          
+          // Added Creator, Creator Role, Assigned To, Location
+          const rows = [['#', 'Ticket ID', 'Title', 'Type', 'Status', 'Location', 'Priority', 'Creator', 'Creator Role', 'Assigned To', 'Created']];
+          
+          // Fixed status map based on the backend (0: Open, 1: In Progress, 2: Resolved, 3: Rejected, 4: Closed)
+          const statusMap = { 0: 'Open', 1: 'In Progress', 2: 'Resolved', 3: 'Rejected', 4: 'Closed' };
+          const priorityMap = { 1: 'Low', 2: 'Medium', 3: 'High', 4: 'Critical' };
+
+          tickets.forEach((t, i) => {
+            rows.push([
+              i + 1,
+              t.ticket_number || t.id,
+              (t.title || '').replace(/"/g, '""'),
+              t.ticket_type === 'PARENT_FEEDBACK' ? 'Feedback' : 'Complaint',
+              statusMap[t.status] || 'Unknown',
+              t.location_name || '-',
+              priorityMap[t.priority] || 'Low',
+              t.creator_name || '-',
+              t.creator_role || '-',
+              t.assigned_to_name || t.assigned_role || 'Unassigned',
+              new Date(t.created_at).toLocaleDateString('en-IN')
+            ]);
+          });
+
+          let csv = rows.map(r => r.map(c => `"${c}"`).join(',')).join('\n');
+          const blob = new Blob([csv], { type: 'text/csv' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url; a.download = 'CampusConnect_Export_' + new Date().toISOString().slice(0, 10) + '.csv';
+          a.click(); URL.revokeObjectURL(url);
+          saveToast('Excel (CSV) exported successfully!');
+        } else {
+          saveToast('Failed to fetch data', true);
+        }
+      } catch (err) {
+        saveToast('Network error exporting data', true);
+      }
+    }
+
+    async function exportToPDF() {
+      try {
+        saveToast('Fetching data for PDF report...');
+        const res = await fetch(`${API_BASE}/tickets?limit=1000`, { headers: getAuthHeaders() });
+        const json = await res.json();
+        if (json.success) {
+          const tickets = json.data.data || json.data;
+          const total = tickets.length;
+          const open = tickets.filter(t => t.status === 1).length;
+          const resolved = tickets.filter(t => t.status === 2 || t.status === 4).length;
+          const escalated = tickets.filter(t => t.escalation_level > 1).length;
+
+          const cats = {};
+          tickets.forEach(t => {
+            if (t.status === 1 && t.complaint_categories) {
+               cats[t.complaint_categories.name] = (cats[t.complaint_categories.name] || 0) + 1;
+            }
+          });
+          const sortedCats = Object.keys(cats).sort((a,b) => cats[b] - cats[a]).slice(0, 5);
+          let catStr = sortedCats.map((c, i) => `${i+1}. ${c} - ${cats[c]} open`).join('<br>');
+
+          if (!window.html2pdf) {
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+            script.onload = () => generatePDF(total, open, resolved, escalated, catStr);
+            document.head.appendChild(script);
+          } else {
+            generatePDF(total, open, resolved, escalated, catStr);
+          }
+        } else {
+          saveToast('Failed to fetch data', true);
+        }
+      } catch (err) {
+        saveToast('Network error exporting PDF', true);
+      }
+    }
+
+    function generatePDF(total, open, resolved, escalated, catStr) {
+      const html = `
+        <div style="padding: 40px; font-family: sans-serif; color: #333;">
+          <h2 style="color: #003BFF; margin-bottom: 5px;">Campus Connect Admin Report</h2>
+          <hr style="border: none; border-top: 2px solid #eee; margin-bottom: 20px;">
+          <p style="color: #666; font-size: 14px;">Generated: ${new Date().toLocaleString('en-IN')}</p>
+          
+          <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+            <h3 style="margin-top: 0;">Overview</h3>
+            <div style="display: flex; gap: 20px; margin-top: 15px;">
+              <div style="flex: 1;"><strong>Total Tickets:</strong><br><span style="font-size: 24px;">${total}</span></div>
+              <div style="flex: 1;"><strong>Open:</strong><br><span style="font-size: 24px; color: #F5A623;">${open}</span></div>
+              <div style="flex: 1;"><strong>Resolved:</strong><br><span style="font-size: 24px; color: #28a745;">${resolved}</span></div>
+              <div style="flex: 1;"><strong>Escalated:</strong><br><span style="font-size: 24px; color: #dc3545;">${escalated}</span></div>
+            </div>
+          </div>
+          
+          <h3 style="margin-top: 40px;">Top Open Categories</h3>
+          <p style="line-height: 1.8;">${catStr || 'No open tickets found'}</p>
+          
+          <div style="margin-top: 50px; font-size: 12px; color: #999; text-align: center;">
+            <p>End of Report</p>
+          </div>
+        </div>
+      `;
+      const opt = {
+        margin: 0,
+        filename: 'CampusConnect_Report_' + new Date().toISOString().slice(0, 10) + '.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+      };
+      saveToast('Generating PDF file...');
+      html2pdf().set(opt).from(html).save().then(() => saveToast('PDF report exported successfully!'));
+    }
+
+    setTimeout(() => initBackupTime(), 100);
+  </script>
+  <script type="module" src="firebase.js"></script>
+</body>
+</html>
