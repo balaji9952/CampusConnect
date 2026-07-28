@@ -1,0 +1,20 @@
+[
+  {
+    "user_id": "a65d87f2-9b96-4e3c-989f-cb6ab44b28f8",
+    "ticket_assignments": true,
+    "escalations": true,
+    "resolutions": true,
+    "reminders": true,
+    "announcements": true,
+    "updated_at": "2026-07-18T05:38:47.378Z"
+  },
+  {
+    "user_id": "093e2824-0bfc-419e-953e-cc9a025bb913",
+    "ticket_assignments": true,
+    "escalations": true,
+    "resolutions": true,
+    "reminders": true,
+    "announcements": true,
+    "updated_at": "2026-07-23T06:24:13.546Z"
+  }
+]

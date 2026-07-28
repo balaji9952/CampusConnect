@@ -21,7 +21,11 @@ import { Router } from 'express';
 
     router.post('/register', registerLimiter, AuthController.register);
     router.post('/login', loginLimiter, AuthController.login);
-    router.post('/google', loginLimiter, AuthController.googleLogin);
+    // Deprecated: Parent Portal retired. Controller/service kept for cleanup release.
+    router.post('/google', (req, res) => {
+      res.status(410).json({ success: false, message: 'Parent Portal has been retired.' });
+    });
+
     router.post('/mobile-google-login', loginLimiter, AuthController.mobileGoogleLogin);
 
     // Mobile SSO logout — needs auth so we know whose session to revoke.

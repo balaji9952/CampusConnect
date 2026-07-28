@@ -273,7 +273,7 @@ export class DepartmentsService {
         ) as a ON t.id = a.ticket_id
         WHERE t.is_deleted = false AND a.rn = 1 AND (a.department_id = ${departmentId} OR a.user_id = ${dept.hod_user_id || 'NONE'})
         ORDER BY t.created_at DESC
-        OFFSET 0 ROWS FETCH NEXT 100 ROWS ONLY
+        LIMIT 100 OFFSET 0
       `;
     }
 

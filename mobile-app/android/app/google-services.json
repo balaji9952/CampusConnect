@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "609668322154-m64cplijf8mgc16vqi2q8iqml7fa5jrj.apps.googleusercontent.com",
+          "client_id": "609668322154-8e6m23fa14ialpsgblp3krqdpimmn5aa.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.mzcet.campus_connect",
-            "certificate_hash": "a71fb6ae14fd8778da05a69af0f046ca86439086"
+            "certificate_hash": "fbc1a9ad95c71cd600079c661ddeec3ffd198e76"
           }
         },
         {

@@ -4,34 +4,11 @@ import { generateQrWithLogo, generateQrUrl, generateQrCard } from '../utils/qr-g
 import { DesignationsService } from './designations.service';
 import { LAYOUT_SPEC_V1 } from '../config/layout-spec';
 
-// ─── Category type derivation from routing_key ─────────────────────────────────
-const ROUTING_KEY_CATEGORY_MAP: Record<string, string> = {
-  LIBRARY_HEAD: 'Library',
-  CANTEEN_HEAD: 'Canteen',
-  SANITATION_HEAD: 'Sanitation',
-  BOYS_HOSTEL_WARDEN: 'Hostel',
-  GIRLS_HOSTEL_WARDEN: 'Hostel',
-  BOYS_MESS_MANAGER: 'Mess',
-  GIRLS_MESS_MANAGER: 'Mess',
-  TRANSPORT_MANAGER: 'Transport',
-  PARENT_FEEDBACK_MANAGER: 'General',
-};
-
-export function deriveLocationCategory(
-  routingType: string | null | undefined,
-  routingKey: string | null | undefined
-): string {
-  if (routingType === 'DEPARTMENT_ROUTED') {
-    return 'Academic';
-  }
-  if (!routingKey) return 'General';
-  return ROUTING_KEY_CATEGORY_MAP[routingKey.toUpperCase()] ?? 'General';
-}
+// Removed legacy category derivation
 
 // ─── DTO ──────────────────────────────────────────────────────────────────────
 function mapLocationToDto(l: any) {
   const activeQr = l.qr_codes?.find((qr: any) => qr.is_active) ?? l.qr_codes?.[0] ?? null;
-  const category = l.category || deriveLocationCategory(l.routing_type, l.routing_key);
 
   return {
     id: l.id,
@@ -42,9 +19,11 @@ function mapLocationToDto(l: any) {
     isActive: l.is_active,
     departmentId: l.department_id ?? null,
     departmentName: l.departments?.name ?? null,
-    routingType: l.routing_type,
-    routingKey: l.routing_key,
-    category: category,
+    routingType: l.location_categories.routing_type ?? null,
+    routingGroupId: l.routing_group_id ?? null,
+    routingGroupName: l.routing_groups?.display_name ?? null,
+    categoryId: l.category_id,
+    category: l.location_categories.name ?? 'Unknown',
     createdAt: l.created_at,
     qr: activeQr ? {
       id: activeQr.id,
@@ -78,7 +57,7 @@ async function buildLocationLabel(params: {
   userDepartmentId: number | null;
   locationDepartmentId: number | null;
   routingType?: string;
-  routingKey?: string | null;
+  routingGroupId?: number | null;
 }): Promise<string> {
   const { userRole, userDepartmentId, locationDepartmentId, routingType } = params;
 
@@ -99,7 +78,7 @@ async function buildLocationLabel(params: {
 
   const canSeeFull = isPrivileged || isSameDepartment;
 
-  if (routingType === 'GLOBAL_ROUTED') {
+  if (routingType === 'GLOBAL') {
     // Public/global locations (Library, Hostel, Canteen, etc.) show their actual names
     const base = params.locationName;
     const floor = params.floor ? `-${params.floor}` : '';
@@ -128,6 +107,8 @@ const LOCATION_INCLUDES = {
   departments: {
     select: { name: true },
   },
+  location_categories: true,
+  routing_groups: true,
   academic_QR_sublocations: {
     where: { is_active: true },
     orderBy: { name: 'asc' },
@@ -146,15 +127,10 @@ export interface ListLocationsQuery {
   search?: string;
   status?: string;   // 'active' | 'inactive'
   departmentId?: string;
-  category?: string; // 'Academic' | 'Library' | 'Hostel' | 'Transport' | 'Canteen' | 'Sports' | 'General' | 'All'
+  categoryId?: string;
   page?: string;
   limit?: string;
 }
-
-// All valid category types shown in the filter pills
-export const LOCATION_CATEGORIES = [
-  'Academic', 'Library', 'Hostel', 'Transport', 'Canteen', 'Sports', 'General', 'Mess', 'Toilet', 'Main gate', 'Labs'
-] as const;
 
 export class LocationsService {
   /**
@@ -162,20 +138,28 @@ export class LocationsService {
    * Returns category list with location counts (for the filter pills row).
    */
   static async getCategoryStats() {
-    const allLocs = await prisma.locations.findMany({
+    const categories = await prisma.location_categories.findMany({
       where: { is_active: true },
-      select: { category: true, routing_type: true, routing_key: true },
+      orderBy: { sort_order: 'asc' }
     });
 
-    const counts: Record<string, number> = { All: allLocs.length };
-    for (const cat of LOCATION_CATEGORIES) counts[cat] = 0;
+    const counts = await prisma.locations.groupBy({
+      by: ['category_id'],
+      where: { is_active: true },
+      _count: true
+    });
 
-    for (const loc of allLocs) {
-      const cat = loc.category || deriveLocationCategory(loc.routing_type, loc.routing_key);
-      if (counts[cat] !== undefined) counts[cat]++;
-    }
+    const countMap = Object.fromEntries(counts.map(c => [c.category_id, c._count]));
 
-    return LOCATION_CATEGORIES.map(cat => ({ category: cat, count: counts[cat] }));
+    const result = categories.map(cat => ({
+      categoryId: cat.id,
+      category: cat.name,
+      routingType: cat.routing_type,
+      count: countMap[cat.id] || 0
+    }));
+
+    const totalLocations = await prisma.locations.count({ where: { is_active: true } });
+    return [{ categoryId: null, category: 'All', count: totalLocations }, ...result];
   }
 
   /**
@@ -204,8 +188,8 @@ export class LocationsService {
     if (query.departmentId) where.department_id = parseInt(query.departmentId, 10);
 
     // Category filtering
-    if (query.category && query.category !== 'All' && query.category !== '') {
-      where.category = query.category;
+    if (query.categoryId && query.categoryId !== 'All' && query.categoryId !== '') {
+      where.category_id = parseInt(query.categoryId, 10);
     }
 
     const [total, locations] = await Promise.all([
@@ -249,10 +233,9 @@ export class LocationsService {
     block?: string | null;
     floor?: string | null;
     departmentId?: number | null;
-    routingType?: string;
-    routingKey?: string | null;
+    routingGroupId?: number | null;
     isActive?: boolean;
-    category?: string | null;
+    categoryId: number;
   }, actorId: string, actorName: string, baseUrl?: string) {
     const name = data.name.trim();
 
@@ -260,13 +243,21 @@ export class LocationsService {
     const existing = await prisma.locations.findUnique({ where: { name } });
     if (existing) throw new Error('LOCATION_NAME_EXISTS');
 
+    const category = await prisma.location_categories.findUnique({ where: { id: data.categoryId } });
+    if (!category) throw new Error('CATEGORY_NOT_FOUND');
+
     // Validation for routing rules
-    const rType = data.routingType ?? 'DEPARTMENT_ROUTED';
-    if (rType === 'GLOBAL_ROUTED' && !data.routingKey) {
-      throw new Error('ROUTING_KEY_REQUIRED');
+    if (category.routing_type === 'GLOBAL' && !data.routingGroupId) {
+      throw new Error('ROUTING_GROUP_REQUIRED');
     }
-    if (rType === 'DEPARTMENT_ROUTED') {
-      data.routingKey = null;
+    if (category.routing_type === 'DEPARTMENT' && !data.departmentId) {
+      throw new Error('DEPARTMENT_REQUIRED');
+    }
+
+    if (category.routing_type === 'DEPARTMENT') {
+      data.routingGroupId = null;
+    } else {
+      data.departmentId = null;
     }
 
     // Check department validity if provided
@@ -283,9 +274,8 @@ export class LocationsService {
         block: data.block ?? null,
         floor: data.floor ?? null,
         department_id: data.departmentId ?? null,
-        routing_type: data.routingType ?? 'DEPARTMENT_ROUTED',
-        routing_key: data.routingKey ?? null,
-        category: data.category || 'General',
+        routing_group_id: data.routingGroupId ?? null,
+        category_id: data.categoryId,
         is_active: data.isActive !== false,
       },
       include: LOCATION_INCLUDES,
@@ -324,14 +314,16 @@ export class LocationsService {
       block?: string | null;
       floor?: string | null;
       departmentId?: number | null;
-      routingType?: string;
-      routingKey?: string | null;
+      routingGroupId?: number | null;
       isActive?: boolean;
-      category?: string | null;
+      categoryId?: number;
     },
     actorName: string
   ) {
-    const existing = await prisma.locations.findUnique({ where: { id } });
+    const existing = await prisma.locations.findUnique({ 
+      where: { id },
+      include: { location_categories: true }
+    });
     if (!existing) return null;
 
     if (data.name !== undefined) {
@@ -349,25 +341,38 @@ export class LocationsService {
     }
 
     const payload: any = {};
-    const finalRoutingType = data.routingType !== undefined ? data.routingType : existing.routing_type;
-    const finalRoutingKey = data.routingKey !== undefined ? data.routingKey : existing.routing_key;
+    const finalCategoryId = data.categoryId !== undefined ? data.categoryId : existing.category_id;
+    const category = await prisma.location_categories.findUnique({ where: { id: finalCategoryId } });
+    if (!category) throw new Error('CATEGORY_NOT_FOUND');
 
-    if (finalRoutingType === 'GLOBAL_ROUTED' && !finalRoutingKey) {
-      throw new Error('VALIDATION_ERROR: GLOBAL_ROUTED locations must have a routing_key.');
+    const finalRoutingGroupId = data.routingGroupId !== undefined ? data.routingGroupId : existing.routing_group_id;
+    const finalDepartmentId = data.departmentId !== undefined ? data.departmentId : existing.department_id;
+
+    if (category.routing_type === 'GLOBAL' && !finalRoutingGroupId) {
+      throw new Error('VALIDATION_ERROR: GLOBAL routed locations must have a routing_group_id.');
     }
-    if (finalRoutingType === 'DEPARTMENT_ROUTED') {
-      data.routingKey = null;
-      payload.routing_key = null;
+    if (category.routing_type === 'DEPARTMENT' && !finalDepartmentId) {
+      throw new Error('VALIDATION_ERROR: DEPARTMENT routed locations must have a department_id.');
     }
+
+    if (category.routing_type === 'DEPARTMENT') {
+      payload.routing_group_id = null;
+    } else {
+      payload.routing_group_id = finalRoutingGroupId;
+    }
+
+    if (category.routing_type === 'GLOBAL') {
+      payload.department_id = null;
+    } else {
+      payload.department_id = finalDepartmentId;
+    }
+
     if (data.name !== undefined) payload.name = data.name;
     if (data.internalCode !== undefined) payload.internal_code = data.internalCode?.trim() || null;
     if (data.block !== undefined) payload.block = data.block;
     if (data.floor !== undefined) payload.floor = data.floor;
-    if (data.departmentId !== undefined) payload.department_id = data.departmentId;
-    if (data.routingType !== undefined) payload.routing_type = data.routingType;
-    if (data.routingKey !== undefined) payload.routing_key = data.routingKey;
     if (data.isActive !== undefined) payload.is_active = data.isActive;
-    if (data.category !== undefined) payload.category = data.category;
+    if (data.categoryId !== undefined) payload.category_id = data.categoryId;
 
     const updated = await prisma.locations.update({
       where: { id },
@@ -825,6 +830,7 @@ export class LocationsService {
       where: { id: locationId },
       include: {
         departments: { select: { id: true, name: true } },
+        location_categories: true,
       },
     });
     if (!location || !location.is_active) {
@@ -855,8 +861,8 @@ export class LocationsService {
       userRole,
       userDepartmentId,
       locationDepartmentId: location.department_id ?? null,
-      routingType: location.routing_type,
-      routingKey: location.routing_key,
+      routingType: location.location_categories?.routing_type,
+      routingGroupId: location.routing_group_id ?? null,
     });
 
     // ── 5. Single-active-token rule: invalidate previous unused sessions ─────
@@ -900,7 +906,7 @@ export class LocationsService {
       subLocationId: subLocationId ?? null,
       locationLabel: displayLabel,
       verificationToken,
-      category: location.category,
+      category: location.location_categories?.name ?? "Unknown",
     };
   }
 

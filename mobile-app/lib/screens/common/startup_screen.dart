@@ -194,7 +194,7 @@ class _GoogleSSOButtonState extends State<_GoogleSSOButton> {
   // Google Sign-In instance — serverClientId must be the WEB client ID
   static final GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: ['email', 'profile'],
-    serverClientId: '609668322154-et2vg0u7maa9g19phba0rom4v3emnq2m.apps.googleusercontent.com',
+    serverClientId: '609668322154-6a8hpmo9ifeqatrprl2ghgjadmmjo66k.apps.googleusercontent.com',
   );
 
   Future<void> _handleGoogleSignIn() async {

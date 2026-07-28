@@ -1,7 +1,8 @@
 import 'dotenv/config';
 import express, { Express, Request, Response } from 'express';
-import cors from 'cors';
+import cors, { CorsOptions } from 'cors';
 import path from 'path';
+import fs from 'fs';
 import helmet from 'helmet';
 import { validateEnv } from './utils/env';
 
@@ -13,7 +14,41 @@ import { validateEnv } from './utils/env';
 validateEnv();
 
 const app: Express = express();
-const port = process.env.PORT || 5000;
+
+// ─── Port ─────────────────────────────────────────────────────────────────────
+// Always read from environment. Default to 3019 so the value matches the Nginx
+// upstream block and PM2/Windows Service configuration documents.
+const port = process.env.PORT || 3019;
+
+// ─── CORS ─────────────────────────────────────────────────────────────────────
+// CORS_ORIGIN is a comma-separated list of allowed origins defined in .env.
+// Examples:
+//   Development : CORS_ORIGIN=http://localhost:5500,http://localhost:3000
+//   Production  : CORS_ORIGIN=https://admin.company.com,https://exec.company.com
+//
+// When Nginx is the reverse proxy and the browser talks to the same origin as
+// the frontend, CORS restrictions are typically not hit for /api/* routes that
+// Nginx proxies. The CORS config here acts as a defence-in-depth layer and
+// also covers direct-to-backend traffic (mobile app, WPF desktop tool, Swagger).
+const rawCorsOrigin = process.env.CORS_ORIGIN || '';
+const allowedOrigins: string[] = rawCorsOrigin
+  .split(',')
+  .map((o) => o.trim())
+  .filter(Boolean);
+
+const corsOptions: CorsOptions = {
+  origin: (origin, callback) => {
+    // Allow requests with no Origin header (server-to-server, Postman, mobile apps).
+    if (!origin) return callback(null, true);
+    // Allow if the origin is in the allowlist, or if no allowlist is configured
+    // (empty CORS_ORIGIN means "allow all" — useful for fresh dev setups).
+    if (allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error(`CORS: origin '${origin}' is not allowed`));
+  },
+  credentials: true,
+};
 
 // Security Headers
 app.use(helmet({
@@ -24,7 +59,7 @@ app.use(helmet({
 
 app.set('trust proxy', 1);
 
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
@@ -61,10 +96,11 @@ import { swaggerSpec } from './config/swagger';
 // Initialize background tasks
 // startCronJobs(); // Disabled legacy cron.service in favor of initEscalationCron
 
-// Setup Swagger
+// ─── Swagger ──────────────────────────────────────────────────────────────────
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// Health check endpoint
+// ─── Health Check ─────────────────────────────────────────────────────────────
+// Kept at /health so load balancers and orchestrators can poll it.
 app.get('/health', (req: Request, res: Response) => {
   res.json({
     status: 'healthy',
@@ -75,6 +111,7 @@ app.get('/health', (req: Request, res: Response) => {
 
 app.get('/api/perf-metrics', getPerformanceMetrics);
 
+// ─── API Routes ───────────────────────────────────────────────────────────────
 app.use('/api/auth', authRoutes);
 app.use('/api/tickets', ticketsRoutes);
 app.use('/api/dashboard', dashboardRoutes);
@@ -92,31 +129,55 @@ app.use('/api/admin/escalation-assignments', escalationAssignmentsRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/security/sessions', sessionsRoutes);
 app.use('/api/qrcodes', qrcodesRoutes);
+
+// ─── QR Scan redirect (public, serves a small HTML page) ──────────────────────
 app.get('/scan/:qrNumber', QrcodesController.serveScanForm);
 
-// Serve static frontend portals for ngrok
-app.get('/admin', (req, res) => res.redirect('/admin/login.html'));
-app.use('/admin', express.static(path.join(__dirname, '../../admin-portal')));
-app.use('/parent', express.static(path.join(__dirname, '../../parent-portal')));
+// ─── Uploads ──────────────────────────────────────────────────────────────────
+// Serve ticket photos and QR images.
+// In production behind Nginx this block is only reached when Nginx has not been
+// configured to serve /uploads directly; it is safe to keep for compatibility.
+const uploadsDir = path.join(__dirname, '..', 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+app.use('/uploads', express.static(uploadsDir));
 
-// Serve uploaded ticket photos
-app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
+// NOTE: The /admin static-file route has been intentionally removed.
+// The admin-portal and executive-portal are now served exclusively by Nginx
+// as static files. The backend exposes ONLY APIs and /uploads.
 
-// Initialize Firebase Cloud Messaging
+// ─── Firebase Cloud Messaging ─────────────────────────────────────────────────
 FCMService.initialize();
 
-// Initialize Cron Jobs
+// ─── Cron Jobs ────────────────────────────────────────────────────────────────
 initEscalationCron();
 initReminderCron();
 initQrSessionCleanupCron();
 
+// ─── HTTP Server ──────────────────────────────────────────────────────────────
 const server = app.listen(Number(port), '0.0.0.0', () => {
-  console.log(`Server running on port ${port}`);
+  const env = process.env.NODE_ENV || 'development';
+  const corsDisplay = allowedOrigins.length > 0 ? allowedOrigins.join(', ') : '* (all — set CORS_ORIGIN to restrict)';
+
+  console.log('');
+  console.log('╔══════════════════════════════════════════════╗');
+  console.log('║        CampusConnect API — Started           ║');
+  console.log('╠══════════════════════════════════════════════╣');
+  console.log(`║  ✓ Environment     : ${env.padEnd(23)}║`);
+  console.log(`║  ✓ Port            : ${String(port).padEnd(23)}║`);
+  console.log(`║  ✓ CORS Origins    : ${corsDisplay.substring(0, 23).padEnd(23)}║`);
+  console.log(`║  ✓ Upload Folder   : ${fs.existsSync(uploadsDir) ? 'Ready'.padEnd(23) : 'MISSING'.padEnd(23)}║`);
+  console.log(`║  ✓ Swagger Docs    : /api-docs${' '.repeat(14)}║`);
+  console.log(`║  ✓ Health Check    : /health${' '.repeat(16)}║`);
+  console.log('╚══════════════════════════════════════════════╝');
+  console.log('');
+
   // Non-blocking startup check: warn if routing assignments are missing
   validateRoutingAssignments().catch((e) =>
     console.error('[STARTUP] Routing validation error:', e)
   );
 });
 
-// Initialize Socket.IO
+// ─── Socket.IO ────────────────────────────────────────────────────────────────
 SocketService.initialize(server);

@@ -69,9 +69,9 @@ namespace CampusQrGenerator.Services
 
     public class SettingsData
     {
-        public string LocalUrl { get; set; } = "http://127.0.0.1:3030";
+        public string LocalUrl { get; set; } = "http://103.207.1.91:3019";
         public string NgrokUrl { get; set; } = "";
-        public string SelectedUrl { get; set; } = "http://127.0.0.1:3030";
+        public string SelectedUrl { get; set; } = "http://103.207.1.91:3019";
     }
 
     public class ApiService : IApiService
@@ -79,11 +79,11 @@ namespace CampusQrGenerator.Services
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly string _settingsFilePath;
 
-        public string LocalUrl { get; set; } = "http://127.0.0.1:3030";
+        public string LocalUrl { get; set; } = "http://103.207.1.91:3019";
         public string NgrokUrl { get; set; } = "";
-        public string SelectedUrl { get; set; } = "http://127.0.0.1:3030";
+        public string SelectedUrl { get; set; } = "http://103.207.1.91:3019";
 
-        public string ActiveUrl { get; private set; } = "http://127.0.0.1:3030";
+        public string ActiveUrl { get; private set; } = "http://103.207.1.91:3019";
         public string ConnectionStatusText { get; private set; } = "🔴 Server Offline";
         public bool IsOffline { get; private set; } = true;
 

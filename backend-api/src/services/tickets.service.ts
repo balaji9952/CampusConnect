@@ -4,6 +4,7 @@ import { FCMService } from './fcm.service';
 import { SocketService } from './socket.service';
 import { VisibilityService } from './visibility.service';
 import { DesignationsService } from './designations.service';
+import { RoutingEngineService } from './routing-engine.service';
 
 export class TicketsService {
   static async getAll(userId: string, role: string, page: number = 1, limit: number = 10, filters: any = {}) {
@@ -38,14 +39,27 @@ export class TicketsService {
       prisma.tickets.findMany({
         where: baseWhere,
         orderBy: { created_at: 'desc' },
-        include: { locations: true, complaint_categories: true, ticket_updates: true },
+        include: { 
+          locations: { include: { location_categories: true } }, 
+          complaint_categories: true, 
+          ticket_updates: true 
+        },
         skip,
         take: cappedLimit,
       })
     ]);
 
+    const safeTickets = JSON.parse(JSON.stringify(tickets, (_k, v) =>
+      typeof v === 'bigint' ? Number(v) : v
+    ));
+    const flattenedTickets = safeTickets.map((t: any) => ({
+      ...t,
+      locationCategoryId: t.locations?.location_categories?.id,
+      locationCategoryName: t.locations?.location_categories?.name
+    }));
+
     return {
-      data: tickets,
+      data: flattenedTickets,
       pagination: {
         total,
         page,
@@ -68,7 +82,11 @@ export class TicketsService {
 
     const ticket = await prisma.tickets.findFirst({
       where: whereClause,
-      include: { locations: true, complaint_categories: true, ticket_updates: true },
+      include: { 
+        locations: { include: { location_categories: true } }, 
+        complaint_categories: true, 
+        ticket_updates: true 
+      },
     });
 
     if (!ticket) {
@@ -84,7 +102,11 @@ export class TicketsService {
       typeof v === 'bigint' ? Number(v) : v
     ));
 
-    return safe;
+    return {
+      ...safe,
+      locationCategoryId: safe.locations?.location_categories?.id,
+      locationCategoryName: safe.locations?.location_categories?.name
+    };
   }
 
   static async create(
@@ -103,85 +125,89 @@ export class TicketsService {
   ) {
     const p_start = performance.now();
     let p_last = p_start;
-    const isFeedback = data.ticket_type === 'PARENT_FEEDBACK';
-    
-    // Auto-assign location and category for feedback
-    if (isFeedback) {
-      const fbLocation = await prisma.locations.findFirst({ where: { name: 'Parent Feedback' } });
-      const fbCategory = await prisma.complaint_categories.findFirst({ where: { name: 'Parent Feedback' } });
-      if (!fbLocation || !fbCategory) {
-        throw new Error('System error: Parent Feedback location or category not found in database.');
-      }
-      data.location_id = fbLocation.id;
-      data.category_id = fbCategory.id;
-    }
 
     if (!data.title || !data.description || !data.location_id || !data.category_id) {
       throw new Error('Validation error: title, description, location_id, and category_id are required');
     }
 
-    const roleStr = String(userRole);
-    const isParent = roleStr === 'Parent';
+    console.log('\n--- TEMPORARY DEBUG: QR VERIFICATION ---');
+    console.log('verificationToken:', qrVerificationToken);
+    console.log('userId:', userId);
+    console.log('locationId from request:', data.location_id);
     
+    if (qrVerificationToken) {
+      const dbSession = await prisma.qr_verification_sessions.findUnique({
+        where: { token: qrVerificationToken }
+      });
+      console.log('Queried Session:', dbSession ? {
+        token: dbSession.token,
+        user_id: dbSession.user_id,
+        location_id: dbSession.location_id,
+        used: dbSession.used,
+        expires_at: dbSession.expires_at,
+      } : 'null');
+    } else {
+      console.log('Queried Session: Skipped because token is undefined.');
+    }
+    
+    console.log('Executing UPDATE with parameters:');
+    console.log(`- token: ${qrVerificationToken}`);
+    console.log(`- user_id: ${userId}`);
+
     // ─── Phase 1 & 2: Extreme Parallel Lookups ──────────
     // We execute ALL reads in a single concurrent block to minimize latency round-trips
     let sessionId: string | null = null;
     let verifiedLocationId: number | null = data.location_id;
-    
-    // Create the QR query promise (only runs if needed)
-    const qrPromise = (!isParent && !isFeedback) ? 
-      prisma.$queryRaw<any[]>`
+
+    // QR token is always required — atomically consume the session
+    const qrPromise = prisma.$queryRaw<any[]>`
         UPDATE qr_verification_sessions 
         SET used = true 
         WHERE token = ${qrVerificationToken} 
           AND user_id = ${userId} 
           AND used = false 
-          AND expires_at > NOW() 
+          AND expires_at > ${new Date()}
         RETURNING id, location_id;
-      ` : Promise.resolve([{ id: null, location_id: data.location_id }]);
+      `.then(res => {
+         console.log('UPDATE statement affected rows/returned:', res?.length);
+         return res;
+      });
 
     const [
       sessions, 
       location, 
       category, 
-      creator, 
-      globalAssignments,
-      hodNamesObj,
-      privilegedNamesObj,
-      parentTicketCount
+      creator
     ] = await Promise.all([
       qrPromise,
       prisma.locations.findUnique({ where: { id: data.location_id } }),
       prisma.complaint_categories.findUnique({ where: { id: data.category_id } }),
-      // Fetch creator + their department + their HOD in one nested query!
-      prisma.users.findUnique({ 
-        where: { id: userId },
-        include: { 
-          departments_users_department_idTodepartments: {
-            include: { users_departments_hod_user_idTousers: { select: { id: true, name: true } } }
-          }
-        }
-      }),
-      // Fetch all level-1 global assignments into memory (fast, small table)
-      prisma.global_assignments.findMany({
-        where: { is_active: true, OR: [{ escalation_level: 1 }, { escalation_level: null }] },
-        include: { users: { select: { id: true, name: true, designation: true } } }
-      }),
-      prisma.designations.findMany({ where: { is_active: true, is_hod: true }, select: { name: true } }),
-      prisma.designations.findMany({ where: { is_active: true, is_privileged: true }, select: { name: true } }),
-      isParent ? prisma.tickets.count({ where: { creator_role: String(userRole) } }) : Promise.resolve(0)
+      prisma.users.findUnique({ where: { id: userId } })
     ]);
 
-    if (!isParent && !isFeedback) {
-      if (!sessions || sessions.length === 0) {
-        throw new Error('VERIFICATION_TOKEN_ALREADY_USED');
+    if (!sessions || sessions.length === 0) {
+      console.log('QR Validation Failed! Analyzing why...');
+      if (qrVerificationToken) {
+        const check = await prisma.qr_verification_sessions.findUnique({ where: { token: qrVerificationToken }});
+        if (!check) {
+          console.log('Reason: Token not found in database.');
+        } else if (check.user_id !== userId) {
+          console.log(`Reason: user_id mismatch. Expected ${userId}, got ${check.user_id}`);
+        } else if (check.used) {
+          console.log('Reason: Token is already marked as used = true.');
+        } else {
+          console.log(`Reason: Token is expired. expires_at=${check.expires_at}, NOW() AT TIME ZONE 'UTC' is past this.`);
+        }
+      } else {
+        console.log('Reason: Token is undefined/missing in request.');
       }
-      sessionId = sessions[0].id;
-      verifiedLocationId = sessions[0].location_id;
+      console.log('----------------------------------------\n');
+      throw new Error('VERIFICATION_TOKEN_ALREADY_USED');
     }
-
-    const hodNames = hodNamesObj.map(d => d.name);
-    const privilegedNames = privilegedNamesObj.map(d => d.name);
+    console.log('QR Validation Successful!');
+    console.log('----------------------------------------\n');
+    sessionId = sessions[0].id;
+    verifiedLocationId = sessions[0].location_id;
 
     if (!location) throw new Error('Location not found');
     if (!category) throw new Error('Category not found');
@@ -189,12 +215,6 @@ export class TicketsService {
     // Prevent inactive locations from receiving tickets
     if (!location.is_active) {
       throw new Error('LOCATION_INACTIVE');
-    }
-
-    if (isParent) {
-      if (parentTicketCount >= 5) {
-        throw new Error('Parents can create a maximum of 5 tickets.');
-      }
     }
     
     const p_qr = performance.now();
@@ -211,65 +231,21 @@ export class TicketsService {
     const yy  = String(now.getFullYear()).slice(-2);
     const catPart  = String(data.category_id).padStart(2, '0');
     let rollPart = (creator?.roll_no ?? 'UNKNWN').replace(/[^A-Za-z0-9]/g, '').slice(0, 6).toUpperCase();
-    
-    // For parents (who don't have roll numbers), replace UNKNWN with P0001, P0002, etc.
-    if (isParent) {
-      rollPart = `P${String((parentTicketCount as number) + 1).padStart(4, '0')}`;
-    }
 
     const randomSuffix = Math.floor(1000 + Math.random() * 9000).toString();
     const ticketNumber = `TK-${dd}${mm}${yy}-${catPart}-${rollPart}-${randomSuffix}`;
 
-    // ─── Routing Resolution (In-Memory) ──────────
-    let assignedToName: string | null = null;
-    let assignedRole: string | null = null;
-    let assignedUserId: string | null = null;
+    // ─── Routing Resolution ──────────
+    const routingEngine = new RoutingEngineService(prisma);
+    const assignee = await routingEngine.getAssigneeForLocation(data.location_id, 1, { creator: creator || undefined });
+    
+    let assignedToName: string = assignee.name;
+    let assignedRole: string = assignee.role;
+    let assignedUserId: string = assignee.id;
     let assignmentReason: string = 'Initial assignment based on routing rules';
-    let routingFailure = false;
-
-    if (location.routing_type === 'GLOBAL_ROUTED' && location.routing_key) {
-      const level1Assignment = globalAssignments.find(ga => ga.routing_key === location.routing_key);
-      if (level1Assignment && level1Assignment.users) {
-        assignedToName = level1Assignment.users.name;
-        assignedRole = level1Assignment.users.designation || 'Global Head';
-        assignedUserId = level1Assignment.users.id;
-      } else {
-        routingFailure = true;
-        assignmentReason = `ROUTING_FAILURE: No Level 1 global assignment found for key "${location.routing_key}". Defaulted to Admin.`;
-      }
-    } else {
-      if (creator && creator.departments_users_department_idTodepartments) {
-        const dept = creator.departments_users_department_idTodepartments;
-        const hod = dept.users_departments_hod_user_idTousers;
-        
-        if (hod) {
-          assignedToName = hod.name;
-          assignedRole = 'HOD';
-          assignedUserId = hod.id;
-        }
-      }
-
-      if (!assignedToName) {
-         routingFailure = true;
-         assignmentReason = 'ROUTING_FAILURE: No HOD found for department. Defaulted to Admin.';
-      }
-    }
-
-    // Only hit DB again for fallback routing if needed (rare)
-    if (routingFailure || !assignedToName) {
-      const admin = privilegedNames.length > 0
-        ? await prisma.users.findFirst({
-            where: { designation: { in: privilegedNames }, is_active: true },
-            select: { name: true, id: true }
-          })
-        : null;
-      assignedToName = admin?.name || 'Unassigned';
-      assignedRole = admin ? (admin.name) : 'Unassigned';
-      assignedUserId = admin?.id || null;
-    }
     
     const p_routing = performance.now();
-    console.log(`[PROFILE-SVC] Routing Resolution (In-Memory): ${(p_routing - p_qr).toFixed(2)}ms`);
+    console.log(`[PROFILE-SVC] Routing Resolution: ${(p_routing - p_qr).toFixed(2)}ms`);
 
     let newTicket: any;
     let notifications: any[] = [];
@@ -333,38 +309,25 @@ export class TicketsService {
       },
     }));
 
-    if (routingFailure) {
-      txPromises.push(prisma.audit_logs.create({
-        data: {
-          user_id: userId,
-          user_name: 'System',
-          action: 'ROUTING_FAILURE',
-          entity_type: 'tickets',
-          entity_id: ticketId,
-          description: assignmentReason,
-        },
-      }));
-    }
+    // Removed routingFailure check
 
-    if (!isFeedback) {
-      txPromises.push(prisma.audit_logs.create({
-        data: {
-          user_id:     userId,
-          user_name:   userName,
-          user_role:   String(userRole),
-          action:      'QR_COMPLAINT_CREATED',
-          entity_type: 'tickets',
-          entity_id:   ticketId,
-          new_value:   JSON.stringify({
-            verificationSessionId: sessionId,
-            ticketId:              ticketId,
-            locationId:            verifiedLocationId,
-            locationName:          (location as any).name,
-          }),
-          description: `Ticket ${ticketNumber} created via QR verification at ${(location as any).name}`,
-        },
-      }));
-    }
+    txPromises.push(prisma.audit_logs.create({
+      data: {
+        user_id:     userId,
+        user_name:   userName,
+        user_role:   String(userRole),
+        action:      'QR_COMPLAINT_CREATED',
+        entity_type: 'tickets',
+        entity_id:   ticketId,
+        new_value:   JSON.stringify({
+          verificationSessionId: sessionId,
+          ticketId:              ticketId,
+          locationId:            verifiedLocationId,
+          locationName:          (location as any).name,
+        }),
+        description: `Ticket ${ticketNumber} created via QR verification at ${(location as any).name}`,
+      },
+    }));
 
     const studentNotifData = {
       id: uuidv4(),
@@ -379,15 +342,27 @@ export class TicketsService {
 
     const staffNotifData = {
       id: uuidv4(),
+      title: 'New Ticket Assigned',
+      body: `Ticket #${ticketNumber} - ${data.title} was assigned to you.`,
+      type: 'TICKET_CREATED',
+      ticket_id: ticketId,
+      user_id: assignedUserId,
+      privileged_only: false,
+    };
+    txPromises.push(prisma.notifications.create({ data: staffNotifData }));
+    notifications.push(staffNotifData);
+
+    const hodBroadcastData = {
+      id: uuidv4(),
       title: 'New Ticket Created',
       body: `Ticket #${ticketNumber} - ${data.title} was created by ${userName}.`,
       type: 'TICKET_CREATED',
       ticket_id: ticketId,
-      user_id: assignedUserId,
+      user_id: null,
       privileged_only: true,
     };
-    txPromises.push(prisma.notifications.create({ data: staffNotifData }));
-    notifications.push(staffNotifData);
+    txPromises.push(prisma.notifications.create({ data: hodBroadcastData }));
+    notifications.push(hodBroadcastData);
 
     const [createdTicket] = await prisma.$transaction(txPromises);
     newTicket = createdTicket;
@@ -790,9 +765,8 @@ export class TicketsService {
           select: { sla_response_hours: true, sla_escalation_hours: true, sla_resolution_hours: true }
         },
         locations: {
-          select: { routing_type: true, routing_key: true, department_id: true }
+          select: { routing_group_id: true, department_id: true }
         },
-        users: { select: { department_id: true } },
         ticket_assignments: {
           orderBy: { assigned_at: 'asc' },
         },
@@ -829,21 +803,21 @@ export class TicketsService {
       ? new Date(l2StartTime.getTime() + slaL2Hours * 3600 * 1000)
       : new Date(l2EscalatesAt.getTime() + slaL2Hours * 3600 * 1000);
 
-    const routingKey = ticket.locations?.routing_key ?? null;
-    const creatorDeptId = ticket.users?.department_id ?? null;
+    const routingGroupId = ticket.locations?.routing_group_id ?? null;
+    const locationDeptId = ticket.locations?.department_id ?? null;
 
     // ── Resolve L2 & L3 targets ──────────────────────────────────────────────
     const resolveTarget = async (level: 2 | 3) => {
-      if (routingKey) {
+      if (routingGroupId) {
         const ga = await prisma.global_assignments.findFirst({
-          where: { routing_key: routingKey, escalation_level: level, is_active: true },
+          where: { routing_group_id: routingGroupId, escalation_level: level, is_active: true },
           include: { users: { select: { name: true, designation: true } } },
         });
         if (ga?.users) return { name: ga.users.name, role: ga.users.designation || `Level ${level}` };
       }
-      if (creatorDeptId) {
+      if (locationDeptId) {
         const ea = await prisma.escalation_assignments.findFirst({
-          where: { department_id: creatorDeptId, escalation_level: level, is_active: true },
+          where: { department_id: locationDeptId, escalation_level: level, is_active: true },
           include: { users: { select: { name: true, designation: true } } },
         });
         if (ea?.users) return { name: ea.users.name, role: ea.users.designation || `Level ${level}` };

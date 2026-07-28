@@ -39,6 +39,7 @@ const _allDepartments = [
   'Electrical and Electronics Engineering',
   'Information Technology',
   'Artificial Intelligence and Data Science',
+  'Master of Business Administration',
   'Others',
 ];
 

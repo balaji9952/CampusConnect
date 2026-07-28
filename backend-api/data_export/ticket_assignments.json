@@ -1,0 +1,479 @@
+[
+  {
+    "id": "1",
+    "ticket_id": "e2bbb1b2-94fc-4860-a762-662452",
+    "assigned_to_user_id": "38bddc38-9a86-4f16-a8f4-e254417ad9b5",
+    "assigned_by": "5c9d8555-6587-40f5-b634-c5eba7a685a3",
+    "assignment_reason": "Initial assignment based on routing rules",
+    "escalation_level": 1,
+    "assigned_at": "2026-07-22T06:04:47.236Z"
+  },
+  {
+    "id": "2",
+    "ticket_id": "68c30fa3-c492-42c7-bc03-300d6e",
+    "assigned_to_user_id": "a7a7748d-1204-40ca-bac0-ea599e9f0c71",
+    "assigned_by": "5c9d8555-6587-40f5-b634-c5eba7a685a3",
+    "assignment_reason": "Initial assignment based on routing rules",
+    "escalation_level": 1,
+    "assigned_at": "2026-07-22T06:17:29.286Z"
+  },
+  {
+    "id": "3",
+    "ticket_id": "9c81aa7f-a513-42dc-bf4e-196861",
+    "assigned_to_user_id": "65788a7b-5cb6-443f-af8c-0a130571f3a7",
+    "assigned_by": "5c9d8555-6587-40f5-b634-c5eba7a685a3",
+    "assignment_reason": "Initial assignment based on routing rules",
+    "escalation_level": 1,
+    "assigned_at": "2026-07-22T06:44:38.246Z"
+  },
+  {
+    "id": "5",
+    "ticket_id": "ac6fba34-b9e6-44a5-91f8-5fdb61",
+    "assigned_to_user_id": "093e2824-0bfc-419e-953e-cc9a025bb913",
+    "assigned_by": "5c9d8555-6587-40f5-b634-c5eba7a685a3",
+    "assignment_reason": "Initial assignment based on routing rules",
+    "escalation_level": 1,
+    "assigned_at": "2026-07-22T07:53:03.222Z"
+  },
+  {
+    "id": "6",
+    "ticket_id": "e69c120d-0950-45be-a887-8f2b3c",
+    "assigned_to_user_id": "093e2824-0bfc-419e-953e-cc9a025bb913",
+    "assigned_by": "5c9d8555-6587-40f5-b634-c5eba7a685a3",
+    "assignment_reason": "Initial assignment based on routing rules",
+    "escalation_level": 1,
+    "assigned_at": "2026-07-22T08:09:32.219Z"
+  },
+  {
+    "id": "7",
+    "ticket_id": "f005b1b0-9004-4525-bdbc-9e1c9d",
+    "assigned_to_user_id": "65788a7b-5cb6-443f-af8c-0a130571f3a7",
+    "assigned_by": "5c9d8555-6587-40f5-b634-c5eba7a685a3",
+    "assignment_reason": "Initial assignment based on routing rules",
+    "escalation_level": 1,
+    "assigned_at": "2026-07-22T08:18:28.898Z"
+  },
+  {
+    "id": "13",
+    "ticket_id": "a35de1d3-00c2-438d-bc14-fdcb95",
+    "assigned_to_user_id": "65788a7b-5cb6-443f-af8c-0a130571f3a7",
+    "assigned_by": "5c9d8555-6587-40f5-b634-c5eba7a685a3",
+    "assignment_reason": "Initial assignment based on routing rules",
+    "escalation_level": 1,
+    "assigned_at": "2026-07-23T05:57:58.607Z"
+  },
+  {
+    "id": "14",
+    "ticket_id": "7e5fb485-bd7a-4b1f-a084-95ad89",
+    "assigned_to_user_id": "65788a7b-5cb6-443f-af8c-0a130571f3a7",
+    "assigned_by": "3e48f0da-32a8-4d4a-95f2-4470a7df7d7f",
+    "assignment_reason": "Initial assignment based on routing rules",
+    "escalation_level": 1,
+    "assigned_at": "2026-07-23T06:06:04.407Z"
+  },
+  {
+    "id": "15",
+    "ticket_id": "dddd1ab2-dae5-4997-972c-fcf1fc",
+    "assigned_to_user_id": "093e2824-0bfc-419e-953e-cc9a025bb913",
+    "assigned_by": "5c9d8555-6587-40f5-b634-c5eba7a685a3",
+    "assignment_reason": "Initial assignment based on routing rules",
+    "escalation_level": 1,
+    "assigned_at": "2026-07-23T06:07:27.131Z"
+  },
+  {
+    "id": "16",
+    "ticket_id": "53b4dc95-26b9-4a2f-b227-6a2bed",
+    "assigned_to_user_id": "2d53e259-f10a-4ffb-a0a6-89a2735f5dc8",
+    "assigned_by": "3a03ed65-c879-4eaf-9f65-594fe712760c",
+    "assignment_reason": "Initial assignment based on routing rules",
+    "escalation_level": 1,
+    "assigned_at": "2026-07-23T06:09:26.752Z"
+  },
+  {
+    "id": "17",
+    "ticket_id": "6d29ee91-e3c1-4ebb-82dc-8c063e",
+    "assigned_to_user_id": "2d53e259-f10a-4ffb-a0a6-89a2735f5dc8",
+    "assigned_by": "2e656248-fadf-4646-aa88-73b8590f6412",
+    "assignment_reason": "Initial assignment based on routing rules",
+    "escalation_level": 1,
+    "assigned_at": "2026-07-23T06:11:47.141Z"
+  },
+  {
+    "id": "18",
+    "ticket_id": "14435d72-5c23-4ca0-8805-9acc45",
+    "assigned_to_user_id": "0ea3e2dd-9451-4705-ba5c-e1a5c50dba83",
+    "assigned_by": "2e656248-fadf-4646-aa88-73b8590f6412",
+    "assignment_reason": "Initial assignment based on routing rules",
+    "escalation_level": 1,
+    "assigned_at": "2026-07-23T06:12:39.135Z"
+  },
+  {
+    "id": "19",
+    "ticket_id": "ac19ef8e-f287-40b2-9684-779c24",
+    "assigned_to_user_id": "51d34408-d339-4f1c-8e8d-8eac83a6192a",
+    "assigned_by": "d95ad3f6-fd7c-455f-ae7f-cf21f5f46cdf",
+    "assignment_reason": "Initial assignment based on routing rules",
+    "escalation_level": 1,
+    "assigned_at": "2026-07-23T06:15:06.681Z"
+  },
+  {
+    "id": "20",
+    "ticket_id": "f022366a-54c7-4293-9ccc-0e8fc6",
+    "assigned_to_user_id": "a7a7748d-1204-40ca-bac0-ea599e9f0c71",
+    "assigned_by": "3a03ed65-c879-4eaf-9f65-594fe712760c",
+    "assignment_reason": "Initial assignment based on routing rules",
+    "escalation_level": 1,
+    "assigned_at": "2026-07-23T06:16:55.234Z"
+  },
+  {
+    "id": "21",
+    "ticket_id": "8fce815a-4a40-4a6d-9060-de1eb9",
+    "assigned_to_user_id": "a7a7748d-1204-40ca-bac0-ea599e9f0c71",
+    "assigned_by": "2e656248-fadf-4646-aa88-73b8590f6412",
+    "assignment_reason": "Initial assignment based on routing rules",
+    "escalation_level": 1,
+    "assigned_at": "2026-07-23T06:16:56.488Z"
+  },
+  {
+    "id": "22",
+    "ticket_id": "035f2067-ade4-4574-8147-4551d8",
+    "assigned_to_user_id": "a7a7748d-1204-40ca-bac0-ea599e9f0c71",
+    "assigned_by": "5c9d8555-6587-40f5-b634-c5eba7a685a3",
+    "assignment_reason": "Initial assignment based on routing rules",
+    "escalation_level": 1,
+    "assigned_at": "2026-07-23T06:16:57.096Z"
+  },
+  {
+    "id": "23",
+    "ticket_id": "b79640f4-fd7c-405e-8023-f31ac3",
+    "assigned_to_user_id": "a7a7748d-1204-40ca-bac0-ea599e9f0c71",
+    "assigned_by": "d95ad3f6-fd7c-455f-ae7f-cf21f5f46cdf",
+    "assignment_reason": "Initial assignment based on routing rules",
+    "escalation_level": 1,
+    "assigned_at": "2026-07-23T06:17:16.246Z"
+  },
+  {
+    "id": "24",
+    "ticket_id": "02c5f094-8933-4e39-913b-998ef1",
+    "assigned_to_user_id": "a7a7748d-1204-40ca-bac0-ea599e9f0c71",
+    "assigned_by": "6d7dcd87-290c-4a62-b7d1-01e87f3d50c6",
+    "assignment_reason": "Initial assignment based on routing rules",
+    "escalation_level": 1,
+    "assigned_at": "2026-07-23T06:17:16.836Z"
+  },
+  {
+    "id": "25",
+    "ticket_id": "5c5aefc2-32ac-4314-bb13-92e80f",
+    "assigned_to_user_id": "65788a7b-5cb6-443f-af8c-0a130571f3a7",
+    "assigned_by": "3a03ed65-c879-4eaf-9f65-594fe712760c",
+    "assignment_reason": "Initial assignment based on routing rules",
+    "escalation_level": 1,
+    "assigned_at": "2026-07-23T06:21:05.616Z"
+  },
+  {
+    "id": "26",
+    "ticket_id": "3b3b6449-804c-46f8-b2ed-a8668e",
+    "assigned_to_user_id": "65788a7b-5cb6-443f-af8c-0a130571f3a7",
+    "assigned_by": "2e656248-fadf-4646-aa88-73b8590f6412",
+    "assignment_reason": "Initial assignment based on routing rules",
+    "escalation_level": 1,
+    "assigned_at": "2026-07-23T06:21:05.732Z"
+  },
+  {
+    "id": "27",
+    "ticket_id": "d67eb7f1-8350-447c-a7a3-44a76c",
+    "assigned_to_user_id": "65788a7b-5cb6-443f-af8c-0a130571f3a7",
+    "assigned_by": "5c9d8555-6587-40f5-b634-c5eba7a685a3",
+    "assignment_reason": "Initial assignment based on routing rules",
+    "escalation_level": 1,
+    "assigned_at": "2026-07-23T06:21:06.027Z"
+  },
+  {
+    "id": "28",
+    "ticket_id": "acd34c2e-e893-465a-a529-3288e3",
+    "assigned_to_user_id": "65788a7b-5cb6-443f-af8c-0a130571f3a7",
+    "assigned_by": "d95ad3f6-fd7c-455f-ae7f-cf21f5f46cdf",
+    "assignment_reason": "Initial assignment based on routing rules",
+    "escalation_level": 1,
+    "assigned_at": "2026-07-23T06:21:06.331Z"
+  },
+  {
+    "id": "29",
+    "ticket_id": "0758adf8-fa8f-48e9-9530-5f2497",
+    "assigned_to_user_id": "65788a7b-5cb6-443f-af8c-0a130571f3a7",
+    "assigned_by": "6d7dcd87-290c-4a62-b7d1-01e87f3d50c6",
+    "assignment_reason": "Initial assignment based on routing rules",
+    "escalation_level": 1,
+    "assigned_at": "2026-07-23T06:21:07.872Z"
+  },
+  {
+    "id": "30",
+    "ticket_id": "16cb284f-999c-4f72-a921-188d26",
+    "assigned_to_user_id": "65788a7b-5cb6-443f-af8c-0a130571f3a7",
+    "assigned_by": "3e48f0da-32a8-4d4a-95f2-4470a7df7d7f",
+    "assignment_reason": "Initial assignment based on routing rules",
+    "escalation_level": 1,
+    "assigned_at": "2026-07-23T06:23:01.027Z"
+  },
+  {
+    "id": "31",
+    "ticket_id": "e2bbb1b2-94fc-4860-a762-662452",
+    "assigned_to_user_id": "a65d87f2-9b96-4e3c-989f-cb6ab44b28f8",
+    "assigned_by": null,
+    "assignment_reason": "SLA Breached: Unresolved after 24 hours response threshold. Auto-escalated to Level 2 (Dean).",
+    "escalation_level": 2,
+    "assigned_at": "2026-07-23T06:30:04.742Z"
+  },
+  {
+    "id": "32",
+    "ticket_id": "68c30fa3-c492-42c7-bc03-300d6e",
+    "assigned_to_user_id": "a65d87f2-9b96-4e3c-989f-cb6ab44b28f8",
+    "assigned_by": null,
+    "assignment_reason": "SLA Breached: Unresolved after 24 hours response threshold. Auto-escalated to Level 2 (Dean).",
+    "escalation_level": 2,
+    "assigned_at": "2026-07-23T06:30:08.631Z"
+  },
+  {
+    "id": "33",
+    "ticket_id": "ac6fba34-b9e6-44a5-91f8-5fdb61",
+    "assigned_to_user_id": "a65d87f2-9b96-4e3c-989f-cb6ab44b28f8",
+    "assigned_by": null,
+    "assignment_reason": "SLA Breached: Unresolved after 24 hours response threshold. Auto-escalated to Level 2 (Dean).",
+    "escalation_level": 2,
+    "assigned_at": "2026-07-23T08:30:03.536Z"
+  },
+  {
+    "id": "34",
+    "ticket_id": "e69c120d-0950-45be-a887-8f2b3c",
+    "assigned_to_user_id": "a65d87f2-9b96-4e3c-989f-cb6ab44b28f8",
+    "assigned_by": null,
+    "assignment_reason": "SLA Breached: Unresolved after 24 hours response threshold. Auto-escalated to Level 2 (Dean).",
+    "escalation_level": 2,
+    "assigned_at": "2026-07-23T08:30:09.555Z"
+  },
+  {
+    "id": "35",
+    "ticket_id": "f005b1b0-9004-4525-bdbc-9e1c9d",
+    "assigned_to_user_id": "a65d87f2-9b96-4e3c-989f-cb6ab44b28f8",
+    "assigned_by": null,
+    "assignment_reason": "SLA Breached: Unresolved after 24 hours response threshold. Auto-escalated to Level 2 (Dean).",
+    "escalation_level": 2,
+    "assigned_at": "2026-07-23T08:30:15.021Z"
+  },
+  {
+    "id": "36",
+    "ticket_id": "9c81aa7f-a513-42dc-bf4e-196861",
+    "assigned_to_user_id": "a65d87f2-9b96-4e3c-989f-cb6ab44b28f8",
+    "assigned_by": null,
+    "assignment_reason": "SLA Breached: Unresolved after 24 hours response threshold. Auto-escalated to Level 2 (Dean).",
+    "escalation_level": 2,
+    "assigned_at": "2026-07-23T08:30:20.061Z"
+  },
+  {
+    "id": "37",
+    "ticket_id": "7e5fb485-bd7a-4b1f-a084-95ad89",
+    "assigned_to_user_id": "a65d87f2-9b96-4e3c-989f-cb6ab44b28f8",
+    "assigned_by": null,
+    "assignment_reason": "SLA Breached: Unresolved after 24 hours response threshold. Auto-escalated to Level 2 (Dean).",
+    "escalation_level": 2,
+    "assigned_at": "2026-07-24T08:30:05.744Z"
+  },
+  {
+    "id": "38",
+    "ticket_id": "53b4dc95-26b9-4a2f-b227-6a2bed",
+    "assigned_to_user_id": "a65d87f2-9b96-4e3c-989f-cb6ab44b28f8",
+    "assigned_by": null,
+    "assignment_reason": "SLA Breached: Unresolved after 24 hours response threshold. Auto-escalated to Level 2 (Dean).",
+    "escalation_level": 2,
+    "assigned_at": "2026-07-24T08:30:13.619Z"
+  },
+  {
+    "id": "39",
+    "ticket_id": "14435d72-5c23-4ca0-8805-9acc45",
+    "assigned_to_user_id": "a65d87f2-9b96-4e3c-989f-cb6ab44b28f8",
+    "assigned_by": null,
+    "assignment_reason": "SLA Breached: Unresolved after 24 hours response threshold. Auto-escalated to Level 2 (Dean).",
+    "escalation_level": 2,
+    "assigned_at": "2026-07-24T08:30:20.382Z"
+  },
+  {
+    "id": "40",
+    "ticket_id": "035f2067-ade4-4574-8147-4551d8",
+    "assigned_to_user_id": "a65d87f2-9b96-4e3c-989f-cb6ab44b28f8",
+    "assigned_by": null,
+    "assignment_reason": "SLA Breached: Unresolved after 24 hours response threshold. Auto-escalated to Level 2 (Dean).",
+    "escalation_level": 2,
+    "assigned_at": "2026-07-24T08:30:27.642Z"
+  },
+  {
+    "id": "41",
+    "ticket_id": "d67eb7f1-8350-447c-a7a3-44a76c",
+    "assigned_to_user_id": "a65d87f2-9b96-4e3c-989f-cb6ab44b28f8",
+    "assigned_by": null,
+    "assignment_reason": "SLA Breached: Unresolved after 24 hours response threshold. Auto-escalated to Level 2 (Dean).",
+    "escalation_level": 2,
+    "assigned_at": "2026-07-24T08:30:34.420Z"
+  },
+  {
+    "id": "42",
+    "ticket_id": "acd34c2e-e893-465a-a529-3288e3",
+    "assigned_to_user_id": "a65d87f2-9b96-4e3c-989f-cb6ab44b28f8",
+    "assigned_by": null,
+    "assignment_reason": "SLA Breached: Unresolved after 24 hours response threshold. Auto-escalated to Level 2 (Dean).",
+    "escalation_level": 2,
+    "assigned_at": "2026-07-24T08:30:41.040Z"
+  },
+  {
+    "id": "43",
+    "ticket_id": "ac19ef8e-f287-40b2-9684-779c24",
+    "assigned_to_user_id": "a65d87f2-9b96-4e3c-989f-cb6ab44b28f8",
+    "assigned_by": null,
+    "assignment_reason": "SLA Breached: Unresolved after 24 hours response threshold. Auto-escalated to Level 2 (Dean).",
+    "escalation_level": 2,
+    "assigned_at": "2026-07-24T08:30:46.833Z"
+  },
+  {
+    "id": "44",
+    "ticket_id": "b79640f4-fd7c-405e-8023-f31ac3",
+    "assigned_to_user_id": "a65d87f2-9b96-4e3c-989f-cb6ab44b28f8",
+    "assigned_by": null,
+    "assignment_reason": "SLA Breached: Unresolved after 24 hours response threshold. Auto-escalated to Level 2 (Dean).",
+    "escalation_level": 2,
+    "assigned_at": "2026-07-24T08:30:52.643Z"
+  },
+  {
+    "id": "45",
+    "ticket_id": "5c5aefc2-32ac-4314-bb13-92e80f",
+    "assigned_to_user_id": "a65d87f2-9b96-4e3c-989f-cb6ab44b28f8",
+    "assigned_by": null,
+    "assignment_reason": "SLA Breached: Unresolved after 24 hours response threshold. Auto-escalated to Level 2 (Dean).",
+    "escalation_level": 2,
+    "assigned_at": "2026-07-24T08:30:59.607Z"
+  },
+  {
+    "id": "46",
+    "ticket_id": "a35de1d3-00c2-438d-bc14-fdcb95",
+    "assigned_to_user_id": "a65d87f2-9b96-4e3c-989f-cb6ab44b28f8",
+    "assigned_by": null,
+    "assignment_reason": "SLA Breached: Unresolved after 24 hours response threshold. Auto-escalated to Level 2 (Dean).",
+    "escalation_level": 2,
+    "assigned_at": "2026-07-24T08:31:05.443Z"
+  },
+  {
+    "id": "47",
+    "ticket_id": "6d29ee91-e3c1-4ebb-82dc-8c063e",
+    "assigned_to_user_id": "a65d87f2-9b96-4e3c-989f-cb6ab44b28f8",
+    "assigned_by": null,
+    "assignment_reason": "SLA Breached: Unresolved after 24 hours response threshold. Auto-escalated to Level 2 (Dean).",
+    "escalation_level": 2,
+    "assigned_at": "2026-07-24T08:31:11.680Z"
+  },
+  {
+    "id": "48",
+    "ticket_id": "f022366a-54c7-4293-9ccc-0e8fc6",
+    "assigned_to_user_id": "a65d87f2-9b96-4e3c-989f-cb6ab44b28f8",
+    "assigned_by": null,
+    "assignment_reason": "SLA Breached: Unresolved after 24 hours response threshold. Auto-escalated to Level 2 (Dean).",
+    "escalation_level": 2,
+    "assigned_at": "2026-07-24T08:31:17.921Z"
+  },
+  {
+    "id": "49",
+    "ticket_id": "8fce815a-4a40-4a6d-9060-de1eb9",
+    "assigned_to_user_id": "a65d87f2-9b96-4e3c-989f-cb6ab44b28f8",
+    "assigned_by": null,
+    "assignment_reason": "SLA Breached: Unresolved after 24 hours response threshold. Auto-escalated to Level 2 (Dean).",
+    "escalation_level": 2,
+    "assigned_at": "2026-07-24T08:31:23.487Z"
+  },
+  {
+    "id": "50",
+    "ticket_id": "02c5f094-8933-4e39-913b-998ef1",
+    "assigned_to_user_id": "a65d87f2-9b96-4e3c-989f-cb6ab44b28f8",
+    "assigned_by": null,
+    "assignment_reason": "SLA Breached: Unresolved after 24 hours response threshold. Auto-escalated to Level 2 (Dean).",
+    "escalation_level": 2,
+    "assigned_at": "2026-07-24T08:31:30.837Z"
+  },
+  {
+    "id": "51",
+    "ticket_id": "3b3b6449-804c-46f8-b2ed-a8668e",
+    "assigned_to_user_id": "a65d87f2-9b96-4e3c-989f-cb6ab44b28f8",
+    "assigned_by": null,
+    "assignment_reason": "SLA Breached: Unresolved after 24 hours response threshold. Auto-escalated to Level 2 (Dean).",
+    "escalation_level": 2,
+    "assigned_at": "2026-07-24T08:31:36.992Z"
+  },
+  {
+    "id": "52",
+    "ticket_id": "0758adf8-fa8f-48e9-9530-5f2497",
+    "assigned_to_user_id": "a65d87f2-9b96-4e3c-989f-cb6ab44b28f8",
+    "assigned_by": null,
+    "assignment_reason": "SLA Breached: Unresolved after 24 hours response threshold. Auto-escalated to Level 2 (Dean).",
+    "escalation_level": 2,
+    "assigned_at": "2026-07-24T08:31:44.343Z"
+  },
+  {
+    "id": "53",
+    "ticket_id": "16cb284f-999c-4f72-a921-188d26",
+    "assigned_to_user_id": "a65d87f2-9b96-4e3c-989f-cb6ab44b28f8",
+    "assigned_by": null,
+    "assignment_reason": "SLA Breached: Unresolved after 24 hours response threshold. Auto-escalated to Level 2 (Dean).",
+    "escalation_level": 2,
+    "assigned_at": "2026-07-24T08:31:51.042Z"
+  },
+  {
+    "id": "54",
+    "ticket_id": "b808c375-4ee9-4e2f-b8f5-97eef3",
+    "assigned_to_user_id": "093e2824-0bfc-419e-953e-cc9a025bb913",
+    "assigned_by": "2e656248-fadf-4646-aa88-73b8590f6412",
+    "assignment_reason": "Initial assignment based on routing rules",
+    "escalation_level": 1,
+    "assigned_at": "2026-07-24T08:36:07.578Z"
+  },
+  {
+    "id": "55",
+    "ticket_id": "b4a8fd89-d281-4977-956b-bec3e5",
+    "assigned_to_user_id": "0ea3e2dd-9451-4705-ba5c-e1a5c50dba83",
+    "assigned_by": "2e656248-fadf-4646-aa88-73b8590f6412",
+    "assignment_reason": "Initial assignment based on routing rules",
+    "escalation_level": 1,
+    "assigned_at": "2026-07-24T08:38:09.509Z"
+  },
+  {
+    "id": "56",
+    "ticket_id": "3340a150-a4dd-4e5d-b3e3-4c2753",
+    "assigned_to_user_id": "093e2824-0bfc-419e-953e-cc9a025bb913",
+    "assigned_by": "5c9d8555-6587-40f5-b634-c5eba7a685a3",
+    "assignment_reason": "Initial assignment based on routing rules",
+    "escalation_level": 1,
+    "assigned_at": "2026-07-24T08:40:23.962Z"
+  },
+  {
+    "id": "57",
+    "ticket_id": "fbcd9bcc-9e14-4af6-9027-6e2379",
+    "assigned_to_user_id": "51d34408-d339-4f1c-8e8d-8eac83a6192a",
+    "assigned_by": "d95ad3f6-fd7c-455f-ae7f-cf21f5f46cdf",
+    "assignment_reason": "Initial assignment based on routing rules",
+    "escalation_level": 1,
+    "assigned_at": "2026-07-24T08:45:38.221Z"
+  },
+  {
+    "id": "58",
+    "ticket_id": "8910d9cc-8e48-4ef0-95bc-31e1eb",
+    "assigned_to_user_id": "2d53e259-f10a-4ffb-a0a6-89a2735f5dc8",
+    "assigned_by": "6d7dcd87-290c-4a62-b7d1-01e87f3d50c6",
+    "assignment_reason": "Initial assignment based on routing rules",
+    "escalation_level": 1,
+    "assigned_at": "2026-07-24T08:51:34.470Z"
+  },
+  {
+    "id": "59",
+    "ticket_id": "ab99ddd3-26bc-42a1-9490-024d68",
+    "assigned_to_user_id": "65788a7b-5cb6-443f-af8c-0a130571f3a7",
+    "assigned_by": "3e48f0da-32a8-4d4a-95f2-4470a7df7d7f",
+    "assignment_reason": "Initial assignment based on routing rules",
+    "escalation_level": 1,
+    "assigned_at": "2026-07-24T08:54:52.511Z"
+  }
+]

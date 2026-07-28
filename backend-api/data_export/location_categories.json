@@ -1,0 +1,130 @@
+[
+  {
+    "id": 1,
+    "name": "Academic",
+    "routing_type": "DEPARTMENT",
+    "is_system": true,
+    "sort_order": 0,
+    "is_active": true
+  },
+  {
+    "id": 2,
+    "name": "Washroom",
+    "routing_type": "GLOBAL",
+    "is_system": true,
+    "sort_order": 0,
+    "is_active": true
+  },
+  {
+    "id": 3,
+    "name": "Laboratory",
+    "routing_type": "DEPARTMENT",
+    "is_system": true,
+    "sort_order": 0,
+    "is_active": true
+  },
+  {
+    "id": 4,
+    "name": "Girls Hostel",
+    "routing_type": "GLOBAL",
+    "is_system": true,
+    "sort_order": 0,
+    "is_active": true
+  },
+  {
+    "id": 5,
+    "name": "Girls Mess",
+    "routing_type": "GLOBAL",
+    "is_system": true,
+    "sort_order": 0,
+    "is_active": true
+  },
+  {
+    "id": 7,
+    "name": "Transport",
+    "routing_type": "GLOBAL",
+    "is_system": true,
+    "sort_order": 0,
+    "is_active": true
+  },
+  {
+    "id": 8,
+    "name": "Main Gate",
+    "routing_type": "GLOBAL",
+    "is_system": true,
+    "sort_order": 0,
+    "is_active": true
+  },
+  {
+    "id": 9,
+    "name": "Sports",
+    "routing_type": "GLOBAL",
+    "is_system": true,
+    "sort_order": 0,
+    "is_active": true
+  },
+  {
+    "id": 10,
+    "name": "Library",
+    "routing_type": "GLOBAL",
+    "is_system": true,
+    "sort_order": 0,
+    "is_active": true
+  },
+  {
+    "id": 11,
+    "name": "Laundry",
+    "routing_type": "GLOBAL",
+    "is_system": true,
+    "sort_order": 0,
+    "is_active": true
+  },
+  {
+    "id": 12,
+    "name": "Power Room",
+    "routing_type": "GLOBAL",
+    "is_system": true,
+    "sort_order": 0,
+    "is_active": true
+  },
+  {
+    "id": 13,
+    "name": "Kitchen",
+    "routing_type": "GLOBAL",
+    "is_system": true,
+    "sort_order": 0,
+    "is_active": true
+  },
+  {
+    "id": 14,
+    "name": "Canteen",
+    "routing_type": "GLOBAL",
+    "is_system": true,
+    "sort_order": 0,
+    "is_active": true
+  },
+  {
+    "id": 15,
+    "name": "General",
+    "routing_type": "DEPARTMENT",
+    "is_system": true,
+    "sort_order": 0,
+    "is_active": true
+  },
+  {
+    "id": 6,
+    "name": "Boys Mess",
+    "routing_type": "GLOBAL",
+    "is_system": true,
+    "sort_order": 0,
+    "is_active": true
+  },
+  {
+    "id": 16,
+    "name": "Boys Hostel",
+    "routing_type": "GLOBAL",
+    "is_system": true,
+    "sort_order": 0,
+    "is_active": true
+  }
+]

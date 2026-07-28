@@ -1,0 +1,8 @@
+[
+  {
+    "key": "security_settings",
+    "value": "{\"version\":1,\"settings\":{\"minPasswordLength\":8,\"maxLoginAttempts\":5,\"sessionTimeout\":3564025,\"requireUppercase\":true,\"requireNumbers\":true,\"requireSpecial\":false,\"enable2FA\":false,\"twoFactorMethod\":\"Email OTP\"}}",
+    "updated_by": "36969986-4ffe-4941-a847-f416eb434cb7",
+    "updated_at": "2026-07-17T02:58:13.129Z"
+  }
+]

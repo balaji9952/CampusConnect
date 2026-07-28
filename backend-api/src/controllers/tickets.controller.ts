@@ -58,14 +58,9 @@ export class TicketsController {
       const { id: userId, name: userName, role: userRole, roleLabel } = req.user;
       const { title, description, location_id, category_id, ticket_type, priority, qr_verification_token } = req.body;
 
-      const actualRoleString = String(roleLabel || userRole); // JWT stores 'Parent', 'Staff', 'Student', 'Admin'
-      // Only Students and Staff must provide a QR token — Parents submit directly without scanning
-      const isParent = actualRoleString === 'Parent';
-      
-      const t1 = performance.now();
-      console.log(`[PROFILE] Controller init & JWT parsing: ${(t1 - t0).toFixed(2)}ms`);
+      const actualRoleString = String(roleLabel || userRole); // JWT stores 'Staff', 'Student', 'Admin'
 
-      if (!isParent && !qr_verification_token && ticket_type !== 'PARENT_FEEDBACK') {
+      if (!qr_verification_token) {
         res.status(400).json({ message: 'qr_verification_token is required', success: false });
         return;
       }

@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "routing_key": "TRANSPORT_MANAGER",
+    "user_id": "a7a7748d-1204-40ca-bac0-ea599e9f0c71",
+    "escalation_level": 1,
+    "is_active": true,
+    "created_at": "2026-07-16T16:24:01.408Z",
+    "updated_at": "2026-07-16T16:24:01.408Z"
+  },
+  {
+    "id": 2,
+    "routing_key": "TRANSPORT_MANAGER",
+    "user_id": "093e2824-0bfc-419e-953e-cc9a025bb913",
+    "escalation_level": 2,
+    "is_active": true,
+    "created_at": "2026-07-16T16:33:48.163Z",
+    "updated_at": "2026-07-16T16:33:48.163Z"
+  },
+  {
+    "id": 3,
+    "routing_key": "TRANSPORT_MANAGER",
+    "user_id": "36969986-4ffe-4941-a847-f416eb434cb7",
+    "escalation_level": 3,
+    "is_active": true,
+    "created_at": "2026-07-16T16:38:53.932Z",
+    "updated_at": "2026-07-16T16:38:53.932Z"
+  },
+  {
+    "id": 4,
+    "routing_key": "BOYS_MESS_MANAGER",
+    "user_id": "093e2824-0bfc-419e-953e-cc9a025bb913",
+    "escalation_level": 1,
+    "is_active": true,
+    "created_at": "2026-07-17T02:34:34.980Z",
+    "updated_at": "2026-07-17T02:34:34.980Z"
+  }
+]

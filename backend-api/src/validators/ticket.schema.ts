@@ -7,7 +7,7 @@ export const CreateTicketSchema = z.object({
   description: z.string().trim().min(1).max(2000),
   location_id: z.coerce.number().int().positive().optional(),
   category_id: z.coerce.number().int().positive().optional(),
-  ticket_type: z.enum(['COMPLAINT', 'PARENT_FEEDBACK']).optional().default('COMPLAINT'),
+  ticket_type: z.enum(['COMPLAINT']).optional().default('COMPLAINT'),
   priority: z.coerce.number().int().min(1).max(3).optional(),
   qr_verification_token: z.string().uuid('qr_verification_token must be a valid UUID').optional(),
 });

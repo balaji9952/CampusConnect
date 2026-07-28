@@ -292,10 +292,6 @@
           <span class="nav-icon-wrap"><i class="ti ti-map-pin nav-icon"></i></span>
           <span class="nav-label">Location and QR</span>
         </a>
-        <a class="nav-item" href="mounva-creation.html">
-          <span class="nav-icon-wrap"><i class="ti ti-qrcode nav-icon"></i></span>
-          <span class="nav-label">Mounva Creation</span>
-        </a>
         <a class="nav-item" href="complaint-categories.html">
           <span class="nav-icon-wrap"><i class="ti ti-tag nav-icon"></i></span>
           <span class="nav-label">Complaint Categories</span>
@@ -504,17 +500,7 @@
         <div class="form-group">
           <label class="form-label">Category</label>
           <select class="form-control" id="lm-category" onchange="onCategoryChange()">
-            <option value="General">General</option>
-            <option value="Academic">Academic</option>
-            <option value="Library">Library</option>
-            <option value="Hostel">Hostel</option>
-            <option value="Transport">Transport</option>
-            <option value="Canteen">Canteen</option>
-            <option value="Sports">Sports</option>
-            <option value="Mess">Mess</option>
-            <option value="Toilet">Toilet</option>
-            <option value="Main gate">Main gate</option>
-            <option value="Labs">Labs</option>
+            <option value="">-- Select Category --</option>
           </select>
         </div>
         <div class="form-group">
@@ -526,12 +512,9 @@
         </div>
       </div>
       <div class="grid-2">
-        <div class="form-group">
+        <div class="form-group" style="display:none">
           <label class="form-label">Routing Type</label>
-          <select class="form-control" id="lm-routing-type" onchange="toggleRoutingKey()">
-            <option value="DEPARTMENT_ROUTED">Department Routed</option>
-            <option value="GLOBAL_ROUTED">Global Routed</option>
-          </select>
+          <input type="hidden" id="lm-routing-type" value="">
         </div>
         <div>
           <div class="form-group" id="lm-dept-group">
@@ -540,9 +523,9 @@
               <option value="">-- No Department --</option>
             </select>
           </div>
-          <div class="form-group" id="lm-routing-key-group" style="display:none">
-            <label class="form-label">Routing Key</label>
-            <select class="form-control" id="lm-routing-key" onchange="updateAssigneeDisplay()">
+          <div class="form-group" id="lm-routing-group-id-group" style="display:none">
+            <label class="form-label">Routing Group</label>
+            <select class="form-control" id="lm-routing-group-id" onchange="updateAssigneeDisplay()">
               <option value="">-- Select --</option>
             </select>
             <div id="lm-routing-assignee" style="margin-top:6px;font-size:12px;font-weight:600;display:none"></div>
@@ -591,7 +574,7 @@
     <span id="toast-msg">Changes saved!</span>
   </div>
 
-  <script src="api/api.js"></script>
+  <script src="js/api.js"></script>
   <script>
     // ── Helpers ───────────────────────────────────────────────────────────────
     function saveToast(msg, isError = false) {
@@ -615,37 +598,23 @@
     function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 
     function onCategoryChange() {
-      const cat = document.getElementById('lm-category').value;
+      const catId = document.getElementById('lm-category').value;
       const typeSel = document.getElementById('lm-routing-type');
-      const keySel = document.getElementById('lm-routing-key');
+      const keySel = document.getElementById('lm-routing-group-id');
 
-      if (['Academic', 'Labs'].includes(cat)) {
+      const selectedCat = catStats.find(c => String(c.categoryId) === catId);
+      if (selectedCat) {
+        typeSel.value = selectedCat.routingType === 'GLOBAL' ? 'GLOBAL_ROUTED' : 'DEPARTMENT_ROUTED';
+      } else {
         typeSel.value = 'DEPARTMENT_ROUTED';
-        keySel.value = '';
-      } else if (['Library', 'Hostel', 'Canteen', 'Transport', 'Mess', 'Toilet', 'Main gate'].includes(cat)) {
-        typeSel.value = 'GLOBAL_ROUTED';
-        if (cat === 'Library') keySel.value = 'LIBRARY_HEAD';
-        else if (cat === 'Canteen') keySel.value = 'CANTEEN_HEAD';
-        else if (cat === 'Transport') keySel.value = 'TRANSPORT_MANAGER';
-        else if (cat === 'Toilet') keySel.value = 'SANITATION_HEAD';
-        else if (cat === 'Mess') {
-          if (!['BOYS_MESS_MANAGER', 'GIRLS_MESS_MANAGER'].includes(keySel.value)) {
-            keySel.value = 'BOYS_MESS_MANAGER';
-          }
-        } else if (cat === 'Hostel') {
-          if (!['BOYS_HOSTEL_WARDEN', 'GIRLS_HOSTEL_WARDEN'].includes(keySel.value)) {
-            keySel.value = '';
-          }
-        } else if (cat === 'Main gate') {
-          keySel.value = '';
-        }
       }
-      toggleRoutingKey();
+      keySel.value = ''; // Reset routing group on category change
+      toggleroutingGroupId();
     }
 
-    function toggleRoutingKey() {
+    function toggleroutingGroupId() {
       const type = document.getElementById('lm-routing-type').value;
-      const keyGroup = document.getElementById('lm-routing-key-group');
+      const keyGroup = document.getElementById('lm-routing-group-id-group');
       const deptGroup = document.getElementById('lm-dept-group');
       
       if (type === 'GLOBAL_ROUTED') {
@@ -656,7 +625,7 @@
       } else {
         keyGroup.style.display = 'none';
         deptGroup.style.display = 'block';
-        document.getElementById('lm-routing-key').value = '';
+        document.getElementById('lm-routing-group-id').value = '';
         updateAssigneeDisplay();
       }
     }
@@ -674,14 +643,14 @@
     }
 
     function updateAssigneeDisplay() {
-      const key = document.getElementById('lm-routing-key').value;
+      const key = document.getElementById('lm-routing-group-id').value;
       const displayEl = document.getElementById('lm-routing-assignee');
       if (!key) {
         displayEl.style.display = 'none';
         return;
       }
       
-      const assign = activeAssignments.find(a => a.routing_key === key && (a.escalation_level === null || a.escalation_level === 1));
+      const assign = activeAssignments.find(a => String(a.routing_group_id) === key && (a.escalation_level === null || a.escalation_level === 1));
       if (assign && assign.users) {
         displayEl.textContent = `Assigned to: ${assign.users.name} (${assign.users.designation || 'Staff'})`;
         displayEl.style.color = 'var(--primary)';
@@ -706,6 +675,7 @@
     const limit = 12;
     let totalPages = 1;
     let activeCategory = 'All';
+    let activeCategoryId = 'All';
     let catStats = []; // [{category, count}]
 
     // ── Load categories + stats ────────────────────────────────────────────
@@ -718,6 +688,10 @@
 
         const total = catStats.reduce((s, c) => s + c.count, 0);
         renderCatPills(catStats, total);
+
+        const modalCatSel = document.getElementById('lm-category');
+        modalCatSel.innerHTML = '<option value="">-- Select Category --</option>' +
+          catStats.map(c => `<option value="${c.categoryId}">${c.category}</option>`).join('');
       } catch (e) {
         document.getElementById('cat-filter-bar').innerHTML =
           '<span style="color:var(--text-hint);font-size:12px">Categories unavailable</span>';
@@ -732,15 +706,16 @@
         ...stats.filter(s => s.count > 0)
       ].map(s => `
         <button class="cat-pill${activeCategory === s.category ? ' active' : ''}"
-                onclick="setCategory('${s.category}')">
+                onclick="setCategory('${s.category}', '${s.categoryId || 'All'}')">
           ${s.category}
           <span class="pill-count">${s.count}</span>
         </button>`).join('');
       bar.innerHTML = pills;
     }
 
-    function setCategory(cat) {
+    function setCategory(cat, id) {
       activeCategory = cat;
+      activeCategoryId = id || 'All';
       currentPage = 1;
       renderCatPills(catStats, catStats.reduce((s, c) => s + c.count, 0));
       fetchLocations();
@@ -763,14 +738,14 @@
     }
 
     // ── Load routing keys ───────────────────────────────────────────────────
-    async function loadRoutingKeys() {
+    async function loadroutingGroupIds() {
       try {
         const res  = await fetch(`${API_BASE}/admin/routing/keys`, { headers });
         const json = await res.json();
         if (!json.success) throw new Error();
-        const sel  = document.getElementById('lm-routing-key');
+        const sel  = document.getElementById('lm-routing-group-id');
         sel.innerHTML = '<option value="">-- Select --</option>' +
-          json.data.map(k => `<option value="${k.key}">${k.label}</option>`).join('');
+          json.data.map(k => `<option value="${k.id}">${k.display_name}</option>`).join('');
       } catch (e) { console.error('Routing keys load error', e); }
     }
 
@@ -781,7 +756,7 @@
       let   url       = `${API_BASE}/locations?page=${currentPage}&limit=${limit}`;
       if (q)        url += `&search=${encodeURIComponent(q)}`;
       if (dept !== 'All')  url += `&departmentId=${dept}`;
-      if (activeCategory !== 'All') url += `&category=${encodeURIComponent(activeCategory)}`;
+      if (activeCategoryId !== 'All') url += `&categoryId=${encodeURIComponent(activeCategoryId)}`;
 
       const tbody = document.getElementById('locations-table-body');
       if (showLoading) {
@@ -911,8 +886,8 @@
       document.getElementById('lm-dept').value       = '';
       document.getElementById('lm-status').value      = 'true';
       document.getElementById('lm-routing-type').value = 'DEPARTMENT_ROUTED';
-      document.getElementById('lm-routing-key').value  = '';
-      toggleRoutingKey();
+      document.getElementById('lm-routing-group-id').value  = '';
+      toggleroutingGroupId();
       document.getElementById('loc-modal-title').textContent = 'Add Location';
       document.getElementById('loc-modal').classList.add('show');
     }
@@ -922,15 +897,15 @@
       if (!l) return;
       document.getElementById('lm-id').value             = l.id;
       document.getElementById('lm-name').value            = l.name;
-      document.getElementById('lm-category').value        = l.category || 'General';
+      document.getElementById('lm-category').value        = l.categoryId || '';
       document.getElementById('lm-internal-code').value  = l.internalCode || '';
       document.getElementById('lm-block').value         = l.block || '';
       document.getElementById('lm-floor').value         = l.floor || '';
       document.getElementById('lm-dept').value          = l.departmentId || '';
       document.getElementById('lm-status').value         = l.isActive ? 'true' : 'false';
-      document.getElementById('lm-routing-type').value   = l.routingType || 'DEPARTMENT_ROUTED';
-      document.getElementById('lm-routing-key').value    = l.routingKey || '';
-      toggleRoutingKey();
+      document.getElementById('lm-routing-type').value   = (l.routingType === 'GLOBAL') ? 'GLOBAL_ROUTED' : 'DEPARTMENT_ROUTED';
+      document.getElementById('lm-routing-group-id').value    = l.routingGroupId || '';
+      toggleroutingGroupId();
       document.getElementById('loc-modal-title').textContent = 'Edit Location';
       document.getElementById('loc-modal').classList.add('show');
     }
@@ -941,16 +916,17 @@
       const internalCode = document.getElementById('lm-internal-code').value.trim();
       const block       = document.getElementById('lm-block').value.trim();
       const floor       = document.getElementById('lm-floor').value.trim();
-      const category    = document.getElementById('lm-category').value;
+      const categoryId  = document.getElementById('lm-category').value;
       const departmentId = document.getElementById('lm-dept').value;
       const isActive    = document.getElementById('lm-status').value === 'true';
       const routingType = document.getElementById('lm-routing-type').value;
-      const routingKey  = document.getElementById('lm-routing-key').value;
+      const routingGroupId  = document.getElementById('lm-routing-group-id').value;
 
       if (!name) { saveToast('Location name is required', true); return; }
-      if (routingType === 'GLOBAL_ROUTED' && !routingKey) {
-        saveToast('Routing Key is required for Global Routing', true); return;
+      if (routingType === 'GLOBAL_ROUTED' && !routingGroupId) {
+        saveToast('Routing Group is required for Global Routing', true); return;
       }
+      if (!categoryId) { saveToast('Category is required', true); return; }
 
       const payload = {
         name,
@@ -958,10 +934,9 @@
         block: block || null,
         floor: floor || null,
         departmentId: departmentId ? parseInt(departmentId, 10) : null,
-        routingType,
-        routingKey: routingType === 'GLOBAL_ROUTED' ? routingKey : null,
+        routingGroupId: routingType === 'GLOBAL_ROUTED' && routingGroupId ? parseInt(routingGroupId, 10) : null,
         isActive,
-        category
+        categoryId: parseInt(categoryId, 10)
       };
 
       try {
@@ -1105,7 +1080,7 @@
 
     // ── Init ────────────────────────────────────────────────────────────────
     (async () => {
-      await Promise.all([loadDepartments(), loadRoutingKeys(), loadActiveAssignments()]);
+      await Promise.all([loadDepartments(), loadroutingGroupIds(), loadActiveAssignments()]);
       await loadCategories();
       await fetchLocations();
     })();

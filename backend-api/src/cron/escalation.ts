@@ -50,8 +50,17 @@ export async function processLevel1ToLevel2() {
         orderBy: { assigned_at: 'desc' },
         take: 1
       },
-      locations: { select: { routing_type: true, routing_key: true, department_id: true } },
-      users: { select: { department_id: true } },
+      locations: {
+        select: {
+          department_id: true,
+          routing_group_id: true,
+          location_categories: {
+            select: {
+              routing_type: true
+            }
+          }
+        }
+      }
     }
   });
 
@@ -105,8 +114,17 @@ export async function processLevel2ToLevel3() {
         orderBy: { assigned_at: 'desc' },
         take: 1
       },
-      locations: { select: { routing_type: true, routing_key: true, department_id: true } },
-      users: { select: { department_id: true } },
+      locations: {
+        select: {
+          department_id: true,
+          routing_group_id: true,
+          location_categories: {
+            select: {
+              routing_type: true
+            }
+          }
+        }
+      }
     }
   });
 
@@ -241,7 +259,7 @@ async function escalateTicket(ticket: any, newLevel: number, newAssigneeName: st
  * Resolves the escalation target for a ticket using the routing chain:
  *
  * 1. GLOBAL_ROUTED tickets → look up global_assignments
- *    WHERE (routing_key, escalation_level = targetLevel)
+ *    WHERE (routing_group_id, escalation_level = targetLevel)
  *
  * 2. DEPARTMENT_ROUTED tickets → look up escalation_assignments
  *    WHERE (department_id, escalation_level = targetLevel)
@@ -255,30 +273,30 @@ async function resolveEscalationTarget(
   ticket: any,
   targetLevel: 2 | 3
 ): Promise<{ id: string | null; name: string; role: string }> {
-  const routingType = ticket.locations?.routing_type;
-  const routingKey = ticket.locations?.routing_key;
-  const creatorDeptId = ticket.users?.department_id;
+  const routingType = ticket.locations?.location_categories?.routing_type;
+  const routingGroupId = ticket.locations?.routing_group_id;
+  const locationDeptId = ticket.locations?.department_id;
 
   // ── 1. Global routing: check global_assignments ────────────────────────────
-  if (routingKey) {
+  if (routingType === 'GLOBAL_ROUTED' && routingGroupId) {
     const ga = await prisma.global_assignments.findFirst({
-      where: { routing_key: routingKey, escalation_level: targetLevel, is_active: true },
+      where: { routing_group_id: routingGroupId, escalation_level: targetLevel, is_active: true },
       include: { users: { select: { id: true, name: true, designation: true } } }
     });
     if (ga?.users) {
-      console.log(`[ESCALATION] Ticket ${ticket.id}: global assignment found for ${routingKey}@L${targetLevel} → ${ga.users.name}`);
+      console.log(`[ESCALATION] Ticket ${ticket.id}: global assignment found for routing group ${routingGroupId}@L${targetLevel} → ${ga.users.name}`);
       return { id: ga.users.id, name: ga.users.name, role: ga.users.designation || `Level ${targetLevel}` };
     }
   }
 
   // ── 2. Department routing: check escalation_assignments ────────────────────
-  if (creatorDeptId) {
+  if (routingType === 'DEPARTMENT_ROUTED' && locationDeptId) {
     const ea = await prisma.escalation_assignments.findFirst({
-      where: { department_id: creatorDeptId, escalation_level: targetLevel, is_active: true },
+      where: { department_id: locationDeptId, escalation_level: targetLevel, is_active: true },
       include: { users: { select: { id: true, name: true, designation: true } } }
     });
     if (ea?.users) {
-      console.log(`[ESCALATION] Ticket ${ticket.id}: dept escalation found for dept=${creatorDeptId}@L${targetLevel} → ${ea.users.name}`);
+      console.log(`[ESCALATION] Ticket ${ticket.id}: dept escalation found for dept=${locationDeptId}@L${targetLevel} → ${ea.users.name}`);
       return { id: ea.users.id, name: ea.users.name, role: ea.users.designation || `Level ${targetLevel}` };
     }
   }

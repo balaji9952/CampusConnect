@@ -190,7 +190,6 @@
               <select id="dept-filter-type" class="form-control" onchange="filterDeptTable()" style="height:38px;font-size:13px">
                 <option value="">All Types</option>
                 <option value="COMPLAINT">Complaint</option>
-                <option value="PARENT_FEEDBACK">Parent Feedback</option>
               </select>
             </div>
             <div style="flex:1;min-width:160px">
@@ -232,95 +231,6 @@
           <div id="dept-pagination" style="display:flex;justify-content:space-between;align-items:center;padding:12px 0 0;flex-wrap:wrap;gap:8px"></div>
         </div>
       </div>
-
-      <!-- ══ PARENT COMPLAINTS VIEW ══ -->
-      <div id="parent-view" style="display:none">
-        <!-- Stats -->
-        <div class="grid-4" style="margin-bottom:20px">
-          <div class="stat-card">
-            <div class="stat-icon" style="background:#fff0f6;color:#e83e8c"><i class="ti ti-users"></i></div>
-            <div>
-              <div class="stat-value" id="parent-stat-total">—</div>
-              <div class="stat-label">Total Parent Complaints</div>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon" style="background:#fff8e1;color:#f59e0b"><i class="ti ti-clock"></i></div>
-            <div>
-              <div class="stat-value" id="parent-stat-open">—</div>
-              <div class="stat-label">Open / Pending</div>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon" style="background:#e8f5e9;color:#28a745"><i class="ti ti-circle-check"></i></div>
-            <div>
-              <div class="stat-value" id="parent-stat-resolved">—</div>
-              <div class="stat-label">Resolved</div>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon" style="background:#e8f0fe;color:#4285f4"><i class="ti ti-loader"></i></div>
-            <div>
-              <div class="stat-value" id="parent-stat-inprogress">—</div>
-              <div class="stat-label">In Progress</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Filters -->
-        <div class="card" style="margin-bottom:20px;padding:16px 20px">
-          <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
-            <div style="flex:1;min-width:160px">
-              <div style="font-size:11px;font-weight:600;color:var(--text-hint);margin-bottom:6px;text-transform:uppercase">Status Filter</div>
-              <select id="parent-filter-status" class="form-control" onchange="loadParentComplaints()" style="height:38px;font-size:13px">
-                <option value="">All Statuses</option>
-                <option value="0">Open</option>
-                <option value="1">In Progress</option>
-                <option value="2">Resolved</option>
-                <option value="3">Rejected</option>
-              </select>
-            </div>
-            <div style="flex:1;min-width:160px">
-              <div style="font-size:11px;font-weight:600;color:var(--text-hint);margin-bottom:6px;text-transform:uppercase">Search</div>
-              <input type="text" id="parent-search" class="form-control" placeholder="Search by title, parent name…" style="height:38px;font-size:13px" oninput="filterParentTable()">
-            </div>
-            <button class="btn btn-outline btn-sm" onclick="loadParentComplaints()" style="height:38px;padding:0 16px;white-space:nowrap">
-              <i class="ti ti-refresh"></i> Refresh
-            </button>
-          </div>
-        </div>
-
-        <!-- Complaints Table -->
-        <div class="card">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px">
-            <div class="card-title"><i class="ti ti-parent" style="color:#e83e8c"></i> All Parent Complaints</div>
-            <span id="parent-count-badge" style="background:#fff0f6;color:#e83e8c;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600">0 complaints</span>
-          </div>
-          <div class="table-wrap">
-            <table id="parent-complaints-table">
-              <thead>
-                <tr>
-                  <th>Ticket #</th>
-                  <th>Parent Name</th>
-                  <th>Title</th>
-                  <th>Category</th>
-                  <th>Location</th>
-                  <th>Status</th>
-                  <th>Assigned To</th>
-                  <th>Date</th>
-                </tr>
-              </thead>
-              <tbody id="parent-complaint-tbody">
-                <tr><td colspan="8" style="text-align:center;padding:32px;color:var(--text-hint)"><i class="ti ti-loader" style="font-size:20px"></i><br>Loading parent complaints…</td></tr>
-              </tbody>
-            </table>
-          </div>
-          <!-- Pagination -->
-          <div id="parent-pagination" style="display:flex;justify-content:space-between;align-items:center;padding:12px 0 0;flex-wrap:wrap;gap:8px"></div>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- STAFF WORKLOAD MODAL -->
   <div class="modal-overlay" id="staff-workload-modal">
@@ -394,7 +304,7 @@
   <div class="toast" id="toast"><i class="ti ti-circle-check"></i><span id="toast-msg">Changes saved
       successfully!</span></div>
 
-  <script src="api/api.js"></script>
+  <script src="js/api.js"></script>
   <script>
     if (!token) {
       window.location.href = 'login.html';
@@ -411,8 +321,6 @@
     let currentDepartments = [];
     let deptCache = {};
     let activeDeptId = null;
-    let allParentComplaints = [];
-    let parentPage = 1;
     let currentDeptComplaints = [];
     let deptPage = 1;
     const PAGE_SIZE = 20;
@@ -448,102 +356,7 @@
         return `<button class="dept-tab" id="tab-dept-${d.id}" onclick="switchDeptDash('${d.id}')">
           <i class="ti ${icon}" style="color:${color}"></i> ${label}</button>`;
       }).join('');
-      // Parent complaints special tab
-      const parentTab = `<button class="dept-tab parent-tab" id="tab-dept-parents" onclick="switchToParents()" style="border-color:#e83e8c">
-        <i class="ti ti-users" style="color:#e83e8c"></i> Parents</button>`;
-      container.innerHTML = deptTabs + parentTab;
-    }
-
-    function switchToParents() {
-      document.querySelectorAll('.dept-tab').forEach(t => t.classList.remove('active'));
-      const tab = document.getElementById('tab-dept-parents');
-      if (tab) tab.classList.add('active');
-      activeDeptId = 'parents';
-      document.getElementById('dept-view').style.display = 'none';
-      document.getElementById('parent-view').style.display = 'block';
-      loadParentComplaints();
-    }
-
-    async function loadParentComplaints() {
-      const statusFilter = document.getElementById('parent-filter-status').value;
-      let url = `${API_BASE}/tickets?creator_role=Parent&limit=200`;
-      if (statusFilter !== '') url += `&status=${statusFilter}`;
-
-      try {
-        const res = await fetch(url, {
-          headers: { 'Authorization': `Bearer ${token}`, 'ngrok-skip-browser-warning': 'true' }
-        });
-        const json = await res.json();
-        if (json.success) {
-          allParentComplaints = json.data;
-          updateParentStats(allParentComplaints);
-          parentPage = 1;
-          renderParentTable();
-        } else {
-          saveToast('Failed to load parent complaints');
-        }
-      } catch (err) {
-        saveToast('Network error loading parent complaints');
-      }
-    }
-
-    function updateParentStats(complaints) {
-      const total = complaints.length;
-      const open = complaints.filter(c => c.status === 0).length;
-      const inprogress = complaints.filter(c => c.status === 1).length;
-      const resolved = complaints.filter(c => c.status === 2).length;
-      document.getElementById('parent-stat-total').textContent = total;
-      document.getElementById('parent-stat-open').textContent = open;
-      document.getElementById('parent-stat-inprogress').textContent = inprogress;
-      document.getElementById('parent-stat-resolved').textContent = resolved;
-    }
-
-    function filterParentTable() {
-      parentPage = 1;
-      renderParentTable();
-    }
-
-    function renderParentTable() {
-      const search = (document.getElementById('parent-search').value || '').toLowerCase();
-      const filtered = allParentComplaints.filter(c => {
-        if (!search) return true;
-        return (c.title || '').toLowerCase().includes(search) ||
-               (c.creator_name || '').toLowerCase().includes(search) ||
-               (c.ticket_number || '').toLowerCase().includes(search);
-      });
-
-      const start = (parentPage - 1) * PAGE_SIZE;
-      const page = filtered.slice(start, start + PAGE_SIZE);
-      const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
-
-      document.getElementById('parent-count-badge').textContent = `${filtered.length} complaint${filtered.length !== 1 ? 's' : ''}`;
-
-      const fmtDate = d => d ? new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: '2-digit' }) : '—';
-
-      const html = page.map(c => `<tr>
-        <td><span style="font-family:monospace;font-size:11px;font-weight:700;color:var(--primary)">${c.ticket_number || c.id.substring(0,8)}</span></td>
-        <td><div style="font-weight:600">${c.creator_name || '—'}</div></td>
-        <td style="max-width:180px"><div style="font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${c.title}">${c.title}</div></td>
-        <td><span style="background:var(--bg-hover);padding:2px 8px;border-radius:10px;font-size:11px">${c.category_name || '—'}</span></td>
-        <td style="font-size:12px;color:var(--text-hint)">${c.location_name || '—'}</td>
-        <td><span class="badge badge-${getStatusClass(c.status)}">${getStatusLabel(c.status)}</span></td>
-        <td style="font-size:12px">${c.assigned_to_name || 'Unassigned'}</td>
-        <td style="font-size:11px;color:var(--text-hint);white-space:nowrap">${fmtDate(c.created_at)}</td>
-      </tr>`).join('');
-
-      document.getElementById('parent-complaint-tbody').innerHTML = html ||
-        `<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--text-hint)">No parent complaints found.</td></tr>`;
-
-      // Pagination
-      let pag = '';
-      if (totalPages > 1) {
-        pag += `<span style="font-size:13px;color:var(--text-hint)">Page ${parentPage} of ${totalPages}</span>`;
-        pag += `<div style="display:flex;gap:6px">`;
-        if (parentPage > 1) pag += `<button class="btn btn-outline btn-sm" onclick="parentPage--;renderParentTable()"><i class="ti ti-chevron-left"></i> Prev</button>`;
-        if (parentPage < totalPages) pag += `<button class="btn btn-outline btn-sm" onclick="parentPage++;renderParentTable()">Next <i class="ti ti-chevron-right"></i></button>`;
-        pag += `</div>`;
-      }
-      document.getElementById('parent-pagination').innerHTML = pag;
+      container.innerHTML = deptTabs;
     }
 
     async function switchDeptDash(deptId) {
@@ -552,10 +365,6 @@
       if (tab) tab.classList.add('active');
       activeDeptId = deptId;
       document.getElementById('dept-view').style.display = 'block';
-      document.getElementById('parent-view').style.display = 'none';
-
-      if (deptId === 'parents') return;
-
       try {
         if (deptId === 'admin') {
           const res = await fetch(`${API_BASE}/dashboard/stats`, {

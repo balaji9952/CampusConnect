@@ -20,7 +20,7 @@ export class VisibilityService {
   }
 
   static isStudentOrParent(role: string | number): boolean {
-    return role === 'Student' || role === 'Parent' || role === 0 || role === 2;
+    return role === 'Student' || role === 0;
   }
 
   /**

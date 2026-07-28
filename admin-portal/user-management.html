@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>User Management — Campus Connect</title>
+  <link rel="icon" href="assets/images/mzcetlogo.jpg">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
     rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" rel="stylesheet">
@@ -177,7 +178,6 @@
               <option value="All">All Roles</option>
               <option value="Student">Student</option>
               <option value="Staff">Staff</option>
-              <option value="Parent">Parent</option>
               <option value="Admin">Admin</option>
             </select>
             <select class="form-control" id="user-status-filter" style="width:130px;padding:8px 12px"
@@ -233,9 +233,6 @@
             Student</button>
           <button class="btn btn-primary" style="background: var(--warning); border-color: var(--warning);"
             onclick="selectRoleAndContinue('Staff')"><i class="ti ti-briefcase"></i> Staff</button>
-          <button class="btn btn-primary"
-            style="background: var(--text-secondary); border-color: var(--text-secondary);"
-            onclick="selectRoleAndContinue('Parent')"><i class="ti ti-users"></i> Parent</button>
           <button class="btn btn-primary" style="background: var(--danger); border-color: var(--danger);"
             onclick="selectRoleAndContinue('Admin')"><i class="ti ti-shield"></i> Admin</button>
         </div>
@@ -346,7 +343,7 @@
   <div class="toast" id="toast"><i class="ti ti-circle-check"></i><span id="toast-msg">Changes saved
       successfully!</span></div>
 
-  <script src="api/api.js"></script>
+  <script src="js/api.js"></script>
   <script>
     const headers = {
       'Content-Type': 'application/json',
@@ -613,13 +610,6 @@
           designations.forEach(p => { selDesignation.innerHTML += `<option value="${p}">${p}</option>`; });
         }
 
-      } else if (role === 'Parent') {
-        lblName.textContent = 'Parent Name';
-        lblEmail.textContent = 'Email Address';
-
-
-        show(grpStatusWrap, 'grid');
-        show(grpStatus);
       }
     }
 
@@ -768,15 +758,13 @@
         const pass = document.getElementById('um-password').value;
         const cpass = document.getElementById('um-confirm-password').value;
 
-        if (roleStr !== 'Parent') {
-          if (!id && (!pass || !cpass)) {
-            saveToast('Please enter password', true); return;
-          }
-          if (pass && pass !== cpass) {
-            saveToast('Passwords do not match', true); return;
-          }
-          if (pass) payload.password = pass;
+        if (!id && (!pass || !cpass)) {
+          saveToast('Please enter password', true); return;
         }
+        if (pass && pass !== cpass) {
+          saveToast('Passwords do not match', true); return;
+        }
+        if (pass) payload.password = pass;
 
         if (roleStr === 'Student') {
           const programType = document.getElementById('um-program-type').value;
@@ -837,38 +825,30 @@
           payload.departmentId = deptId;
           payload.designation = desig;
 
-        } else if (roleStr === 'Parent') {
-          // Phone is already set in payload
+
+        let res;
+        if (id) {
+          res = await fetch(`${API_BASE}/admin/users/${id}`, {
+            method: 'PUT',
+            headers,
+            body: JSON.stringify(payload)
+          });
+        } else {
+          res = await fetch(`${API_BASE}/admin/users`, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify(payload)
+          });
         }
 
-        try {
-          let res;
-          if (id) {
-            res = await fetch(`${API_BASE}/admin/users/${id}`, {
-              method: 'PUT',
-              headers,
-              body: JSON.stringify(payload)
-            });
-          } else {
-            res = await fetch(`${API_BASE}/admin/users`, {
-              method: 'POST',
-              headers,
-              body: JSON.stringify(payload)
-            });
-          }
-
-          const json = await res.json();
-          if (json.success) {
-            saveToast(id ? 'User updated successfully' : 'User added successfully');
-            closeModal('user-modal');
-            fetchUsers();
-            fetchStats();
-          } else {
-            saveToast(json.message || 'Operation failed', true);
-          }
-        } catch (err) {
-          saveToast('Network error', true);
-          console.error(err);
+        const json = await res.json();
+        if (json.success) {
+          saveToast(id ? 'User updated successfully' : 'User added successfully');
+          closeModal('user-modal');
+          fetchUsers();
+          fetchStats();
+        } else {
+          saveToast(json.message || 'Operation failed', true);
         }
       } catch (err) {
         saveToast('Error: ' + err.message, true);

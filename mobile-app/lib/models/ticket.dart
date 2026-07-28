@@ -27,6 +27,9 @@ class Ticket {
   final String creatorId;
   final String creatorName;
   final String creatorRole;
+  // Location Category fields
+  final int? locationCategoryId;
+  final String? locationCategoryName;
 
   Ticket({
     required this.id,
@@ -49,6 +52,8 @@ class Ticket {
     required this.creatorId,
     required this.creatorName,
     required this.creatorRole,
+    this.locationCategoryId,
+    this.locationCategoryName,
   }) : updates = updates ?? [];
 
   Map<String, dynamic> toJson() => {
@@ -72,6 +77,8 @@ class Ticket {
         'creatorId': creatorId,
         'creatorName': creatorName,
         'creatorRole': creatorRole,
+        'locationCategoryId': locationCategoryId,
+        'locationCategoryName': locationCategoryName,
       };
 
   factory Ticket.fromJson(Map<String, dynamic> json) {
@@ -104,9 +111,10 @@ class Ticket {
         creatorId: json['creator_id']?.toString() ?? json['creatorId']?.toString() ?? 'Unknown',
         creatorName: json['creator_name']?.toString() ?? json['creatorName']?.toString() ?? 'Unknown',
         creatorRole: json['creator_role']?.toString() ?? json['creatorRole']?.toString() ?? 'Unknown',
+        locationCategoryId: json['locationCategoryId'] as int?,
+        locationCategoryName: json['locationCategoryName']?.toString(),
       );
     } catch (e, stackTrace) {
-      debugPrint('TICKET PARSE ERROR for json: \$json');
       debugPrint('TICKET PARSE ERROR for json: $json');
       debugPrint('Error: $e');
       debugPrint(stackTrace.toString());

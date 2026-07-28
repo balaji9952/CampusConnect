@@ -53,6 +53,10 @@ export class AuthController {
     }
   }
 
+  /**
+   * @deprecated Parent Portal retired. Route now returns 410 Gone.
+   * This method is unreachable. Remove in a future cleanup release.
+   */
   static async googleLogin(req: Request, res: Response): Promise<void> {
     try {
       const { credential } = req.body;

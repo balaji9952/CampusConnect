@@ -71,8 +71,8 @@ export class QrcodesService {
           block: data.block || null,
           floor: data.floor || null,
           is_active: data.status === 'Active',
-          routing_type: data.routingType === 'Global Routed' ? 'GLOBAL_ROUTED' : 'DEPARTMENT_ROUTED',
-          category: data.category,
+          category_id: 1, // Legacy fallback
+          routing_group_id: null,
           internal_code: data.internalCode || null,
           department_id: deptId
         }
@@ -84,8 +84,7 @@ export class QrcodesService {
           block: data.block || null,
           floor: data.floor || null,
           is_active: data.status === 'Active',
-          routing_type: data.routingType === 'Global Routed' ? 'GLOBAL_ROUTED' : 'DEPARTMENT_ROUTED',
-          category: data.category,
+          category_id: data.category ? parseInt(data.category, 10) : 1,
           internal_code: data.internalCode || null,
           department_id: deptId
         }

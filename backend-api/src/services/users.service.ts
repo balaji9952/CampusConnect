@@ -189,7 +189,6 @@ export class UsersService {
       branch: u.branch,
       studyYear: u.study_year,
       designation: u.designation,
-      globalRoutingKey: u.global_routing_key,
       avatarUrl: u.avatar_url,
       createdAt: u.created_at,
     };

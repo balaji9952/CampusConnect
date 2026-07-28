@@ -152,7 +152,7 @@
         <div class="modal-title" id="assign-modal-title">Assign User</div>
         <button class="modal-close" onclick="closeModalFn('assign-modal')"><i class="ti ti-x"></i></button>
       </div>
-      <input type="hidden" id="assign-routing-key">
+      <input type="hidden" id="assign-routing-group-id">
       <input type="hidden" id="assign-level">
       <div class="form-group">
         <label class="form-label">Level</label>
@@ -202,7 +202,7 @@
   <!-- TOAST -->
   <div class="toast" id="toast"><i class="ti ti-circle-check"></i><span id="toast-msg">Saved!</span></div>
 
-  <script src="api/api.js"></script>
+  <script src="js/api.js"></script>
   <script>
     function toast(msg, isError = false) {
       const t = document.getElementById('toast');
@@ -217,34 +217,34 @@
 
     const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
 
-    let routingKeys = [];        // all supported routing keys
-    let assignmentsByKey = {};   // routing_key → [{ escalationLevel, user }]
+    let routingGroups = [];        // all supported routing groups
+    let assignmentsByGroup = {};   // routing_group_id → [{ escalationLevel, user }]
     let departments = [];
     let deptAssignments = {};     // deptId → [{ escalationLevel, user }]
     let allUsers = [];            // cached list for dropdown
 
-    async function loadRoutingKeys() {
+    async function loadRoutingGroups() {
       try {
         const res = await fetch(`${API_BASE}/admin/routing/keys`, { headers });
         if (!res.ok) return;
         const json = await res.json();
-        if (json.success) routingKeys = json.data || [];
+        if (json.success) routingGroups = json.data || [];
       } catch (e) { console.error(e); }
     }
 
-    async function loadAssignmentsByKey() {
+    async function loadAssignmentsByGroup() {
       try {
         const res = await fetch(`${API_BASE}/admin/routing/assignments`, { headers });
         if (!res.ok) return;
         const json = await res.json();
         if (json.success) {
-          // Flat list → group by routing_key
-          assignmentsByKey = {};
+          // Flat list → group by routing_group_id
+          assignmentsByGroup = {};
           for (const a of (json.data || [])) {
-            const key = a.routing_key;
-            if (!assignmentsByKey[key]) assignmentsByKey[key] = {};
+            const key = a.routing_group_id;
+            if (!assignmentsByGroup[key]) assignmentsByGroup[key] = {};
             const level = a.escalation_level || 1;
-            assignmentsByKey[key][level] = a.users;
+            assignmentsByGroup[key][level] = a.users;
           }
         }
       } catch (e) { console.error(e); }
@@ -313,7 +313,7 @@
     async function loadData() {
       document.getElementById('routing-table-body').innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px">Loading...</td></tr>';
       document.getElementById('dept-table-body').innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px">Loading...</td></tr>';
-      await Promise.all([loadRoutingKeys(), loadAssignmentsByKey(), loadDepartments(), loadDeptAssignments(), loadUsers()]);
+      await Promise.all([loadRoutingGroups(), loadAssignmentsByGroup(), loadDepartments(), loadDeptAssignments(), loadUsers()]);
       renderRoutingTable();
       renderDeptTable();
       // After render, show a warning if no users loaded (auth issue)
@@ -329,15 +329,15 @@
 
     function renderRoutingTable() {
       const tbody = document.getElementById('routing-table-body');
-      if (routingKeys.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text-hint)">No routing keys configured.</td></tr>';
+      if (routingGroups.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text-hint)">No routing groups configured.</td></tr>';
         return;
       }
 
-      tbody.innerHTML = routingKeys.map(k => {
-        const l1 = assignmentsByKey[k.key]?.[1];
-        const l2 = assignmentsByKey[k.key]?.[2];
-        const l3 = assignmentsByKey[k.key]?.[3];
+      tbody.innerHTML = routingGroups.map(k => {
+        const l1 = assignmentsByGroup[k.id]?.[1];
+        const l2 = assignmentsByGroup[k.id]?.[2];
+        const l3 = assignmentsByGroup[k.id]?.[3];
 
         const cell = (level, user, note) => {
           if (user) {
@@ -356,7 +356,7 @@
 
         return `<tr>
           <td>
-            <span style="font-weight:600;font-size:13px">${escHtml(k.label || k.key)}</span>
+            <span style="font-weight:600;font-size:13px">${escHtml(k.display_name || k.key)}</span>
             <div style="font-size:11px;color:var(--text-hint);margin-top:2px">${escHtml(k.key)}</div>
           </td>
           <td>${cell(1, l1, 'No L1 assignee — complaint may not be routed')}</td>
@@ -364,9 +364,9 @@
           <td>${cell(3, l3, 'Falls back to designation-based escalation')}</td>
           <td>
             <div class="td-actions" style="flex-wrap:nowrap">
-              <button class="btn btn-outline btn-icon btn-sm" onclick="openAssignModal('${escAttr(k.key)}', 1)" title="Set L1">L1</button>
-              <button class="btn btn-outline btn-icon btn-sm" onclick="openAssignModal('${escAttr(k.key)}', 2)" title="Set L2">L2</button>
-              <button class="btn btn-outline btn-icon btn-sm" onclick="openAssignModal('${escAttr(k.key)}', 3)" title="Set L3">L3</button>
+              <button class="btn btn-outline btn-icon btn-sm" onclick="openAssignModal(${k.id}, 1)" title="Set L1">L1</button>
+              <button class="btn btn-outline btn-icon btn-sm" onclick="openAssignModal(${k.id}, 2)" title="Set L2">L2</button>
+              <button class="btn btn-outline btn-icon btn-sm" onclick="openAssignModal(${k.id}, 3)" title="Set L3">L3</button>
             </div>
           </td>
         </tr>`;
@@ -421,7 +421,7 @@
     }
 
     function escHtml(s) { return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-    function escAttr(s) { return (s || '').replace(/'/g, "\\'"); }
+    function escAttr(value) { return String(value ?? '').replace(/'/g, "\\'"); }
 
     function populateUserSelect(selectId, targetDeptId = null) {
       const sel = document.getElementById(selectId);
@@ -490,14 +490,18 @@
       }
     }
 
-    function openAssignModal(routingKey, level) {
-      document.getElementById('assign-routing-key').value = routingKey;
+    function openAssignModal(routingGroupId, level) {
+      document.getElementById('assign-routing-group-id').value = routingGroupId;
       document.getElementById('assign-level').value = level;
-      document.getElementById('assign-modal-title').textContent = `Assign ${routingKey} — Level ${level}`;
+      
+      const group = routingGroups.find(g => g.id == routingGroupId);
+      const displayLabel = group ? (group.display_name || group.key) : routingGroupId;
+      
+      document.getElementById('assign-modal-title').textContent = `Assign ${displayLabel} — Level ${level}`;
       const cls = level === 1 ? 'level-1' : level === 2 ? 'level-2' : 'level-3';
-      document.getElementById('assign-level-display').innerHTML = `<span class="level-badge ${cls}">Level ${level}</span> ${escHtml(routingKey)}`;
+      document.getElementById('assign-level-display').innerHTML = `<span class="level-badge ${cls}">Level ${level}</span> ${escHtml(displayLabel)}`;
 
-      const current = assignmentsByKey[routingKey]?.[level];
+      const current = assignmentsByGroup[routingGroupId]?.[level];
       document.getElementById('assign-current-info').textContent = current
         ? `Currently: ${current.name} (${current.designation || '—'})`
         : 'Currently: not assigned';
@@ -507,7 +511,7 @@
     }
 
     async function confirmAssign() {
-      const routingKey = document.getElementById('assign-routing-key').value;
+      const routingGroupId = parseInt(document.getElementById('assign-routing-group-id').value);
       const level = parseInt(document.getElementById('assign-level').value);
       const userId = document.getElementById('assign-user-select').value;
 
@@ -517,13 +521,13 @@
         const res = await fetch(`${API_BASE}/admin/routing/assignments`, {
           method: 'POST',
           headers,
-          body: JSON.stringify({ routingKey, userId, escalationLevel: level })
+          body: JSON.stringify({ routingGroupId, userId, escalationLevel: level })
         });
         const json = await res.json();
         if (json.success) {
-          toast(`${routingKey} L${level} assigned!`);
+          toast(`Assignment L${level} saved!`);
           closeModalFn('assign-modal');
-          await loadAssignmentsByKey();
+          await loadAssignmentsByGroup();
           renderRoutingTable();
         } else {
           toast(json.message || 'Assignment failed', true);

@@ -202,6 +202,10 @@ export class AuthService {
     };
   }
 
+  /**
+   * @deprecated Parent Portal retired. Route POST /api/auth/google now returns 410 Gone.
+   * This method is unreachable. Remove in a future cleanup release.
+   */
   static async googleLogin(credential: string, ipAddress: string, deviceName: string, requiredRole?: number) {
     let user: any;
 

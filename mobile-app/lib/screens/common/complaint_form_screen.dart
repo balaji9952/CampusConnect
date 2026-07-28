@@ -425,9 +425,10 @@ class _ComplaintFormScreenState extends State<ComplaintFormScreen> {
                           crossAxisSpacing: 8,
                           childAspectRatio: 1.0,
                         ),
-                        itemCount: 16,
+                        itemCount: [2, 5, 6, 16, 41, 42, 40, 49, 23, 24, 15, 3, 33, 17, 31, 32, 4, 18].length,
                         itemBuilder: (context, index) {
-                          final busNum = index + 1;
+                          final busNumbers = [2, 5, 6, 16, 41, 42, 40, 49, 23, 24, 15, 3, 33, 17, 31, 32, 4, 18];
+                          final busNum = busNumbers[index];
                           final isSelected = _selectedBusNumber == busNum;
                           return GestureDetector(
                             onTap: () => setState(() => _selectedBusNumber = busNum),

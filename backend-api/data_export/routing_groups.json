@@ -1,0 +1,93 @@
+[
+  {
+    "id": 2,
+    "key": "MESS",
+    "display_name": "Mess",
+    "is_system": true,
+    "is_active": true
+  },
+  {
+    "id": 3,
+    "key": "TRANSPORT",
+    "display_name": "Transport",
+    "is_system": true,
+    "is_active": true
+  },
+  {
+    "id": 4,
+    "key": "SECURITY",
+    "display_name": "Security",
+    "is_system": true,
+    "is_active": true
+  },
+  {
+    "id": 5,
+    "key": "SPORTS",
+    "display_name": "Sports",
+    "is_system": true,
+    "is_active": true
+  },
+  {
+    "id": 6,
+    "key": "LIBRARY",
+    "display_name": "Library",
+    "is_system": true,
+    "is_active": true
+  },
+  {
+    "id": 7,
+    "key": "LAUNDRY",
+    "display_name": "Laundry",
+    "is_system": true,
+    "is_active": true
+  },
+  {
+    "id": 8,
+    "key": "ELECTRICAL",
+    "display_name": "Electrical",
+    "is_system": true,
+    "is_active": true
+  },
+  {
+    "id": 9,
+    "key": "KITCHEN",
+    "display_name": "Kitchen",
+    "is_system": true,
+    "is_active": true
+  },
+  {
+    "id": 10,
+    "key": "CANTEEN",
+    "display_name": "Canteen",
+    "is_system": true,
+    "is_active": true
+  },
+  {
+    "id": 11,
+    "key": "WASHROOM",
+    "display_name": "Washroom",
+    "is_system": true,
+    "is_active": true
+  },
+  {
+    "id": 1,
+    "key": "HOSTEL",
+    "display_name": "(Deprecated) Hostel",
+    "is_system": true,
+    "is_active": false
+  },
+  {
+    "id": 12,
+    "key": "BOYS_HOSTEL",
+    "display_name": "Boys Hostel",
+    "is_system": true,
+    "is_active": true
+  },
+  {
+    "id": 13,
+    "key": "GIRLS_HOSTEL",
+    "display_name": "Girls Hostel",
+    "is_system": true,
+    "is_active": true
+  }
+]

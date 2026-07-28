@@ -268,7 +268,7 @@
   <div class="toast" id="toast"><i class="ti ti-circle-check"></i><span id="toast-msg">Changes saved
       successfully!</span></div>
 
-  <script src="api/api.js"></script>
+  <script src="js/api.js"></script>
   <script>
     // API_BASE is globally available via api.js
 
@@ -287,7 +287,7 @@
     function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); }
     function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 
-    let routingKeyLabels = {
+    let routingGroupLabels = {
       "HOD": "HOD / Assigned Staff",
       "PRINCIPAL": "Principal",
       "ADMIN": "Management / Admin",
@@ -305,7 +305,7 @@
           const editSelect = document.getElementById('edit-node-role');
           
           json.data.forEach(k => {
-            routingKeyLabels[k.key] = k.label;
+            routingGroupLabels[k.key] = k.label;
             const optionHtml = `<option value="${k.key}">${k.key}</option>`;
             escSelect.innerHTML += optionHtml;
             editSelect.innerHTML += optionHtml;
@@ -334,7 +334,7 @@
       chainEl.innerHTML = '';
       keys.forEach((key, index) => {
         const level = index + 1;
-        const text = routingKeyLabels[key] || key;
+        const text = routingGroupLabels[key] || key;
         const iconColor = level === 1 ? 'var(--primary)' : level === 2 ? '#d4a017' : 'var(--danger)';
         const bgColor = level === 1 ? 'var(--bg-stat-icon-1)' : level === 2 ? 'var(--bg-stat-icon-2)' : 'var(--danger-bg)';
         const icon = level === 1 ? 'ti-user-star' : level === 2 ? 'ti-crown' : 'ti-shield';
@@ -437,7 +437,7 @@
       const step = document.querySelector(`#${type}-chain .chain-step[data-level="${level}"]`);
       if (step) {
         step.dataset.key = role;
-        document.getElementById(`${type}-node-${level}-text`).innerText = routingKeyLabels[role] || role;
+        document.getElementById(`${type}-node-${level}-text`).innerText = routingGroupLabels[role] || role;
       }
       closeModal('edit-node-modal');
     }

@@ -57,9 +57,9 @@ export class GlobalAssignmentsController {
         return res.status(403).json({ success: false, message: 'Forbidden' });
       }
 
-      const { routingKey, userId, escalationLevel } = req.body;
-      if (!routingKey || !userId) {
-        res.status(400).json({ success: false, message: 'routingKey and userId are required' });
+      const { routingGroupId, userId, escalationLevel } = req.body;
+      if (!routingGroupId || !userId) {
+        res.status(400).json({ success: false, message: 'routingGroupId and userId are required' });
         return;
       }
 
@@ -68,7 +68,7 @@ export class GlobalAssignmentsController {
         ? Number(escalationLevel)
         : 1;
 
-      const data = await GlobalAssignmentsService.reassignKey(routingKey, userId, user.id, level);
+      const data = await GlobalAssignmentsService.reassignKey(routingGroupId, userId, user.id, level);
       res.json({ success: true, data });
     } catch (error: any) {
       console.error('[GlobalAssignmentsController.reassignKey]', error);

@@ -55,9 +55,8 @@ async function main() {
       data: {
         name:         loc.name,
         block:        loc.block ?? null,
-        routing_type: loc.routingType,
-        routing_key:  loc.routingKey ?? null,
-        category:     loc.category,
+        category_id: 1,
+        routing_group_id: null,
         is_active:    true,
       },
     });

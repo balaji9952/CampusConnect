@@ -1,0 +1,119 @@
+[
+  {
+    "id": 1,
+    "routing_group_id": 3,
+    "user_id": "a7a7748d-1204-40ca-bac0-ea599e9f0c71",
+    "escalation_level": 1,
+    "is_active": true,
+    "created_at": "2026-07-16T16:24:01.408Z",
+    "updated_at": "2026-07-21T16:35:28.208Z"
+  },
+  {
+    "id": 2,
+    "routing_group_id": 3,
+    "user_id": "093e2824-0bfc-419e-953e-cc9a025bb913",
+    "escalation_level": 2,
+    "is_active": true,
+    "created_at": "2026-07-16T16:33:48.163Z",
+    "updated_at": "2026-07-21T16:35:28.720Z"
+  },
+  {
+    "id": 3,
+    "routing_group_id": 3,
+    "user_id": "36969986-4ffe-4941-a847-f416eb434cb7",
+    "escalation_level": 3,
+    "is_active": true,
+    "created_at": "2026-07-16T16:38:53.932Z",
+    "updated_at": "2026-07-21T16:35:29.128Z"
+  },
+  {
+    "id": 4,
+    "routing_group_id": 2,
+    "user_id": "093e2824-0bfc-419e-953e-cc9a025bb913",
+    "escalation_level": 1,
+    "is_active": true,
+    "created_at": "2026-07-17T02:34:34.980Z",
+    "updated_at": "2026-07-21T16:35:29.588Z"
+  },
+  {
+    "id": 5,
+    "routing_group_id": 10,
+    "user_id": "38bddc38-9a86-4f16-a8f4-e254417ad9b5",
+    "escalation_level": 1,
+    "is_active": true,
+    "created_at": "2026-07-22T04:30:35.332Z",
+    "updated_at": "2026-07-22T04:30:35.332Z"
+  },
+  {
+    "id": 6,
+    "routing_group_id": 10,
+    "user_id": "1e82b020-1783-41c8-ab58-ebe4a4cd19ec",
+    "escalation_level": 2,
+    "is_active": true,
+    "created_at": "2026-07-22T06:05:19.890Z",
+    "updated_at": "2026-07-22T06:05:19.890Z"
+  },
+  {
+    "id": 7,
+    "routing_group_id": 10,
+    "user_id": "6a77977e-e0dd-48ac-8880-68e7040583fc",
+    "escalation_level": 3,
+    "is_active": true,
+    "created_at": "2026-07-22T06:05:29.311Z",
+    "updated_at": "2026-07-22T06:05:29.311Z"
+  },
+  {
+    "id": 8,
+    "routing_group_id": 6,
+    "user_id": "65788a7b-5cb6-443f-af8c-0a130571f3a7",
+    "escalation_level": 1,
+    "is_active": true,
+    "created_at": "2026-07-22T06:41:06.346Z",
+    "updated_at": "2026-07-22T06:41:06.346Z"
+  },
+  {
+    "id": 9,
+    "routing_group_id": 7,
+    "user_id": "65788a7b-5cb6-443f-af8c-0a130571f3a7",
+    "escalation_level": 1,
+    "is_active": true,
+    "created_at": "2026-07-22T06:42:36.528Z",
+    "updated_at": "2026-07-22T06:42:36.528Z"
+  },
+  {
+    "id": 16,
+    "routing_group_id": 4,
+    "user_id": "65788a7b-5cb6-443f-af8c-0a130571f3a7",
+    "escalation_level": 1,
+    "is_active": true,
+    "created_at": "2026-07-22T15:28:18.172Z",
+    "updated_at": "2026-07-22T15:28:18.172Z"
+  },
+  {
+    "id": 19,
+    "routing_group_id": 11,
+    "user_id": "65788a7b-5cb6-443f-af8c-0a130571f3a7",
+    "escalation_level": 1,
+    "is_active": true,
+    "created_at": "2026-07-22T17:07:38.273Z",
+    "updated_at": "2026-07-22T17:07:38.273Z"
+  },
+  {
+    "id": 20,
+    "routing_group_id": 1,
+    "user_id": "3185dae2-ff0f-44c0-81a3-2c824a3b58e2",
+    "escalation_level": 1,
+    "is_active": true,
+    "created_at": "2026-07-23T10:14:05.465Z",
+    "updated_at": "2026-07-23T10:14:05.465Z"
+  },
+  {
+    "id": 49,
+    "routing_group_id": 12,
+    "user_id": "b378eb59-740f-4698-881f-ef33716767ac",
+    "escalation_level": 1,
+    "is_active": true,
+    "created_at": "2026-07-23T10:36:00.025Z",
+    "updated_at": "2026-07-23T10:36:00.025Z"
+  }
+]

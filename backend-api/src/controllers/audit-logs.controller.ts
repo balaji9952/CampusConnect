@@ -7,7 +7,7 @@ export class AuditLogsController {
     try {
       const { role } = req.user;
 
-      if (role === 'Student' || role === 'Parent') {
+      if (role === 'Student') {
         res.status(403).json({ success: false, message: 'Forbidden' });
         return;
       }

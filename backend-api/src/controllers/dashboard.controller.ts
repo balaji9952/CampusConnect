@@ -7,7 +7,7 @@ export class DashboardController {
     try {
       const { id: userId, role } = req.user;
 
-      if (role === 'Student' || role === 'Parent') {
+      if (role === 'Student') {
         const stats = await DashboardService.getStudentStats(userId);
         res.status(200).json({ success: true, data: stats });
         return;

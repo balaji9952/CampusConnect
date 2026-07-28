@@ -231,7 +231,7 @@
       </div>
       <div class="form-group">
         <label class="form-label">Routing Key</label>
-        <select class="form-control" id="gm-routing-key">
+        <select class="form-control" id="gm-routing-group-id">
           <option value="">-- Loading Keys --</option>
         </select>
       </div>
@@ -252,7 +252,7 @@
   <div class="toast" id="toast"><i class="ti ti-circle-check"></i><span id="toast-msg">Changes saved
       successfully!</span></div>
 
-  <script src="api/api.js"></script>
+  <script src="js/api.js"></script>
   <script>
     // API_BASE is globally available via api.js
 
@@ -434,16 +434,15 @@
     let globalKeys = [];
     let globalKeyLabels = {};
 
-    async function loadRoutingKeys() {
+    async function loadroutingGroupIds() {
       try {
         const res = await fetch(`${API_BASE}/admin/routing/keys`, { headers });
         const json = await res.json();
         if (json.success && json.data) {
-          globalKeys = json.data.map(k => k.key);
-          json.data.forEach(k => globalKeyLabels[k.key] = k.label);
+          globalKeys = json.data;
           
-          const select = document.getElementById('gm-routing-key');
-          select.innerHTML = json.data.map(k => `<option value="${k.key}">${k.key}</option>`).join('');
+          const select = document.getElementById('gm-routing-group-id');
+          select.innerHTML = json.data.map(k => `<option value="${k.id}">${k.label || k.key}</option>`).join('');
         }
       } catch (err) {
         console.error('Failed to load routing keys', err);
@@ -471,8 +470,8 @@
       const tbody = document.getElementById('global-table-body');
       if (!tbody) return;
 
-      const html = globalKeys.map(key => {
-        const assignment = globals.find(g => g.routingKey === key || g.routing_key === key);
+      const html = globalKeys.map(group => {
+        const assignment = globals.find(g => g.routingGroupId == group.id || g.routing_group_id == group.id);
         let assigneeName = '<span style="color:var(--text-hint)">Unassigned</span>';
         let designation = 'N/A';
         let userId = '';
@@ -490,11 +489,11 @@
 
         return `
         <tr>
-          <td><span class="badge badge-gray" style="font-family:monospace">${key}</span></td>
+          <td><span class="badge badge-gray" style="font-family:monospace">${group.label || group.key}</span></td>
           <td>${assigneeName}</td>
           <td>${designation}</td>
           <td><div class="td-actions">
-            <button class="btn btn-outline btn-icon btn-sm" onclick="editGlobal('${key}', '${userId}')"><i class="ti ti-edit"></i></button>
+            <button class="btn btn-outline btn-icon btn-sm" onclick="editGlobal(${group.id}, '${userId}')"><i class="ti ti-edit"></i></button>
           </div></td>
         </tr>`;
       }).join('');
@@ -503,26 +502,26 @@
     }
 
     function openGlobalModal() {
-      document.getElementById('gm-routing-key').value = globalKeys[0];
+      document.getElementById('gm-routing-group-id').value = globalKeys[0]?.id ?? '';
       document.getElementById('gm-assignee').value = '';
       document.getElementById('global-modal').classList.add('show');
     }
 
-    function editGlobal(key, userId) {
-      document.getElementById('gm-routing-key').value = key;
+    function editGlobal(groupId, userId) {
+      document.getElementById('gm-routing-group-id').value = groupId;
       document.getElementById('gm-assignee').value = userId || '';
       document.getElementById('global-modal').classList.add('show');
     }
 
     async function saveGlobal() {
-      const routingKey = document.getElementById('gm-routing-key').value;
+      const routingGroupId = parseInt(document.getElementById('gm-routing-group-id').value, 10);
       const userId = document.getElementById('gm-assignee').value || null;
 
       try {
         const res = await fetch(`${API_BASE}/admin/routing/assignments`, {
           method: 'POST',
           headers,
-          body: JSON.stringify({ routingKey, userId })
+          body: JSON.stringify({ routingGroupId, userId })
         });
         const json = await res.json();
         if (json.success) {
@@ -539,7 +538,7 @@
     }
 
     // Initialize Page
-    loadRoutingKeys().then(() => loadStaff()).then(() => { fetchDepartments(); fetchGlobals(); });
+    loadroutingGroupIds().then(() => loadStaff()).then(() => { fetchDepartments(); fetchGlobals(); });
   </script>
   <script type="module" src="firebase.js"></script>
 </body>

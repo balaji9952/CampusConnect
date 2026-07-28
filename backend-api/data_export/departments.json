@@ -1,0 +1,74 @@
+[
+  {
+    "id": 4,
+    "name": "Mechanical Engineering",
+    "code": "MECH",
+    "hod_user_id": "3a04e4f9-4441-4a85-b849-6b9158a10b29",
+    "is_active": true,
+    "created_at": "2026-07-13T06:11:10.102Z",
+    "updated_at": "2026-07-13T06:11:10.102Z"
+  },
+  {
+    "id": 6,
+    "name": "Artificial Intelligence and Data Science",
+    "code": "AIDS",
+    "hod_user_id": "65788a7b-5cb6-443f-af8c-0a130571f3a7",
+    "is_active": true,
+    "created_at": "2026-07-13T06:11:11.945Z",
+    "updated_at": "2026-07-22T15:28:32.609Z"
+  },
+  {
+    "id": 5,
+    "name": "Civil Engineering",
+    "code": "CIVIL",
+    "hod_user_id": "51d34408-d339-4f1c-8e8d-8eac83a6192a",
+    "is_active": true,
+    "created_at": "2026-07-13T06:11:11.023Z",
+    "updated_at": "2026-07-22T15:57:13.339Z"
+  },
+  {
+    "id": 8,
+    "name": "Master of Business Administration",
+    "code": "MBA",
+    "hod_user_id": null,
+    "is_active": true,
+    "created_at": "2026-07-22T16:27:16.283Z",
+    "updated_at": "2026-07-22T16:27:16.283Z"
+  },
+  {
+    "id": 1,
+    "name": "Computer Science and Engineering",
+    "code": "CSE",
+    "hod_user_id": "0ea3e2dd-9451-4705-ba5c-e1a5c50dba83",
+    "is_active": true,
+    "created_at": "2026-07-13T06:11:06.155Z",
+    "updated_at": "2026-07-23T05:33:52.157Z"
+  },
+  {
+    "id": 3,
+    "name": "Electrical and Electronics Engineering",
+    "code": "EEE",
+    "hod_user_id": "2d53e259-f10a-4ffb-a0a6-89a2735f5dc8",
+    "is_active": true,
+    "created_at": "2026-07-13T06:11:09.079Z",
+    "updated_at": "2026-07-23T05:34:08.154Z"
+  },
+  {
+    "id": 2,
+    "name": "Electronics and Communication Engineering",
+    "code": "ECE",
+    "hod_user_id": "a65d87f2-9b96-4e3c-989f-cb6ab44b28f8",
+    "is_active": true,
+    "created_at": "2026-07-13T06:11:08.053Z",
+    "updated_at": "2026-07-23T05:35:05.720Z"
+  },
+  {
+    "id": 7,
+    "name": "Information Technology",
+    "code": "IT",
+    "hod_user_id": "b378eb59-740f-4698-881f-ef33716767ac",
+    "is_active": true,
+    "created_at": "2026-07-22T16:27:14.712Z",
+    "updated_at": "2026-07-24T09:50:57.518Z"
+  }
+]

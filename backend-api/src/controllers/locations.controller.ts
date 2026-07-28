@@ -36,7 +36,7 @@ export class LocationsController {
         search:       req.query.search as string | undefined,
         status:       req.query.status as string | undefined,
         departmentId: req.query.departmentId as string | undefined,
-        category:     req.query.category as string | undefined,
+        categoryId:   req.query.categoryId as string | undefined,
         page:         req.query.page   as string | undefined,
         limit:        req.query.limit  as string | undefined,
       };
@@ -88,7 +88,7 @@ export class LocationsController {
         return;
       }
 
-      const { name, internalCode, block, floor, departmentId, routingType, routingKey, isActive, category } = req.body;
+      const { name, internalCode, block, floor, departmentId, routingGroupId, isActive, categoryId } = req.body;
       const actorId = req.user?.id;
       const actorName = req.user?.name ?? 'Admin';
 
@@ -108,7 +108,7 @@ export class LocationsController {
       const baseUrl = `${protocol}://${host}`;
 
       const location = await LocationsService.createLocation(
-        { name, internalCode, block, floor, departmentId: parsedDeptId, routingType, routingKey, isActive, category },
+        { name, internalCode, block, floor, departmentId: parsedDeptId, routingGroupId, isActive, categoryId },
         actorId,
         actorName,
         baseUrl
@@ -145,7 +145,7 @@ export class LocationsController {
         return;
       }
 
-      const { name, internalCode, block, floor, departmentId, routingType, routingKey, isActive, category } = req.body;
+      const { name, internalCode, block, floor, departmentId, routingGroupId, isActive, categoryId } = req.body;
       const actorName = req.user?.name ?? 'Admin';
 
       const parsedDeptId = departmentId !== undefined
@@ -154,7 +154,7 @@ export class LocationsController {
 
       const updated = await LocationsService.updateLocation(
         id,
-        { name, internalCode, block, floor, departmentId: parsedDeptId, routingType, routingKey, isActive, category },
+        { name, internalCode, block, floor, departmentId: parsedDeptId, routingGroupId, isActive, categoryId },
         actorName
       );
 

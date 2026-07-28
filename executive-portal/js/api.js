@@ -4,9 +4,11 @@
    Interacts with real Express + Prisma + PostgreSQL backend.
    ========================================================= */
 
-const isLocalDev = window.location.port === '5500' || window.location.port === '3000' || window.location.protocol === 'file:';
-const API_BASE = isLocalDev ? 'http://127.0.0.1:3030/api' : '/api';
-const SERVER_BASE = isLocalDev ? 'http://127.0.0.1:3030' : '';
+// All requests use RELATIVE paths so they are always routed through Nginx.
+// Nginx proxies /api/* → http://localhost:3019
+// Do NOT change to absolute URLs.
+const API_BASE = '/api';
+
 
 // Map frontend status strings to backend integers
 const STATUS_MAP = {
@@ -187,12 +189,11 @@ const API = {
     }
   },
 
-  // Image Helper
+  // Image Helper — returns relative paths as-is (Nginx routes /uploads/* to backend).
+  // Absolute CDN/external URLs pass through unchanged.
   resolveImageUrl(path) {
     if (!path) return '';
     if (path.startsWith('http://') || path.startsWith('https://')) return path;
-    const base = SERVER_BASE.endsWith('/') ? SERVER_BASE.slice(0, -1) : SERVER_BASE;
-    const relativePath = path.startsWith('/') ? path : '/' + path;
-    return base + relativePath;
+    return path.startsWith('/') ? path : '/' + path;
   }
 };

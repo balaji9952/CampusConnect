@@ -10,8 +10,17 @@ export class SocketService {
   public static initialize(server: HttpServer): void {
     if (this.isInitialized) return;
 
+    // Reuse the same CORS_ORIGIN env variable that controls HTTP CORS.
+    // Parses a comma-separated list; falls back to '*' if not set (dev-friendly).
+    const rawOrigin = process.env.CORS_ORIGIN || '';
+    const allowedOrigins = rawOrigin
+      .split(',')
+      .map((o) => o.trim())
+      .filter(Boolean);
+    const socketCorsOrigin: string | string[] = allowedOrigins.length > 0 ? allowedOrigins : '*';
+
     this.io = new SocketIOServer(server, {
-      cors: { origin: '*' }
+      cors: { origin: socketCorsOrigin, credentials: true }
     });
 
     this.io.use(async (socket, next) => {
@@ -48,7 +57,7 @@ export class SocketService {
       socket.join(`student_${user.id}`);
 
       // 2. Join role-specific room
-      const userRoleStr = (user.role || '').toLowerCase();
+      const userRoleStr = String(user.role || '').toLowerCase();
       if (userRoleStr === 'staff' || userRoleStr === 'hostel_manager' || userRoleStr === 'boys_hostel_manager' || userRoleStr === 'girls_hostel_manager' || userRoleStr === 'food_manager') {
         socket.join('staff');
       } else if (userRoleStr === 'admin') {

@@ -11,6 +11,7 @@ import 'package:http/http.dart' as http;
 import 'package:campus_connect/models/ticket.dart';
 import 'package:campus_connect/services/ticket_service.dart';
 import 'package:campus_connect/screens/common/qr_scanner_screen.dart';
+import 'package:campus_connect/widgets/location_category_filter.dart';
 // ---------------------------------------------------------------------------
 // Role helpers
 // ---------------------------------------------------------------------------
@@ -157,6 +158,7 @@ class TicketsScreen extends StatefulWidget {
 class _TicketsScreenState extends State<TicketsScreen> {
   String _selectedFilter = 'All';
   final List<String> _filters = ['All', 'Open', 'In Progress', 'Resolved'];
+  int? _selectedLocCategory;
 
 
   @override
@@ -232,9 +234,14 @@ class _TicketsScreenState extends State<TicketsScreen> {
   }
 
   List<Ticket> get _filteredTickets {
-    final all = _allTickets;
-    if (_selectedFilter == 'All') return all;
-    return all.where((t) => t.statusLabel == _selectedFilter).toList();
+    var all = _allTickets;
+    if (_selectedFilter != 'All') {
+      all = all.where((t) => t.statusLabel == _selectedFilter).toList();
+    }
+    if (_selectedLocCategory != null) {
+      all = all.where((t) => t.locationCategoryId == _selectedLocCategory).toList();
+    }
+    return all;
   }
 
   @override
@@ -368,6 +375,17 @@ class _TicketsScreenState extends State<TicketsScreen> {
 
             SizedBox(height: AppSpacing.md(context)),
 
+            // ── Location Category Filter ────────────────────────────────────
+            LocationCategoryFilter(
+              // We pass the tickets AFTER the status filter has been applied 
+              // so the counts reflect the current status selection!
+              tickets: _allTickets.where((t) => _selectedFilter == 'All' || t.statusLabel == _selectedFilter).toList(),
+              selectedCategoryId: _selectedLocCategory,
+              onChanged: (id) => setState(() => _selectedLocCategory = id),
+            ),
+            
+            SizedBox(height: AppSpacing.md(context)),
+
             // ── Ticket list ────────────────────────────────────────────────
             Expanded(
               child: _filteredTickets.isEmpty
@@ -435,6 +453,24 @@ class _TicketsScreenState extends State<TicketsScreen> {
 
   Widget _buildEmptyState() {
     final isPrivileged = _isPrivileged(widget.staffPosition);
+    
+    String title = 'No feedback found';
+    String subtitle = isPrivileged
+        ? 'No feedback matching this filter.'
+        : 'You haven\'t submitted any feedback yet.';
+
+    if (_selectedLocCategory != null) {
+      // Find the name of the selected category from the available tickets
+      final catMatch = _allTickets.firstWhere(
+        (t) => t.locationCategoryId == _selectedLocCategory,
+        orElse: () => _allTickets.first, 
+      );
+      final catName = catMatch.locationCategoryName ?? 'this category';
+      
+      title = 'No $catName complaints';
+      subtitle = 'No $catName complaints assigned to you.';
+    }
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -453,9 +489,9 @@ class _TicketsScreenState extends State<TicketsScreen> {
             ),
           ),
           const SizedBox(height: 16),
-          const Text(
-            'No feedback found',
-            style: TextStyle(
+          Text(
+            title,
+            style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w700,
               color: Color(0xFF374151),
@@ -463,9 +499,7 @@ class _TicketsScreenState extends State<TicketsScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            isPrivileged
-                ? 'No feedback matching this filter.'
-                : 'You haven\'t submitted any feedback yet.',
+            subtitle,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14,
