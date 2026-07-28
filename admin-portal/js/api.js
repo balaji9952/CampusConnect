@@ -1,20 +1,23 @@
 // ─── API Configuration ────────────────────────────────────────────────────────
-// All requests use RELATIVE paths so they are always routed through the Nginx
-// reverse proxy (or whatever web server is in front).
-// Do NOT change these to absolute URLs — all /api/* traffic is proxied by Nginx
-// to http://localhost:3019.
-const API_BASE = '/api';
+// Centralized API Base URL definition.
+// - Local development (localhost / 127.0.0.1): uses http://localhost:3019/api
+// - Production deployment (Render): uses https://campusconnect-nbeb.onrender.com/api
+const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? 'http://localhost:3019/api'
+  : 'https://campusconnect-nbeb.onrender.com/api';
+
+window.API_BASE = API_BASE;
 
 // resolveImageUrl — handles image paths returned from the backend.
 // The backend returns paths like "/uploads/photos/xxx.jpg".
-// Since we're behind Nginx (same origin), relative paths work without any prefix.
 function resolveImageUrl(path) {
   if (!path) return '';
   // Absolute URLs (CDN or external) pass through unchanged.
   if (path.startsWith('http://') || path.startsWith('https://')) return path;
-  // Already-relative paths (e.g. /uploads/...) are returned as-is.
-  // Nginx serves /uploads/ content from the backend's uploads directory.
-  return path.startsWith('/') ? path : '/' + path;
+  const baseUrl = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? ''
+    : 'https://campusconnect-nbeb.onrender.com';
+  return path.startsWith('/') ? `${baseUrl}${path}` : `${baseUrl}/${path}`;
 }
 
 function getAuthHeaders(extraHeaders = {}) {

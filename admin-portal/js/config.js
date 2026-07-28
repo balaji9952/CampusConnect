@@ -1,19 +1,19 @@
 // config.js
-// Centralized API configuration — relative paths for Nginx reverse proxy deployment.
-// All /api/* requests are routed by Nginx to http://localhost:3019.
-// All /uploads/* requests are proxied by Nginx to the backend's upload directory.
-
-export const API_BASE = '/api';
+// Centralized API configuration — supports both Local Development and Render Production.
+export const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? 'http://localhost:3019/api'
+  : 'https://campusconnect-nbeb.onrender.com/api';
 
 // resolveImageUrl — converts backend-returned paths to browser-usable URLs.
-// The backend returns paths like "/uploads/photos/xxx.jpg" or full CDN URLs.
-// Since the frontend is served through Nginx on the same origin, relative paths
-// resolve correctly without any absolute prefix.
 export function resolveImageUrl(path) {
   if (!path) return '';
   if (path.startsWith('http://') || path.startsWith('https://')) return path;
   
-  return path.startsWith('/') ? path : '/' + path;
+  const baseUrl = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? ''
+    : 'https://campusconnect-nbeb.onrender.com';
+
+  return path.startsWith('/') ? `${baseUrl}${path}` : `${baseUrl}/${path}`;
 }
 
 // Helper for standard authenticated headers
