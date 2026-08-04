@@ -79,13 +79,25 @@ async function fetchCollegeLogo(): Promise<any> { // eslint-disable-line @typesc
   let logoBuffer: Buffer;
 
   if (COLLEGE_LOGO_URL.startsWith('file://')) {
-    const rawPath = COLLEGE_LOGO_URL.replace(/^file:\/\//, '');
-    let resolvedPath = path.resolve(rawPath);
-    if (!path.isAbsolute(rawPath)) {
-      resolvedPath = path.resolve(__dirname, '..', '..', rawPath);
+    try {
+      const rawPath = COLLEGE_LOGO_URL.replace(/^file:\/\//, '');
+      let resolvedPath = path.resolve(rawPath);
+      if (!path.isAbsolute(rawPath)) {
+        resolvedPath = path.resolve(__dirname, '..', '..', rawPath);
+      }
+      const filePath = resolvedPath.replace(/\//g, path.sep);
+      if (fs.existsSync(filePath)) {
+        logoBuffer = fs.readFileSync(filePath);
+      } else {
+        console.warn(`[qr-generator] Logo file not found at ${filePath} — generating QR without logo.`);
+        _cachedLogo = new Jimp({ width: 1, height: 1, color: 0x00000000 });
+        return _cachedLogo;
+      }
+    } catch (err) {
+      console.warn('[qr-generator] Failed to read logo file — generating QR without logo:', err);
+      _cachedLogo = new Jimp({ width: 1, height: 1, color: 0x00000000 });
+      return _cachedLogo;
     }
-    const filePath = resolvedPath.replace(/\//g, path.sep);
-    logoBuffer = fs.readFileSync(filePath);
   } else {
     try {
       logoBuffer = await fetch(COLLEGE_LOGO_URL)

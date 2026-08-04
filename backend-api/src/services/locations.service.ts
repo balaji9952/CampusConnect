@@ -701,6 +701,7 @@ export class LocationsService {
         }
       } catch (err) {
         console.warn('[getOrGenerateQr] Image overwrite fallback:', err);
+        qr.qr_image_url = generateQrUrl(qrPayload);
       }
     }
 
