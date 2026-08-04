@@ -683,7 +683,7 @@ export class LocationsService {
       const scanBaseUrl = process.env.QR_SCAN_BASE_URL || (baseUrl ? baseUrl.replace(/\/$/, '') : 'https://campus-connect-9a7c6.web.app');
       const qrPayload = `${scanBaseUrl}/scan/${qr.qr_token}`;
       try {
-        await generateQrCard({
+        const genRes = await generateQrCard({
           payload: qrPayload,
           filename: qr.qr_token,
           locationName: location.name,
@@ -692,6 +692,13 @@ export class LocationsService {
           spec: LAYOUT_SPEC_V1,
           target: { dpi: 100 }
         });
+        if (genRes && genRes.imageUrl) {
+          qr.qr_image_url = genRes.imageUrl;
+          await prisma.qr_codes.update({
+            where: { id: qr.id },
+            data: { qr_image_url: genRes.imageUrl }
+          }).catch(() => {});
+        }
       } catch (err) {
         console.warn('[getOrGenerateQr] Image overwrite fallback:', err);
       }
