@@ -270,13 +270,8 @@ export async function generateQrCard(params: {
     });
   }
 
-  // 4. Center QR in canvas
-  const qrX = Math.round((canvasWidth - qrSize) / 2);
-  const qrY = Math.round((canvasHeight - qrSize) / 2);
-  card.composite(qr, qrX, qrY);
-
-  // 5. Write finished card image to disk
-  await (card as any).write(outPath);
+  // 4. Write clean square QR image with centered logo directly to disk
+  await (qr as any).write(outPath);
   
   // 5.1 Inject pHYs chunk so Canva reads the exact physical dimension
   if (target?.dpi) {
