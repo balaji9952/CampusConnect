@@ -443,7 +443,7 @@ export class LocationsService {
         const qrNumber = `QR-${nextNumber}`;
         nextNumber++;
 
-        const scanBaseUrl = baseUrl ? baseUrl.replace(/\/$/, '') : 'http://localhost:3030';
+        const scanBaseUrl = process.env.QR_SCAN_BASE_URL || (baseUrl ? baseUrl.replace(/\/$/, '') : 'https://campus-connect-9a7c6.web.app');
         const qrPayload = `${scanBaseUrl}/scan/${qrNumber}`;
         const qrFilename = qrNumber;
 
@@ -616,7 +616,7 @@ export class LocationsService {
       }
 
       const qrNumber = `QR-${nextNumber}`;
-      const scanBaseUrl = baseUrl ? baseUrl.replace(/\/$/, '') : 'http://localhost:3030';
+      const scanBaseUrl = process.env.QR_SCAN_BASE_URL || (baseUrl ? baseUrl.replace(/\/$/, '') : 'https://campus-connect-9a7c6.web.app');
       const qrPayload = `${scanBaseUrl}/scan/${qrNumber}`;
       const qrFilename = qrNumber;
 
@@ -1077,7 +1077,27 @@ export class LocationsService {
     const existing = await prisma.locations.findUnique({ where: { id } });
     if (!existing) return false;
 
-    await prisma.locations.delete({ where: { id } });
+    // Check if complaints/tickets are linked to this location
+    const ticketCount = await prisma.tickets.count({ where: { location_id: id } });
+
+    if (ticketCount > 0) {
+      // If complaints exist, soft-delete (deactivate) location to maintain ticket integrity
+      await prisma.locations.update({
+        where: { id },
+        data: { is_active: false },
+      });
+
+      // Deactivate associated QR codes
+      await prisma.qr_codes.updateMany({
+        where: { location_id: id },
+        data: { is_active: false },
+      });
+    } else {
+      // Safe hard-delete: clean up related records first
+      await prisma.qr_codes.deleteMany({ where: { location_id: id } });
+      await prisma.academic_QR_sublocations.deleteMany({ where: { location_id: id } });
+      await prisma.locations.delete({ where: { id } });
+    }
 
     await prisma.audit_logs.create({
       data: {
@@ -1085,7 +1105,7 @@ export class LocationsService {
         action: 'DELETE_LOCATION',
         entity_type: 'location',
         entity_id: String(id),
-        description: `Admin deleted location: ${existing.name}`,
+        description: `Admin deleted/deactivated location: ${existing.name}${ticketCount > 0 ? ' (deactivated due to linked tickets)' : ''}`,
       },
     });
 
