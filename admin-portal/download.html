@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download CampusConnect Mobile App | MZCET</title>
+    <meta name="description" content="Download the official CampusConnect Android App for Mount Zion College of Engineering and Technology.">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            color: #f8fafc;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(59,130,246,0.25) 0%, rgba(0,0,0,0) 70%);
+            top: -100px;
+            right: -100px;
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        body::after {
+            content: "";
+            position: absolute;
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(99,102,241,0.2) 0%, rgba(0,0,0,0) 70%);
+            bottom: -80px;
+            left: -80px;
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .download-card {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 460px;
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 28px;
+            padding: 36px 28px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        .logo-wrapper {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 20px;
+        }
+
+        .logo-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 24px;
+            object-fit: cover;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            background: white;
+        }
+
+        .verified-badge {
+            position: absolute;
+            bottom: -6px;
+            right: -6px;
+            background: #10b981;
+            color: white;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            border: 3px solid #1e293b;
+        }
+
+        .app-title {
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: #ffffff;
+            margin-bottom: 6px;
+        }
+
+        .college-subtitle {
+            font-size: 13px;
+            font-weight: 600;
+            color: #94a3b8;
+            margin-bottom: 24px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-row {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #cbd5e1;
+        }
+
+        .btn-download {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            padding: 16px 24px;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: #ffffff;
+            font-size: 17px;
+            font-weight: 700;
+            text-decoration: none;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.5);
+            transition: all 0.25s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px -5px rgba(37, 99, 235, 0.7);
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        }
+
+        .btn-download:active {
+            transform: translateY(0);
+        }
+
+        .btn-download svg {
+            width: 22px;
+            height: 22px;
+            fill: currentColor;
+        }
+
+        .guide-section {
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            text-align: left;
+        }
+
+        .guide-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #e2e8f0;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .guide-steps {
+            list-style: none;
+            counter-reset: step-counter;
+        }
+
+        .guide-steps li {
+            position: relative;
+            counter-increment: step-counter;
+            font-size: 13px;
+            color: #94a3b8;
+            margin-bottom: 10px;
+            padding-left: 28px;
+            line-height: 1.5;
+        }
+
+        .guide-steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 1px;
+            width: 18px;
+            height: 18px;
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .portal-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #60a5fa;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .app-footer {
+            margin-top: 24px;
+            font-size: 12px;
+            color: #64748b;
+            text-align: center;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            padding-top: 16px;
+            border-top: 1px dashed rgba(255, 255, 255, 0.06);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="download-card">
+        <div class="logo-wrapper">
+            <img src="assets/images/mzcetlogo.jpg" alt="College Logo" class="logo-img">
+            <div class="verified-badge" title="Official App">✓</div>
+        </div>
+
+        <h1 class="app-title">CampusConnect</h1>
+        <p class="college-subtitle">Mount Zion College of Engg & Tech</p>
+
+        <div class="badge-row">
+            <span class="badge">Android APK</span>
+            <span class="badge">v1.0.0</span>
+            <span class="badge">79.4 MB</span>
+        </div>
+
+        <a href="https://campusconnect-nbeb.onrender.com/uploads/CampusConnect.apk" download="CampusConnect.apk" class="btn-download" id="downloadBtn">
+            <svg viewBox="0 0 24 24">
+                <path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"/>
+            </svg>
+            Download Android App
+        </a>
+
+        <div class="guide-section">
+            <div class="guide-title">
+                <span>📱</span> How to Install:
+            </div>
+            <ol class="guide-steps">
+                <li>Tap <strong>Download Android App</strong> above.</li>
+                <li>When prompted by Android, allow <strong>Install from Unknown Sources</strong>.</li>
+                <li>Open the downloaded <strong>CampusConnect.apk</strong> and tap <strong>Install</strong>.</li>
+                <li>Launch the app and log in with your college credentials.</li>
+            </ol>
+        </div>
+
+        <div class="app-footer">
+            &copy; 2026 MZCET. All rights reserved.
+        </div>
+    </div>
+
+</body>
+</html>
