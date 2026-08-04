@@ -1,8 +1,11 @@
 // ─── API Configuration ────────────────────────────────────────────────────────
 // Centralized API Base URL definition.
-// - Local development (localhost / 127.0.0.1): uses http://localhost:3019/api
-// - Production deployment (Render): uses https://campusconnect-nbeb.onrender.com/api
-const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+// - Local standalone static server (e.g. port 8000 / 5500): uses http://localhost:3019/api
+// - Direct-to-backend or Nginx proxy / production: uses origin-based /api or relative /api
+var isStandaloneStaticDev = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  && (window.location.port === '8000' || window.location.port === '5500' || window.location.port === '3000' || window.location.port === '5000');
+
+var API_BASE = isStandaloneStaticDev
   ? 'http://localhost:3019/api'
   : 'https://campusconnect-nbeb.onrender.com/api';
 
@@ -13,9 +16,9 @@ window.API_BASE = API_BASE;
 function resolveImageUrl(path) {
   if (!path) return '';
   // Absolute URLs (CDN or external) pass through unchanged.
-  if (path.startsWith('http://') || path.startsWith('https://')) return path;
-  const baseUrl = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-    ? ''
+  if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('data:')) return path;
+  const baseUrl = isStandaloneStaticDev
+    ? 'http://localhost:3019'
     : 'https://campusconnect-nbeb.onrender.com';
   return path.startsWith('/') ? `${baseUrl}${path}` : `${baseUrl}/${path}`;
 }

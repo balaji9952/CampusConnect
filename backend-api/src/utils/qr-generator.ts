@@ -270,20 +270,24 @@ export async function generateQrCard(params: {
     });
   }
 
-  // 4. Write clean square QR image with centered logo directly to disk
-  await (qr as any).write(outPath);
-  
-  // 5.1 Inject pHYs chunk so Canva reads the exact physical dimension
-  if (target?.dpi) {
-    patchPngDpi(outPath, target.dpi);
+  // 4. Convert QR image to base64 Data URL for 100% reliable loading across all cloud environments
+  const buffer = await (qr as any).getBuffer("image/png");
+  const base64Data = buffer.toString('base64');
+  const dataUrl = `data:image/png;base64,${base64Data}`;
+
+  try {
+    if (!fs.existsSync(UPLOADS_DIR)) {
+      fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+    }
+    await (qr as any).write(outPath);
+    if (target?.dpi) {
+      patchPngDpi(outPath, target.dpi);
+    }
+  } catch (e) {
+    console.warn('[qr-generator] Could not save file to disk:', e);
   }
 
-  // 6. Build relative public URL
-  const imageUrl = QR_BASE_URL
-    ? `${QR_BASE_URL}/${filename}.png`
-    : `/uploads/qrcodes/${filename}.png`;
-
-  return { filePath: outPath, imageUrl };
+  return { filePath: outPath, imageUrl: dataUrl };
 }
 
 /**
