@@ -679,24 +679,21 @@ export class LocationsService {
         },
       });
     } else {
-      // Only generate image if missing on disk (e.g. after container restart) to keep GET requests fast and zero-RAM
-      const qrPath = path.join(process.cwd(), 'uploads', 'qrcodes', `${qr.qr_token}.png`);
-      if (!fs.existsSync(qrPath)) {
-        const scanBaseUrl = process.env.QR_SCAN_BASE_URL || (baseUrl ? baseUrl.replace(/\/$/, '') : 'https://campus-connect-9a7c6.web.app');
-        const qrPayload = `${scanBaseUrl}/scan/${qr.qr_token}`;
-        try {
-          await generateQrCard({
-            payload: qrPayload,
-            filename: qr.qr_token,
-            locationName: location.name,
-            floor: location.floor || '',
-            qrNumber: qr.qr_token,
-            spec: LAYOUT_SPEC_V1,
-            target: { dpi: 100 }
-          });
-        } catch (err) {
-          console.warn('[getOrGenerateQr] Missing file generation fallback:', err);
-        }
+      // Overwrite image file to guarantee old cached card images are updated to the clean square format
+      const scanBaseUrl = process.env.QR_SCAN_BASE_URL || (baseUrl ? baseUrl.replace(/\/$/, '') : 'https://campus-connect-9a7c6.web.app');
+      const qrPayload = `${scanBaseUrl}/scan/${qr.qr_token}`;
+      try {
+        await generateQrCard({
+          payload: qrPayload,
+          filename: qr.qr_token,
+          locationName: location.name,
+          floor: location.floor || '',
+          qrNumber: qr.qr_token,
+          spec: LAYOUT_SPEC_V1,
+          target: { dpi: 100 }
+        });
+      } catch (err) {
+        console.warn('[getOrGenerateQr] Image overwrite fallback:', err);
       }
     }
 
