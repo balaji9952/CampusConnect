@@ -676,6 +676,23 @@ export class LocationsService {
           description: `${actorName} ${oldQrIds.length > 0 ? 'regenerated' : 'generated'} QR for ${subLocationId ? `sub-location (id=${subLocationId}) of ` : ''}location: ${location.name}`,
         },
       });
+    } else {
+      // Ensure existing QR codes on disk are updated to the clean square format
+      const scanBaseUrl = process.env.QR_SCAN_BASE_URL || (baseUrl ? baseUrl.replace(/\/$/, '') : 'https://campus-connect-9a7c6.web.app');
+      const qrPayload = `${scanBaseUrl}/scan/${qr.qr_token}`;
+      try {
+        await generateQrCard({
+          payload: qrPayload,
+          filename: qr.qr_token,
+          locationName: location.name,
+          floor: location.floor || '',
+          qrNumber: qr.qr_token,
+          spec: LAYOUT_SPEC_V1,
+          target: { dpi: 150 }
+        });
+      } catch (err) {
+        console.warn('[getOrGenerateQr] Image refresh fallback:', err);
+      }
     }
 
     return {
