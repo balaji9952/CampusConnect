@@ -1,4 +1,6 @@
 import prisma from '../utils/prisma';
+import path from 'path';
+import fs from 'fs';
 import { randomBytes, randomUUID } from 'crypto';
 import { generateQrWithLogo, generateQrUrl, generateQrCard } from '../utils/qr-generator';
 import { DesignationsService } from './designations.service';
