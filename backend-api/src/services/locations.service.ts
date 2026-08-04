@@ -456,7 +456,7 @@ export class LocationsService {
             floor: loc.floor || '',
             qrNumber: qrNumber,
             spec: LAYOUT_SPEC_V1,
-            target: { dpi: 300 }
+            target: { dpi: 150 }
           })).imageUrl;
         } catch (err) {
           console.warn(`[RegenerateAll] QR logo failed for loc ${loc.id}, using fallback:`, err);
@@ -629,7 +629,7 @@ export class LocationsService {
           floor: location.floor || '',
           qrNumber: qrNumber,
           spec: LAYOUT_SPEC_V1,
-          target: { dpi: 300 }
+          target: { dpi: 150 }
         })).imageUrl;
       } catch (err) {
         console.warn('[LocationsService] QR logo overlay failed, using fallback:', err);

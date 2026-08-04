@@ -290,7 +290,7 @@ export class LocationsController {
           floor: location.floor || '',
           qrNumber: qrToken,
           spec: LAYOUT_SPEC_V1,
-          target: { dpi: 600 } // high-res target (600 DPI)
+          target: { dpi: 200 } // lightweight target (200 DPI)
         });
       }
 
@@ -386,7 +386,11 @@ export class LocationsController {
       res.status(200).json({ success: true, message: 'Location deleted' });
     } catch (error: any) {
       console.error('[LocationsController.deleteLocation]', error);
-      res.status(500).json({ success: false, message: 'Internal server error' });
+      const isConstraintError = error.code === 'P2003' || error.message?.includes('foreign key constraint');
+      const message = isConstraintError 
+        ? 'Cannot delete location: Complaints or tickets are linked to this location.'
+        : (error.message || 'Internal server error');
+      res.status(400).json({ success: false, message });
     }
   }
 

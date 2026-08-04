@@ -168,11 +168,14 @@ export async function generateQrCard(params: {
   const { payload, filename, spec, target } = params;
   const outPath = path.join(UPLOADS_DIR, `${filename}.png`);
 
+  // Cap DPI to 200 max to prevent RAM exhaustion on Render (512MB RAM limit)
+  const safeDpi = Math.min(target?.dpi || 150, 200);
+
   // Target physical dimensions in inches based on Canva layout
   const widthInches = 6.27;
   const heightInches = 6.15;
-  const canvasWidth = Math.round(widthInches * target.dpi);
-  const canvasHeight = Math.round(heightInches * target.dpi);
+  const canvasWidth = Math.round(widthInches * safeDpi);
+  const canvasHeight = Math.round(heightInches * safeDpi);
 
   // QR is square, use the smaller dimension (height) to prevent cropping
   const qrSize = Math.min(canvasWidth, canvasHeight);
